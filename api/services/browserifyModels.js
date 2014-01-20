@@ -6,7 +6,7 @@ module.exports = function() {
     .require('./api/services/clientModels.js', {
       expose: 'clientModels'
     })
-    .transform(require('shimify')({
+    .transform(require('stubify')({
       '**/api/services/!(clientModels.js)': 'api/services/empty.js'
     }))
     .bundle()

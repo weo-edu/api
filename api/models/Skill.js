@@ -39,9 +39,16 @@ var model = module.exports = {
   	/* e.g.
   	nickname: 'string'
   	*/
-  }
+  },
+  beforeCreate: [function(attrs, next) {
+    hashids('skill', function(err, hashId) {
+      attrs._id = hashId;
+      attrs.url = [attrs.domain, modelName, attrs._id].join('/');
+      delete attrs.domain;
+      next();
+    });
+  }]
 };
 
-model.beforeCreate = [require('../services/hashids.js')('skill'),
-    require('../services/virtualize.js')(model.attributes)];
+model.beforeCreate.push(require('../services/virtualize.js')(model.attributes));
 model.beforeUpdate = [require('../services/virtualize.js')(model.attributes)];

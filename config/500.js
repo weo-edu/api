@@ -56,22 +56,22 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
   }
 
   // If the user-agent wants JSON, respond with JSON
-  if (req.wantsJSON) {
-    return res.json(result, result.status);
-  }
+  //if (req.wantsJSON) {
+  return res.json(result, result.status);
+  //}
 
   // Set status code and view locals
-  res.status(result.status);
-  for (var key in result) {
-    res.locals[key] = result[key];
-  }
-  // And render view
-  res.render(viewFilePath, result, function (err) {
-    // If the view doesn't exist, or an error occured, just send JSON
-    if (err) { return res.json(result, result.status); }
+  // res.status(result.status);
+  // for (var key in result) {
+  //   res.locals[key] = result[key];
+  // }
+  // // And render view
+  // res.render(viewFilePath, result, function (err) {
+  //   // If the view doesn't exist, or an error occured, just send JSON
+  //   if (err) { return res.json(result, result.status); }
     
-    // Otherwise, if it can be rendered, the `views/500.*` page is rendered
-    res.render(viewFilePath, result);
-  });
+  //   // Otherwise, if it can be rendered, the `views/500.*` page is rendered
+  //   res.render(viewFilePath, result);
+  // });
 
 };

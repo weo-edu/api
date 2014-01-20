@@ -2,15 +2,22 @@ var hashids = new (require('hashids'))('themang')
   , redis = require('redis')
   , client = redis.createClient();
 
-module.exports = function(modelName) {
-  return function(attrs, cb) {
-    client.incr(modelName + ':hashid', function(err, id) {
-      if(err) throw err;
+exports = module.exports = function(modelName, options, cb) {
+  if(typeof options === 'function') {
+    cb = options;
+    options = {
+      num: 1,
+      offset: 0
+    };
+  }
 
-      attrs._id = hashids.encrypt(id);
-      attrs.url = [attrs.domain, modelName, attrs._id].join('/');
-      delete attrs.domain;
-      cb(null, attrs);
+  client.incrby(modelName + ':hashid', options.num, function(err, id) {
+    if(err) throw err;
+    var ids = _.times(options.num, function(i) {
+      return hashids.encrypt(id + i + options.offset);
     });
-  };
+    cb(null, options.num === 1 ? ids[0] : ids);
+  });
 };
+
+exports.sixDigitOffset = 3748096;
