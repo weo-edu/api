@@ -143,7 +143,7 @@ module.exports = {
   }
 };
 
-},{"password-hash":17}],"PqGDPE":[function(require,module,exports){
+},{"password-hash":17}],"xhRxXC":[function(require,module,exports){
 module.exports = {
   Group: require('../models/Group.js'),
   User: require('../models/User.js'),
@@ -151,7 +151,7 @@ module.exports = {
   Teacher: require('../models/Teacher.js')
 };
 },{"../models/Group.js":1,"../models/Student.js":2,"../models/Teacher.js":3,"../models/User.js":4}],"clientModels":[function(require,module,exports){
-module.exports=require('PqGDPE');
+module.exports=require('xhRxXC');
 },{}],7:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
