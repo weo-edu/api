@@ -9,7 +9,6 @@ var _ = require('lodash')
   , User = require('./User.js');
 
 module.exports = _.merge(_.clone(User, true), {
-
   attributes: {
     type: {
       type: 'string',

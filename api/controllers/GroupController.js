@@ -30,7 +30,11 @@ module.exports = {
   },
   lookupCode: function(req, res, next) {
     var selector = {};
-    selector[req.param('type') + '_code'] = req.param('code');
+    // XXX: Don't construct regexes directly from user queries
+    // also, change this as soon as sails supports case-sensitive
+    // queries
+    selector[req.param('type') + '_code'] = new RegExp(
+      '^' + req.param('code') + '$');
     console.log('selector', selector);
     Group.findOne(selector)
       .exec(function(err, group) {
