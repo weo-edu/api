@@ -35,10 +35,8 @@ module.exports = {
     // queries
     selector[req.param('type') + '_code'] = new RegExp(
       '^' + req.param('code') + '$');
-    console.log('selector', selector);
     Group.findOne(selector)
       .exec(function(err, group) {
-        console.log('group', err, group);
         if(err) throw err;
         if (!group) {
           return res.clientError(404, 'invalid code')
