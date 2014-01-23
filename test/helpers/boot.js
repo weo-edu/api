@@ -1,5 +1,10 @@
 var sails = require('sails')
-  , supertest = require('supertest');
+  , supertest = require('supertest')
+  , chai = require('chai')
+  , _ = require('lodash');
+
+global._ = _;
+global.expect = chai.expect;
 
 module.exports = function() {
   before(function(done) {

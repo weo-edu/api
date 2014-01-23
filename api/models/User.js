@@ -29,13 +29,12 @@ module.exports = {
     },
     username: {
       type: 'string',
-      required: true,
-      minLength: 5
+      required: true
     },
     password: {
       type: 'string',
       required: true,
-      password:true
+      password: true
     },
     password_confirmation: {
       type: 'string',

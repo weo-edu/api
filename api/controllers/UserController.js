@@ -54,7 +54,9 @@ module.exports = {
             redis.set(this.vars.token, user.username, this);
           })
           .seq(function() {
-            redis.expire(this.vars.token, moment.duration(7, 'days').asSeconds());
+            redis.expire(this.vars.token, 
+              moment.duration(7, 'days').asSeconds(), 
+              this);
           })
           .seq(function() {
             res.json({token: this.vars.token});
