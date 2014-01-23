@@ -41,7 +41,7 @@ module.exports = {
       if(! user) {
         return res.clientError(404, 'User not found')
           .missing('User', 'username')
-          .send();
+          .send(); 
       }
 
       if(passwordHash.verify(password, user.password)) {

@@ -13,7 +13,10 @@ module.exports = {
       type: 'string',
       in: ['class', 'tag', 'friends']
     },
-    name: 'string',
+    name: {
+      type: 'string',
+      required: true
+    },
     teacher_code: {
       type: 'string',
       required: true
