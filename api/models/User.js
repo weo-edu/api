@@ -10,14 +10,7 @@ var passwordHash = require('password-hash');
 
 module.exports = {
   tableName: 'user',
-  types: {
-    password_confirmation: function(password_confirmation) {
-      return password_confirmation === this.password;
-    },
-    password: function(password) {
-      return password === this.password_confirmation;
-    }
-  },
+  
   attributes: {
     first_name: {
       required: true,
@@ -33,22 +26,26 @@ module.exports = {
     },
     password: {
       type: 'string',
-      required: true,
-      password: true
-    },
-    password_confirmation: {
-      type: 'string',
-      password_confirmation: true
+      required: true
     },
     tokens: 'array',
     salt: 'string',
     verifier: 'string',
     type: {
       type: 'string',
+      required: true,
       in: ['student', 'teacher', 'parent']
     },
     groups: 'array'
   },
+  beforeValidation: [function(values, next) {
+    if (values.full_name) {
+      var fullName = values.full_name;
+      values.first_name = fullName.split(' ')[0];
+      values.last_name = fullName.split(' ').slice(1).join(' ');
+    }
+    next();
+  }],
   beforeCreate: function(attrs, next) {
     delete attrs.password_confirmation;
     attrs.password = passwordHash.generate(attrs.password, 
@@ -58,5 +55,8 @@ module.exports = {
   afterCreate: function(attrs, next) {
     delete attrs.password;
     next();
+  },
+  addToGroup: function(userId, groupId, cb) {
+    User.update({id: userId}, {$push: {groups: groupId}}).done(cb);
   }
 };

@@ -11,29 +11,19 @@ module.exports = {
   attributes: {
     type: {
       type: 'string',
-      in: ['class', 'tag', 'friends']
+      in: ['class', 'group']
     },
     name: {
-      type: 'string',
-      required: true
-    },
-    teacher_code: {
-      type: 'string',
-      required: true
-    },
-    student_code: {
       type: 'string',
       required: true
     }
   },
   beforeValidation: [function(attrs, next) {
-    if (attrs.id) return;
-    hashids('Group', {num: 2, offset: hashids.sixDigitOffset}, 
-    function(err, codes) {
+    if (attrs.id) return next();
+    hashids('Group', {offset: hashids.sixDigitOffset}, 
+    function(err, code) {
       if(err) throw err;
-      attrs.teacher_code = codes[0]
-      attrs.student_code = codes[1];
-      console.log('attrs', attrs);
+      attrs.id = code;
       next();
     });
   }]

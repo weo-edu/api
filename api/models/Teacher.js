@@ -8,17 +8,24 @@
 var _ = require('lodash')
   , User = require('./User.js');
 
-module.exports = _.merge(_.clone(User, true), {
+module.exports = _.merge({}, User, {
   attributes: {
     type: {
-      type: 'string',
       defaultsTo: 'teacher',
       in: ['teacher'],
-      required: true
+    },
+    email: {
+      required: true,
+      type: 'string',
+      email: true
     }
-  	/* e.g.
-  	nickname: 'string'
-  	*/
-    
-  }
+  },
+  beforeValidation: [function(values, next) {
+    if (!values.id) {
+      values.email = values.username;
+    }
+    next();
+  }]
+}, function(a, b) {
+  return _.isArray(a) ? a.concat(b) : undefined;
 });

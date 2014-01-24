@@ -1,3 +1,5 @@
+var Seq = require('seq');
+
 /**
  * GroupController
  *
@@ -15,6 +17,8 @@
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
 
+
+
 module.exports = {
     
   
@@ -26,26 +30,38 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    '@/:type/:code': 'lookupCode'
-  },
-  lookupCode: function(req, res, next) {
-    var selector = {};
-    // XXX: Don't construct regexes directly from user queries
-    // also, change this as soon as sails supports case-sensitive
-    // queries
-    selector[req.param('type') + '_code'] = new RegExp(
-      '^' + req.param('code') + '$');
-    Group.findOne(selector)
-      .exec(function(err, group) {
-        if(err) throw err;
-        if (!group) {
-          return res.clientError(404, 'invalid code')
-            .missing('Group', req.param('type') + '_code')
-            .send();
-        }
-        res.json(group);
+    'PUT @/:id/members/:user': 'addMember',
+    'POST /user/:user/group': 'createNew'
+  }
+  createNew: function(req, res) {
+    console.log('add new');
+    var name = req.param('name')
+      , type = req.param('type')
+      , userId = req.param('user');
+
+    Seq()
+      .seq(function() {
+        Group.create({name: name, type: type}).done(this);
+      })
+      .seq(function(group) {
+        this.vars.group = group;
+        User.addToGroup(userId, group.id, this)
+      })
+      .seq(function() {
+        res.json(this.vars.group);
+      })
+      .catch(function(err) {
+        throw err;
       });
+  },
+  addMember: function(req, res) {
+    var userId = req.param('user')
+      , groupId = req.param('id');
+
+    User.addToGroup(userId, groupId,function(err) {
+      if (err) throw err;
+      res.json({groupId: groupId});
+    })
   }
 };
 
-codes: ['teacher:W0', 'student:Y0']
