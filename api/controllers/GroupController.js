@@ -32,7 +32,7 @@ module.exports = {
   _routes: {
     'PUT @/:id/members/:user': 'addMember',
     'POST /user/:user/group': 'createNew'
-  }
+  },
   createNew: function(req, res) {
     console.log('add new');
     var name = req.param('name')
