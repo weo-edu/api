@@ -34,14 +34,15 @@ module.exports = {
     'POST /user/:user/group': 'createNew'
   },
   createNew: function(req, res) {
-    console.log('add new');
+    
     var name = req.param('name')
-      , type = req.param('type')
       , userId = req.param('user');
+
+    console.log('add new', name, userId);
 
     Seq()
       .seq(function() {
-        Group.create({name: name, type: type}).done(this);
+        Group.create({name: name}).done(this);
       })
       .seq(function(group) {
         this.vars.group = group;

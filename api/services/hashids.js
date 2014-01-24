@@ -5,11 +5,11 @@ var hashids = new (require('hashids'))('themang')
 exports = module.exports = function(modelName, options, cb) {
   if(typeof options === 'function') {
     cb = options;
-    options = {
-      num: 1,
-      offset: 0
-    };
+    options = {};
   }
+
+  options.num = options.num || 1;
+  options.offset = options.offset || 0;
 
   client.incrby(modelName + ':hashid', options.num, function(err, id) {
     if(err) throw err;
