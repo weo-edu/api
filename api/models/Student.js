@@ -19,11 +19,9 @@ module.exports = _.merge(_.clone(User, true), {
   },
   attributes: {
   	type: {
-      type: 'string',
-      required: true,
       defaultsTo: 'student',
       in: ['student']
-    }, 
+    },
     password_confirmation: {
       type: 'string',
       password_confirmation: true
@@ -31,6 +29,9 @@ module.exports = _.merge(_.clone(User, true), {
     grade: {
       type: 'integer',
       in: _.range(13)
+    },
+    password: {
+      password: true
     }
   	/* e.g.
   	nickname: 'string'

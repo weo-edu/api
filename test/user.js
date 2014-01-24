@@ -93,7 +93,7 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          expect(_.omit(this.vars.user, 'password')).to.be.like(res.body);
+          expect(res.body).to.have.properties(_.omit(this.vars.user, 'password'));
           expect(res.body).not.to.have.key('password');
           this();
         })

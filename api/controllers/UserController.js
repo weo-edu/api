@@ -29,7 +29,11 @@ module.exports = {
   _config: {},
   _routes: {
     '@/login': 'login',
-    '@/testAuthMethod': 'testAuthMethod'
+    '@/testAuthMethod': 'testAuthMethod',
+    'POST @/:user/group': {
+      action: 'createNew',
+      controller: 'group'
+    }
   },
   login: function(req, res) {
     var username = req.param('username')
