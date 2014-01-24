@@ -32,11 +32,11 @@ function search(name) {
       , sailsMongo = sails.adapters['sails-mongo'];
 
     sailsMongo['native'](name, function(err, collection) {
-      if(err) return res.send(err, 500);
+      if(err) return res.serverError(err);
       
       return collection.db.command({text: name, search: q || ''}, 
         function(err, result) {
-        if(err) res.send(err, 500);
+        if(err) res.serverError(err);
         else {
           res.json(_.map(result.results, function(res) {
             return res.obj;

@@ -5,71 +5,105 @@ describe('User controller', function() {
   require('./helpers/boot.js')();
 
   describe('login', function() {
-    it('Should handle non-existent username', function(done) {
-      request
-        .post('/user/login')
-        .send({username: 'badusername', password: 'test'})
-        .end(function(err, res) {
-          expect(res.status).to.equal(404);
+    it('should handle non-existent username', function(done) {
+      Seq()
+        .seq(function() {
+          User.login('badusername', 'test', this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(404);
           expect(res.body.message).to.equal('User not found');
-          expect(res.body.errors).to.be.an('array');
-          expect(res.body.errors).to.have.length(1);
-          expect(res.body.errors[0]).to.eql({
-            resource: 'User',
+          console.log(res.body.errors);
+          expect(res.body.errors).to.include.something.that.deep.equals({
+            resource: 'user',
             field: 'username',
             code: 'missing'
           });
-          done();
-        });
+          this();
+        })
+        .seq(done);
     });
 
-    it('Should handle incorrect password', function(done) {
+    it('should handle incorrect password', function(done) {
       Seq()
         .seq(function() {
           this.vars.user = User.create({}, this);
         })
         .seq(function(res) {
-          var user = this.vars.user;
-          expect(res.status).to.equal(201);
-          request
-            .post('/user/login')
-            .send({username: user.username, password: 'badpass'})
-            .end(this);
+          expect(res).to.have.status(201);
+          User.login(this.vars.user.username, 'badpass', this);
         })
         .seq(function(res) {
-          expect(res.status).to.equal(401);
+          expect(res).to.have.status(401);
           expect(res.body.message).to.equal('Incorrect password');
-          expect(res.body.errors).to.be.an('array');
-          expect(res.body.errors).to.have.length(1);
-          expect(res.body.errors[0]).to.eql({
-            resource: 'User',
+          expect(res.body.errors).to.contain.an.item.that.eql({
+            resource: 'user',
             field: 'password',
-            code: 'invalid'
+            code: 'invalid' 
           });
-          done();
+          this();
         })
+        .seq(done)
         .catch(function(err) { throw err; });
     });
 
-    it('Should accept valid credentials', function(done) {
+    it('should accept valid credentials', function(done) {
       Seq()
         .seq(function() {
           this.vars.user = User.create({}, this);
         })
         .seq(function(res) {
-          expect(res.status).to.equal(201);
+          expect(res).to.have.status(201);
           var user = this.vars.user;
-          request
-            .post('/user/login')
-            .send({username: user.username, password: user.password})
-            .end(this);
+          User.login(user.username, user.password, this);
         })
         .seq(function(res) {
-          expect(res.status).to.equal(200);
-          expect(res.body.token).to.be.a('string');
-          done();
+          expect(res).to.have.status(200);
+          expect(res.body).to.have.key('token');
+          this();
         })
+        .seq(done)
         .catch(function(err) { throw err; });
+    });
+  });
+
+  describe('create', function() {
+    it('should validate new user data', function(done) {
+      Seq()
+        .seq(function() {
+          User.create({
+            username: 'a',
+            type: 'notAValidType'
+          }, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have
+            .ValidationError('invalid', 'username')
+            .and
+            .ValidationError('invalid', 'type');
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should create a new user and login successfully', function(done) {
+      Seq()
+        .seq(function() {
+          this.vars.user = User.create({}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          expect(_.omit(this.vars.user, 'password')).to.be.like(res.body);
+          expect(res.body).not.to.have.key('password');
+          this();
+        })
+        .seq(function() {
+          User.login(this.vars.username, this.vars.password, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+        })
+        .seq(done);
     });
   });
 });

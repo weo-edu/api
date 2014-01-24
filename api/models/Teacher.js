@@ -15,10 +15,21 @@ module.exports = _.merge(_.clone(User, true), {
       defaultsTo: 'teacher',
       in: ['teacher'],
       required: true
+    },
+    email: {
+      type: 'email',
+      required: true
     }
   	/* e.g.
   	nickname: 'string'
   	*/
-    
-  }
+  },
+  // Event-callbacks here must use array style
+  // so that they can be _.merge'd with User
+  beforeValidate: [
+    function(attrs, next) {
+      attrs.username = attrs.email;
+      next();
+    }
+  ]
 });

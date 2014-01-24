@@ -16,10 +16,6 @@
  */
 
 module.exports = {
-    
-  
-
-
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to GroupController)
@@ -39,13 +35,11 @@ module.exports = {
       .exec(function(err, group) {
         if(err) throw err;
         if (!group) {
-          return res.clientError(404, 'invalid code')
+          return res.clientError('Invalid code')
             .missing('Group', req.param('type') + '_code')
-            .send();
+            .send(404);
         }
         res.json(group);
       });
   }
 };
-
-codes: ['teacher:W0', 'student:Y0']

@@ -10,14 +10,6 @@ var passwordHash = require('password-hash');
 
 module.exports = {
   tableName: 'user',
-  types: {
-    password_confirmation: function(password_confirmation) {
-      return password_confirmation === this.password;
-    },
-    password: function(password) {
-      return password === this.password_confirmation;
-    }
-  },
   attributes: {
     first_name: {
       required: true,
@@ -29,16 +21,16 @@ module.exports = {
     },
     username: {
       type: 'string',
-      required: true
+      required: true,
+      minLength: 3
     },
     password: {
       type: 'string',
       required: true,
       password: true
     },
-    password_confirmation: {
-      type: 'string',
-      password_confirmation: true
+    email: {
+      type: 'email'
     },
     tokens: 'array',
     salt: 'string',
@@ -49,14 +41,15 @@ module.exports = {
     },
     groups: 'array'
   },
-  beforeCreate: function(attrs, next) {
-    delete attrs.password_confirmation;
+  // Event-callbacks here must use array style
+  // so that they can be _.merge'd with Teacher/Student
+  beforeCreate: [function(attrs, next) {
     attrs.password = passwordHash.generate(attrs.password, 
       sails.config.hash);
     next();
-  },
-  afterCreate: function(attrs, next) {
+  }],
+  afterCreate: [function(attrs, next) {
     delete attrs.password;
     next();
-  }
+  }]
 };

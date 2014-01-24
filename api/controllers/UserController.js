@@ -39,15 +39,15 @@ module.exports = {
     .exec(function(err, user) {
       if(err) throw err;
       if(! user) {
-        return res.clientError(404, 'User not found')
-          .missing('User', 'username')
-          .send();
+        return res.clientError('User not found')
+          .missing('user', 'username')
+          .send(404);
       }
 
       if(passwordHash.verify(password, user.password)) {
         Seq()
           .seq(function() {
-            crypto.randomBytes(16,this);
+            crypto.randomBytes(16, this);
           })
           .seq(function(buf) {
             this.vars.token = buf.toString('base64');
@@ -65,9 +65,9 @@ module.exports = {
             throw err;
           });
       } else {
-        res.clientError(401, 'Incorrect password')
-          .invalid('User', 'password')
-          .send();
+        res.clientError('Incorrect password')
+          .invalid('user', 'password')
+          .send(401);
       }
     });
   },

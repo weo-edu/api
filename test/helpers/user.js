@@ -1,4 +1,5 @@
-var Faker = require('Faker');
+var Faker = require('Faker')
+  , chai = require('chai');
 
 var User = module.exports = {
   create: function(opts, cb) {
@@ -15,5 +16,11 @@ var User = module.exports = {
       }))
       .end(cb);
     return opts;
+  },
+  login: function(username, password, cb) {
+    request
+      .post('/user/login')
+      .send({username: username, password: password})
+      .end(cb);
   }
 };
