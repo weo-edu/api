@@ -25,15 +25,9 @@ module.exports = _.merge({}, User, {
   },
   // Event-callbacks here must use array style
   // so that they can be _.merge'd with User
-  beforeValidate: [
-    function(attrs, next) {
-      attrs.username = attrs.email;
-      next();
-    }
-  ],
   beforeValidation: [function(values, next) {
-    if (!values.id) {
-      values.email = values.username;
+    if (! values.id) {
+      values.username = values.email;
     }
     next();
   }]
