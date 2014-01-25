@@ -8,6 +8,7 @@ var User = module.exports = {
       type: 'teacher',
       first_name: Faker.Name.firstName(),
       last_name: Faker.Name.lastName(),
+      groups: ['notARealGroupId'],
       username: Faker.Internet.userName(),
       password: 'testpassword',
       password_confirmation: opts.password || 'testpassword'

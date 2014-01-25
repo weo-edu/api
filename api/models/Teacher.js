@@ -5,10 +5,10 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var _ = require('lodash')
+var mergeModels = require('../services/mergeModels.js')
   , User = require('./User.js');
 
-module.exports = _.merge({}, User, {
+module.exports = mergeModels({}, User, {
   attributes: {
     type: {
       defaultsTo: 'teacher',
@@ -30,7 +30,5 @@ module.exports = _.merge({}, User, {
       values.username = values.email;
     }
     next();
-  }]
-}, function(a, b) {
-  return _.isArray(a) ? a.concat(b) : undefined;
+  }].concat(User.beforeValidation)
 });

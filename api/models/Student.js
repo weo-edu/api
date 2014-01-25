@@ -5,10 +5,10 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var _ = require('lodash')
+var mergeModels = require('../services/mergeModels.js')
   , User = require('./User.js');
 
-module.exports = _.merge(_.clone(User, true), {
+module.exports = mergeModels(User, {
   types: {
     password_confirmation: function(password_confirmation) {
       return password_confirmation === this.password;
@@ -32,6 +32,11 @@ module.exports = _.merge(_.clone(User, true), {
     },
     password: {
       password: true
+    },
+    groups: {
+      type: 'array',
+      minLength: 1,
+      required: true
     }
   	/* e.g.
   	nickname: 'string'

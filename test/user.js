@@ -159,5 +159,64 @@ describe('User controller', function() {
         })
         .seq(done);
     });
+
+    it('should replace a teacher\'s username with their email address', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/teacher')
+            .send(User.generate())
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          expect(res.body.username).to.equal(res.body.email);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should return an error if you pass type "student" to the teacher endpoint and vice versa', 
+    function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/teacher')
+            .send(User.generate({type: 'student', email: 'test@test.com'}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('invalid', 'type', 'teacher', 
+            {rule: 'in'});
+          this();
+        })
+        .seq(function() {
+          request
+            .post('/student')
+            .send(User.generate({type: 'teacher', email: 'test@test.com'}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('invalid', 'type', 'student', 
+            {rule: 'in'});
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not allow a student with no group', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/student')
+            .send(User.generate({type: 'student', groups: []}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('missing_field', 'groups');
+          this();
+        })
+        .seq(done);
+    });
   });
 });
