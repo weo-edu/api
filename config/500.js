@@ -27,7 +27,6 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
   var result = {
     status: statusCode
   };
-
   // Normalize a {String|Object|Error} or array of {String|Object|Error} 
   // into an array of proper, readable {Error}
   var errorsToDisplay = sails.util.normalizeErrors(errors);

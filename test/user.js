@@ -13,7 +13,6 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(404);
           expect(res.body.message).to.equal('User not found');
-          console.log(res.body.errors);
           expect(res.body.errors).to.include.something.that.deep.equals({
             resource: 'user',
             field: 'username',
@@ -92,16 +91,130 @@ describe('User controller', function() {
           this.vars.user = User.create({}, this);
         })
         .seq(function(res) {
+          var user = this.vars.user;
           expect(res).to.have.status(201);
-          expect(res.body).to.have.properties(_.omit(this.vars.user, 'password'));
+          expect(res.body).to.have
+            .properties(_.omit(user, 
+              ['password', 'password_confirmation']));
           expect(res.body).not.to.have.key('password');
+          expect(res.body).not.to.have.key('password_confirmation'); 
           this();
         })
         .seq(function() {
-          User.login(this.vars.username, this.vars.password, this);
+          var user = this.vars.user;
+          User.login(user.username, user.password, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
+          this();
+        })
+        .seq(done);
+    });
+
+    _.each(['teacher', 'student'], function(type) {
+      it('should add type field when creating a ' + type, function(done) {
+        Seq()
+          .seq(function() {
+            request
+              .post('/' + type)
+              .send(_.omit(User.generate(), 'type'))
+              .end(this);
+          })
+          .seq(function(res) {
+            expect(res).to.have.status(201);
+            expect(res.body.type).to.equal(type);
+            this();
+          })
+          .seq(done);
+      });
+    });
+
+    it('should require an email address on a teacher, but not a student',
+    function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/teacher')
+            .send(_.omit(User.generate(), 'email'))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have
+            .ValidationError('missing_field', 'email', 'teacher', 
+              {rule: 'required'});
+          this();
+        })
+        .seq(function() {
+          request
+            .post('/teacher')
+            .send(User.generate({email: 'invalidEmail'}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have
+            .ValidationError('invalid', 'email', 'teacher', {
+              rule: 'email'
+            });
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should replace a teacher\'s username with their email address', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/teacher')
+            .send(User.generate())
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          expect(res.body.username).to.equal(res.body.email);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should return an error if you pass type "student" to the teacher endpoint and vice versa', 
+    function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/teacher')
+            .send(User.generate({type: 'student', email: 'test@test.com'}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('invalid', 'type', 'teacher', 
+            {rule: 'in'});
+          this();
+        })
+        .seq(function() {
+          request
+            .post('/student')
+            .send(User.generate({type: 'teacher', email: 'test@test.com'}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('invalid', 'type', 'student', 
+            {rule: 'in'});
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not allow a student with no group', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .post('/student')
+            .send(User.generate({type: 'student', groups: []}))
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('missing_field', 'groups');
+          this();
         })
         .seq(done);
     });
