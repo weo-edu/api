@@ -26,5 +26,9 @@ module.exports = {
       attrs.id = code;
       next();
     });
-  }]
+  }],
+  afterCreate: function(values, next) {
+    console.log('values', values);
+    next();
+  }
 };
