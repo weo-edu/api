@@ -23,7 +23,8 @@
     "redis": "~0.10.0",
     "hiredis": "~0.1.16",
     "seq": "~0.3.5",
-    "weo-error-codes": "0.0.0"
+    "weo-error-codes": "0.0.0",
+    "sails-mongo": "~0.9.6"
   },
   "scripts": {
     "start": "node app.js",
