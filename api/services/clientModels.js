@@ -4,3 +4,4 @@ module.exports = {
   Student: require('../models/Student.js'),
   Teacher: require('../models/Teacher.js')
 };
+

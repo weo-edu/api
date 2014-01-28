@@ -5,8 +5,9 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var mergeModels = require('../services/mergeModels.js')
-  , User = require('./User.js');
+var mergeModels = require('../../lib/mergeModels.js')
+  , User = require('./User.js')
+  , _ = require('lodash');
 
 module.exports = mergeModels(User, {
   types: {
@@ -38,9 +39,6 @@ module.exports = mergeModels(User, {
       minLength: 1,
       required: true
     }
-  	/* e.g.
-  	nickname: 'string'
-  	*/
   },
   // Event-callbacks here must use array style
   // so that they can be _.merge'd with User

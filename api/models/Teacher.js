@@ -5,7 +5,7 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var mergeModels = require('../services/mergeModels.js')
+var mergeModels = require('../../lib/mergeModels.js')
   , User = require('./User.js');
 
 module.exports = mergeModels({}, User, {
@@ -29,3 +29,5 @@ module.exports = mergeModels({}, User, {
     next();
   }].concat(User.beforeValidation)
 });
+
+
