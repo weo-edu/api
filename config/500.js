@@ -40,13 +40,14 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
     else {
       errorToLog = errorsToDisplay[i].stack;
     }
-    if(! errorsToDisplay[i].original.ValidationError) {
-      sails.log.error('Server Error (500)');
-      sails.log.error(errorToLog);
-    }
     // Use original error if it exists
     errorToJSON = errorsToDisplay[i].original || errorsToDisplay[i].message;
     errorsToDisplay[i] = errorToJSON;
+    
+    if(! errorsToDisplay[i].ValidationError) {
+      sails.log.error('Server Error (500)');
+      sails.log.error(errorToLog);
+    }
   }
 
   if(errorsToDisplay[0].ValidationError) {

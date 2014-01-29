@@ -21,14 +21,17 @@ module.exports = {
     username: {
       type: 'string',
       required: true,
-      minLength: 3
+      minLength: 3,
+      unique: true
     },
     password: {
       type: 'string',
       required: true,
+      minLength: 6,
     },
     email: {
-      type: 'email'
+      type: 'email',
+      unique: true
     },
     tokens: 'array',
     salt: 'string',

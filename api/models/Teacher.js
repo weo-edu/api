@@ -16,8 +16,14 @@ module.exports = mergeModels({}, User, {
       required: true
     },
     email: {
-      type: 'email',
-      required: true
+      type: 'string',
+      required: true,
+      email: true
+    },
+    title: {
+      type: 'string',
+      required: true,
+      in: ['Mrs.', 'Ms.', 'Mr.', 'Dr.', 'First']
     }
   },
   // Event-callbacks here must use array style
