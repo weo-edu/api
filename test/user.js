@@ -219,7 +219,7 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    it.only('should not allow duplicate username', function(done) {
+    it('should not allow duplicate username', function(done) {
       Seq()
         .seq(function() {
           this.vars.user1 = User.create({}, this);

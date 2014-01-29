@@ -29,7 +29,8 @@ module.exports = {
       required: true,
     },
     email: {
-      type: 'email'
+      type: 'email',
+      unique: true
     },
     tokens: 'array',
     salt: 'string',
