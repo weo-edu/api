@@ -5,20 +5,29 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var _ = require('lodash')
+var mergeModels = require('../../lib/mergeModels.js')
   , User = require('./User.js');
 
-module.exports = _.merge(_.clone(User, true), {
+module.exports = mergeModels({}, User, {
   attributes: {
     type: {
-      type: 'string',
       defaultsTo: 'teacher',
       in: ['teacher'],
       required: true
+    },
+    email: {
+      type: 'email',
+      required: true
     }
-  	/* e.g.
-  	nickname: 'string'
-  	*/
-    
-  }
+  },
+  // Event-callbacks here must use array style
+  // so that they can be _.merge'd with User
+  beforeValidation: [function(values, next) {
+    if (! values.id) {
+      values.username = values.email;
+    }
+    next();
+  }].concat(User.beforeValidation)
 });
+
+

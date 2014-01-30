@@ -27,7 +27,6 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
   var result = {
     status: statusCode
   };
-
   // Normalize a {String|Object|Error} or array of {String|Object|Error} 
   // into an array of proper, readable {Error}
   var errorsToDisplay = sails.util.normalizeErrors(errors);
@@ -36,29 +35,37 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
     // Log error(s) as clean `stack`
     // (avoids ending up with \n, etc.)
     if ( errorsToDisplay[i].original ) {
-      errorToLog = sails.util.inspect(errorsToDisplay[i].original);
+      errorToLog = sails.util.inspect(errorsToDisplay[i].original, {depth: null});
     }
     else {
       errorToLog = errorsToDisplay[i].stack;
     }
-    sails.log.error('Server Error (500)');
-    sails.log.error(errorToLog);
-
+    if(! errorsToDisplay[i].original.ValidationError) {
+      sails.log.error('Server Error (500)');
+      sails.log.error(errorToLog);
+    }
     // Use original error if it exists
     errorToJSON = errorsToDisplay[i].original || errorsToDisplay[i].message;
     errorsToDisplay[i] = errorToJSON;
   }
 
-  // Only include errors if application environment is set to 'development'
-  // In production, don't display any identifying information about the error(s)
-  if (sails.config.environment === 'development') {
-    result.errors = errorsToDisplay;
-  }
+  if(errorsToDisplay[0].ValidationError) {
+    var resource = req.path.split('/')[1];
+    res.clientError('ValidationError')
+      .fromSails(resource, errorsToDisplay)
+      .send(401);
+  } else {
+    // Only include errors if application environment is set to 'development'
+    // In production, don't display any identifying information about the error(s)
+    if (sails.config.environment === 'development') {
+      result.errors = errorsToDisplay;
+    }
 
-  // If the user-agent wants JSON, respond with JSON
-  //if (req.wantsJSON) {
-  return res.json(result, result.status);
-  //}
+    // If the user-agent wants JSON, respond with JSON
+    //if (req.wantsJSON) {
+    return res.json(result, result.status);
+    //}
+  }
 
   // Set status code and view locals
   // res.status(result.status);

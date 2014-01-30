@@ -29,7 +29,11 @@ module.exports = {
   _config: {},
   _routes: {
     '@/login': 'login',
-    '@/testAuthMethod': 'testAuthMethod'
+    '@/testAuthMethod': 'testAuthMethod',
+    'POST @/:user/group': {
+      action: 'createNew',
+      controller: 'group'
+    }
   },
   login: function(req, res) {
     var username = req.param('username')
@@ -39,22 +43,24 @@ module.exports = {
     .exec(function(err, user) {
       if(err) throw err;
       if(! user) {
-        return res.clientError(404, 'User not found')
-          .missing('User', 'username')
-          .send();
+        return res.clientError('User not found')
+          .missing('user', 'username')
+          .send(404);
       }
 
       if(passwordHash.verify(password, user.password)) {
         Seq()
           .seq(function() {
-            crypto.randomBytes(16,this);
+            crypto.randomBytes(16, this);
           })
           .seq(function(buf) {
             this.vars.token = buf.toString('base64');
             redis.set(this.vars.token, user.username, this);
           })
           .seq(function() {
-            redis.expire(this.vars.token, moment.duration(7, 'days').asSeconds());
+            redis.expire(this.vars.token, 
+              moment.duration(7, 'days').asSeconds(), 
+              this);
           })
           .seq(function() {
             res.json({token: this.vars.token});
@@ -63,9 +69,9 @@ module.exports = {
             throw err;
           });
       } else {
-        res.clientError(401, 'Incorrect password')
-          .invalid('User', 'password')
-          .send();
+        res.clientError('Incorrect password')
+          .invalid('user', 'password')
+          .send(401);
       }
     });
   },
