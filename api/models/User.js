@@ -27,10 +27,10 @@ module.exports = {
     password: {
       type: 'string',
       required: true,
+      minLength: 6,
     },
     email: {
       type: 'email',
-      unique: true
     },
     tokens: 'array',
     salt: 'string',

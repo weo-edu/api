@@ -23,14 +23,27 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    'PUT @/:id/members/:user': 'addMember'
+    'PUT @/:id/members/:user': 'addMember',
+    '@/:id': 'get'
+  },
+  get: function(req, res) {
+    var id = req.param('id');
+    Group.findOne(id)
+      .exec(function(err, group) {
+        console.log('err', err, group);
+        if (err) throw err;
+        if (!group) {
+          return res.clientError('Group not found')
+            .missing('group', 'id')
+            .send(404);
+        }
+
+        res.json(group);
+      });
   },
   createNew: function(req, res) {
     var name = req.param('name')
       , userId = req.param('user');
-
-    console.log('add new', name, userId);
-
     Seq()
       .seq(function() {
         Group.create({name: name}).done(this);
