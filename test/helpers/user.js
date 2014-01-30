@@ -9,12 +9,13 @@ var User = module.exports = {
       first_name: Faker.Name.firstName(),
       last_name: Faker.Name.lastName(),
       groups: ['notARealGroupId'],
-      username: Faker.Internet.userName(),
+      username: Faker.Internet.email(),
       password: 'testpassword',
       password_confirmation: opts.password || 'testpassword'
     });
-    if(opts.type === 'teacher')
-      opts.email = opts.email || Faker.Internet.email();
+    if(opts.type === 'teacher') {
+      opts.title = 'Mr.'
+    }
     return opts;
   },
   create: function(opts, cb) {

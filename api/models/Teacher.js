@@ -8,7 +8,11 @@
 var mergeModels = require('../../lib/mergeModels.js')
   , User = require('./User.js');
 
-module.exports = mergeModels({}, User, {
+var model = module.exports = mergeModels({}, User, {
+  types: {
+    virtual: function() { return true; },
+    fn: function() { return true; },
+  },
   attributes: {
     type: {
       defaultsTo: 'teacher',
@@ -19,8 +23,10 @@ module.exports = mergeModels({}, User, {
       email: true
     },
     email: {
-      type: 'string',
-      email: true
+      type: 'virtual',
+      fn: function() {
+        return this.username;
+      }
     },
     title: {
       type: 'string',
@@ -30,4 +36,5 @@ module.exports = mergeModels({}, User, {
   }
 });
 
-
+model.beforeCreate.push(require('../services/virtualize.js')(model.attributes));
+model.beforeUpdate = [require('../services/virtualize.js')(model.attributes)];
