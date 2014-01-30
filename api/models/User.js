@@ -31,7 +31,6 @@ module.exports = {
     },
     email: {
       type: 'email',
-      unique: true
     },
     tokens: 'array',
     salt: 'string',
@@ -55,7 +54,7 @@ module.exports = {
   }],
   beforeCreate: [function(attrs, next) {
     delete attrs.password_confirmation;
-    attrs.password = passwordHash.generate(attrs.password, 
+    attrs.password = passwordHash.generate(attrs.password,
       sails.config.hash);
     next();
   }],

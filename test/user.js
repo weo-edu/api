@@ -38,7 +38,7 @@ describe('User controller', function() {
           expect(res.body.errors).to.contain.an.item.that.eql({
             resource: 'user',
             field: 'password',
-            code: 'invalid' 
+            code: 'invalid'
           });
           this();
         })
@@ -94,10 +94,10 @@ describe('User controller', function() {
           var user = this.vars.user;
           expect(res).to.have.status(201);
           expect(res.body).to.have
-            .properties(_.omit(user, 
+            .properties(_.omit(user,
               ['password', 'password_confirmation']));
           expect(res.body).not.to.have.key('password');
-          expect(res.body).not.to.have.key('password_confirmation'); 
+          expect(res.body).not.to.have.key('password_confirmation');
           this();
         })
         .seq(function() {
@@ -140,7 +140,7 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have
-            .ValidationError('missing_field', 'email', 'teacher', 
+            .ValidationError('missing_field', 'email', 'teacher',
               {rule: 'required'});
           this();
         })
@@ -176,7 +176,7 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    it('should return an error if you pass type "student" to the teacher endpoint and vice versa', 
+    it('should return an error if you pass type "student" to the teacher endpoint and vice versa',
     function(done) {
       Seq()
         .seq(function() {
@@ -186,7 +186,7 @@ describe('User controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.ValidationError('invalid', 'type', 'teacher', 
+          expect(res).to.have.ValidationError('invalid', 'type', 'teacher',
             {rule: 'in'});
           this();
         })
@@ -197,7 +197,7 @@ describe('User controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.ValidationError('invalid', 'type', 'student', 
+          expect(res).to.have.ValidationError('invalid', 'type', 'student',
             {rule: 'in'});
           this();
         })
@@ -214,6 +214,42 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.ValidationError('missing_field', 'groups');
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not allow duplicate username', function(done) {
+      Seq()
+        .seq(function() {
+          this.vars.user1 = User.create({}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          User.create({username: this.vars.user1.username}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(401);
+          expect(res).to.have
+            .ValidationError('already_exists', 'username', 'user', {rule: 'unique'});
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not allow duplicate email', function(done) {
+      Seq()
+        .seq(function() {
+          this.vars.user1 = User.create({}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          User.create({email: this.vars.user1.email}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(401);
+          expect(res).to.have
+            .ValidationError('already_exists', 'email', 'user', {rule: 'unique'});
           this();
         })
         .seq(done);

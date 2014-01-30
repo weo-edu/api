@@ -1,7 +1,7 @@
 /**
  * Default 500 (Server Error) middleware
  *
- * If an error is thrown in a policy or controller, 
+ * If an error is thrown in a policy or controller,
  * Sails will respond using this default error handler
  *
  * This middleware can also be invoked manually from a controller or policy:
@@ -27,7 +27,7 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
   var result = {
     status: statusCode
   };
-  // Normalize a {String|Object|Error} or array of {String|Object|Error} 
+  // Normalize a {String|Object|Error} or array of {String|Object|Error}
   // into an array of proper, readable {Error}
   var errorsToDisplay = sails.util.normalizeErrors(errors);
   for (i in errorsToDisplay) {
@@ -41,9 +41,51 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
       errorToLog = errorsToDisplay[i].stack;
     }
     // Use original error if it exists
-    errorToJSON = errorsToDisplay[i].original || errorsToDisplay[i].message;
+    errorToJSON = errorsToDisplay[i].original || errorsToDisplay[i];
     errorsToDisplay[i] = errorToJSON;
-    
+
+    if(errorsToDisplay[i].name === 'MongoError'
+        && errorsToDisplay[i].code === 11000) {
+      function parseDupKeyMessage(msg) {
+        var re = /^E11000 duplicate key error index\: (\w+)\.(\w+)\.\$([\w\$]+)  dup key\: \{ \: \"(.*)\" \}$/;
+        var parts = re.exec(msg);
+        if(parts && parts.length > 1) {
+          return {
+            db: parts[1],
+            collection: parts[2],
+            index: parts[3],
+            data: parts[4]
+          };
+        }
+      }
+
+      var info = parseDupKeyMessage(errorsToDisplay[i].message);
+      if(info) {
+        sails.adapters['sails-mongo'].native(info.collection, function(err, col) {
+          if(err) throw err;
+          col.indexInformation(function(err, indexInfo) {
+            if(err) throw err;
+            var index = indexInfo[info.index]
+              , error = {ValidationError: {}};
+
+            // index = [[<fieldName>, <direction>]]
+            _.each(index, function(field) {
+              field = field[0];
+              error.ValidationError[field] = [{
+                data: info.data,
+                message: 'Validation error: ' + field + ' is not unique',
+                rule: 'unique'
+              }];
+            });
+
+            sails.config[500](error, req, res);
+          });
+        });
+        // Error transformation is async, so we need to skip reporting
+        // for now
+        return;
+      }
+    }
     if(! errorsToDisplay[i].ValidationError) {
       sails.log.error('Server Error (500)');
       sails.log.error(errorToLog);
@@ -77,7 +119,7 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
   // res.render(viewFilePath, result, function (err) {
   //   // If the view doesn't exist, or an error occured, just send JSON
   //   if (err) { return res.json(result, result.status); }
-    
+
   //   // Otherwise, if it can be rendered, the `views/500.*` page is rendered
   //   res.render(viewFilePath, result);
   // });
