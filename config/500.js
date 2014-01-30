@@ -96,7 +96,7 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
     var resource = req.path.split('/')[1];
     res.clientError('ValidationError')
       .fromSails(resource, errorsToDisplay)
-      .send(401);
+      .send(400);
   } else {
     // Only include errors if application environment is set to 'development'
     // In production, don't display any identifying information about the error(s)

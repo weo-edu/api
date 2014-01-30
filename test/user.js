@@ -229,7 +229,7 @@ describe('User controller', function() {
           User.create({username: this.vars.user1.username}, this);
         })
         .seq(function(res) {
-          expect(res).to.have.status(401);
+          expect(res).to.have.status(400);
           expect(res).to.have
             .ValidationError('already_exists', 'username', 'user', {rule: 'unique'});
           this();
@@ -247,7 +247,7 @@ describe('User controller', function() {
           User.create({email: this.vars.user1.email}, this);
         })
         .seq(function(res) {
-          expect(res).to.have.status(401);
+          expect(res).to.have.status(400);
           expect(res).to.have
             .ValidationError('already_exists', 'email', 'user', {rule: 'unique'});
           this();
