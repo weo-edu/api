@@ -15,19 +15,19 @@ module.exports = mergeModels({}, User, {
       in: ['teacher'],
       required: true
     },
+    username: {
+      email: true
+    },
     email: {
-      type: 'email',
-      required: true
+      type: 'string',
+      email: true
+    },
+    title: {
+      type: 'string',
+      required: true,
+      in: ['Mrs.', 'Ms.', 'Mr.', 'Dr.', 'First']
     }
-  },
-  // Event-callbacks here must use array style
-  // so that they can be _.merge'd with User
-  beforeValidation: [function(values, next) {
-    if (! values.id) {
-      values.username = values.email;
-    }
-    next();
-  }].concat(User.beforeValidation)
+  }
 });
 
 

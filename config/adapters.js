@@ -1,8 +1,8 @@
 /**
  * Global adapter config
- * 
+ *
  * The `adapters` configuration object lets you create different global "saved settings"
- * that you can mix and match in your models.  The `default` option indicates which 
+ * that you can mix and match in your models.  The `default` option indicates which
  * "saved setting" should be used if a model doesn't have an adapter specified.
  *
  * Keep in mind that options you define directly in your model definitions
@@ -12,9 +12,9 @@
  * http://sailsjs.org/#documentation
  */
 
-module.exports.adapters = {
+var adapters = module.exports.adapters = {
 
-  // If you leave the adapter config unspecified 
+  // If you leave the adapter config unspecified
   // in a model definition, 'default' will be used.
   'default': 'mongo',
 
@@ -38,7 +38,31 @@ module.exports.adapters = {
     user: 'YOUR_MYSQL_USER',
     // Psst.. You can put your password in config/local.js instead
     // so you don't inadvertently push it up if you're using version control
-    password: 'YOUR_MYSQL_PASSWORD', 
+    password: 'YOUR_MYSQL_PASSWORD',
     database: 'YOUR_MYSQL_DB'
   }
 };
+
+// function randomDbName(prefix) {
+//   return (prefix || '') + '_' + (new Date);
+// }
+
+// if(process.env.NODE_ENV === 'testing') {
+//   var sails = require('sails');
+//   // Cache the random name here, in the off-chance that someone accidentally
+//   // modifies adapters.mongo.database at some later point, we don't want
+//   // to accidentally obliterate real data
+//   var randomName = adapters.mongo.database = randomDbName('testing');
+
+//   sails.on('bootstrap', function() {
+//     var testData = require('../lib/testData.js');
+//     _.each(testData, function(data, collectionName) {
+//       sails.adapters['sails-mongo'].native(collectionName, function(err, col) {
+//         if(err) throw err;
+//         _.each(data, function(doc) {
+//           col.insert(doc);
+//         });
+//       });
+//     });
+//   });
+// }

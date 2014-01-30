@@ -21,14 +21,16 @@ module.exports = {
     username: {
       type: 'string',
       required: true,
-      minLength: 3
+      minLength: 3,
+      unique: true
     },
     password: {
       type: 'string',
       required: true,
+      minLength: 6,
     },
     email: {
-      type: 'email'
+      type: 'email',
     },
     tokens: 'array',
     salt: 'string',
@@ -52,7 +54,7 @@ module.exports = {
   }],
   beforeCreate: [function(attrs, next) {
     delete attrs.password_confirmation;
-    attrs.password = passwordHash.generate(attrs.password, 
+    attrs.password = passwordHash.generate(attrs.password,
       sails.config.hash);
     next();
   }],

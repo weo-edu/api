@@ -25,11 +25,8 @@ module.exports = mergeModels(User, {
     },
     password_confirmation: {
       type: 'string',
-      password_confirmation: true
-    },
-    grade: {
-      type: 'integer',
-      in: _.range(13)
+      password_confirmation: true,
+      required: true
     },
     password: {
       password: true

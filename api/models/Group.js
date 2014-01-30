@@ -16,6 +16,11 @@ module.exports = {
     name: {
       type: 'string',
       required: true
+    },
+    id: {
+      type: 'string',
+      unique: true,
+      required: true
     }
   },
   beforeValidation: [function(attrs, next) {
