@@ -26,7 +26,7 @@
     "weo-error-codes": "git://github.com/weo-edu/weo-error-codes.git",
     "supertest": "~0.9.0",
     "chai": "~1.8.1",
-    "Faker": "~0.5.11",
+    "Faker": "weo-edu/Faker.js",
     "chai-things": "~0.2.0",
     "chai-fuzzy": "~1.4.0",
     "chai-http": "~0.4.0",

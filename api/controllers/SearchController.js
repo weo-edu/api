@@ -33,8 +33,8 @@ function search(name) {
 
     sailsMongo['native'](name, function(err, collection) {
       if(err) return res.serverError(err);
-      
-      return collection.db.command({text: name, search: q || ''}, 
+
+      return collection.db.command({text: name, search: q || ''},
         function(err, result) {
         if(err) res.serverError(err);
         else {
@@ -48,10 +48,6 @@ function search(name) {
 }
 
 module.exports = {
-    
-  
-
-
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to SearchController)
