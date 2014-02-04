@@ -111,50 +111,33 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    _.each(['teacher', 'student'], function(type) {
-      it('should add type field when creating a ' + type, function(done) {
-        Seq()
-          .seq(function() {
-            request
-              .post('/' + type)
-              .send(_.omit(User.generate(), 'type'))
-              .end(this);
-          })
-          .seq(function(res) {
-            expect(res).to.have.status(201);
-            expect(res.body.type).to.equal(type);
-            this();
-          })
-          .seq(done);
-      });
-    });
-
-    it('should require an email address on a teacher, but not a student',
-    function(done) {
+    it('should add type field when creating a teacher', function(done) {
       Seq()
         .seq(function() {
           request
             .post('/teacher')
-            .send(_.omit(User.generate(), 'email'))
+            .send(_.omit(User.generate(), 'type'))
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have
-            .ValidationError('missing_field', 'email', 'teacher',
-              {rule: 'required'});
+          expect(res).to.have.status(201);
+          expect(res.body.type).to.equal('teacher');
           this();
         })
+        .seq(done);
+    });
+
+    it('should add type field when creating a student', function(done) {
+      Seq()
         .seq(function() {
           request
-            .post('/teacher')
-            .send(User.generate({email: 'invalidEmail'}))
+            .post('/student')
+            .send(_.omit(User.generate(), 'type'))
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have
-            .ValidationError('invalid', 'email', 'teacher', {
-              rule: 'email'
-            });
+          expect(res).to.have.status(201);
+          expect(res.body.type).to.equal('student');
           this();
         })
         .seq(done);
@@ -250,24 +233,6 @@ describe('User controller', function() {
           expect(res).to.have.status(400);
           expect(res).to.have
             .ValidationError('already_exists', 'email', 'user', {rule: 'unique'});
-          this();
-        })
-        .seq(done);
-    });
-
-    it.only('test test', function(done) {
-      Seq()
-        .seq(function() {
-          var user = User.generate({type: 'teacher'});
-          delete user.email;
-          delete user.username;
-          request
-            .post('/teacher')
-            .send(user)
-            .end(this);
-        })
-        .seq(function(res) {
-          console.log('res', res.body.errors);
           this();
         })
         .seq(done);
