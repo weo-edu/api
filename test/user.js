@@ -254,5 +254,23 @@ describe('User controller', function() {
         })
         .seq(done);
     });
+
+    it.only('test test', function(done) {
+      Seq()
+        .seq(function() {
+          var user = User.generate({type: 'teacher'});
+          delete user.email;
+          delete user.username;
+          request
+            .post('/teacher')
+            .send(user)
+            .end(this);
+        })
+        .seq(function(res) {
+          console.log('res', res.body.errors);
+          this();
+        })
+        .seq(done);
+    });
   });
 });
