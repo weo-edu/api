@@ -5,19 +5,19 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var anchorSchema = require('anchor-schema')
-  , entitySchema = anchorSchema({
+var subSchema = require('../services/subSchema.js');
+
+module.exports = {
+  types: {
+    // entity: function(entity) {
+    //   return entitySchema.$validate(entity);
+    // }
+    entity: subSchema({
       id: {required: true, type: 'string'},
       name: {required: true, type: 'string'},
       url: {required: true, type: 'string'},
       avatar: 'string'
-  });
-
-module.exports = {
-  types: {
-    entity: function(entity) {
-      return entitySchema.$validate(entity);
-    }
+    })
   },
   attributes: {
     group_id: {
