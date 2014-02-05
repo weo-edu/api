@@ -1,8 +1,8 @@
 var Seq = require('seq')
   , User = require('./helpers/user.js');
 
+require('./helpers/boot.js');
 describe('Event controller', function() {
-  require('./helpers/boot.js')();
 
   describe('entity validation', function() {
     it('should validate sub-entities', function(done) {

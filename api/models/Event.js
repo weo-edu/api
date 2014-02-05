@@ -30,31 +30,18 @@ function anchorify(attrs) {
   return validations;
 }
 
+var anchorSchema = require('anchor-schema')
+  , entitySchema = anchorSchema({
+      id: {required: true, type: 'string'},
+      name: {required: true, type: 'string'},
+      url: {required: true, type: 'string'},
+      avatar: 'string'
+  });
+var entitySchema =
 module.exports = {
   types: {
     entity: function(entity) {
-      var self = this;
-      var schema = anchorify({
-        id: {required: true, type: 'string'},
-        name: {required: true, type: 'string'},
-        url: {required: true, type: 'string'},
-        avatar: 'string'
-      });
-
-
-      try {
-        _.any(entity, function(val, key) {
-          var requirements = anchor(schema[key]);
-          console.log('data', requirements, schema);
-          var err = anchor(val).to(requirements.data, self);
-          if(err) throw err;
-        });
-        anchor(schema).to
-      } catch(e) {
-        console.log('e', e);
-        return false;
-      }
-      return true;
+      return entitySchema.$validate(entity);
     }
   },
   attributes: {
