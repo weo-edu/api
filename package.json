@@ -32,7 +32,8 @@
     "chai-fuzzy": "~1.4.0",
     "chai-http": "~0.4.0",
     "chai-properties": "~1.1.0",
-    "anchor": "~0.9.7"
+    "anchor": "~0.9.7",
+    "clarify": "~1.0.0"
   },
   "scripts": {
     "start": "node app.js",
