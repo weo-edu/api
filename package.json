@@ -23,7 +23,8 @@
     "redis": "~0.10.0",
     "hiredis": "~0.1.16",
     "seq": "~0.3.5",
-    "weo-error-codes": "git://github.com/weo-edu/weo-error-codes.git",
+    "sails-mongo": "~0.9.6",
+    "weo-error-codes": "0.0.1",
     "supertest": "~0.9.0",
     "chai": "~1.8.1",
     "Faker": "weo-edu/Faker.js",
@@ -32,14 +33,20 @@
     "chai-http": "~0.4.0",
     "chai-properties": "~1.1.0",
     "async-eventemitter": "~0.2.0",
-    "async": "~0.2.10"
+    "anchor": "~0.9.7",
+    "anchor-schema": "0.0.0",
+    "clarify": "~1.0.0"
   },
   "scripts": {
     "start": "node app.js",
-    "debug": "node debug app.js"
+    "debug": "node debug app.js",
+    "test": "mocha test/*.js"
   },
   "main": "app.js",
   "repository": "",
   "author": "",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "clarify": "~1.0.0"
+  }
 }

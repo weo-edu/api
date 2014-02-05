@@ -28,7 +28,7 @@ var User = module.exports = {
   },
   login: function(username, password, cb) {
     request
-      .post('/user/login')
+      .post('/auth/login')
       .send({username: username, password: password})
       .end(cb);
   }

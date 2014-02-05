@@ -12,7 +12,6 @@ chai.use(require('chai-things'));
 global._ = _;
 global.expect = chai.expect;
 
-
 before(function(done) {
   sails.lift();
   sails.on('ready', function() {
