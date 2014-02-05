@@ -1,3 +1,6 @@
+var modelHook = require('../../lib/modelHook')
+  , Seq = require('seq');
+
 /**
  * User
  *
@@ -61,8 +64,31 @@ module.exports = {
   afterCreate: [function(attrs, next) {
     delete attrs.password;
     next();
+  }, function(attrs, next) {
+    //XXX delete user on error
+    Seq()
+      .seq(function() {
+        Group.create({type: 'individual', name: attrs.username}, this);
+      })
+      .seq(function(group) {
+        User.addToGroup(attrs.id, group.id, this);
+      })
+      .seq(function(user) {
+        attrs.groups = user.groups;
+        next();
+      })
+      .catch(next);
   }],
   addToGroup: function(userId, groupId, cb) {
-    User.update({id: userId}, {$push: {groups: groupId}}).done(cb);
+    User.update({id: userId}, {$addToSet: {groups: groupId}}).done(function(err, users) {
+      if (err) return cb(err);
+      if (users.length) {
+        var user = users[0];
+        cb(null, user);
+      } else {
+        cb(new databaseError.NotFound('Assignment'));
+      }
+      
+    });
   }
 };

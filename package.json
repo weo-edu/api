@@ -30,7 +30,9 @@
     "chai-things": "~0.2.0",
     "chai-fuzzy": "~1.4.0",
     "chai-http": "~0.4.0",
-    "chai-properties": "~1.1.0"
+    "chai-properties": "~1.1.0",
+    "async-eventemitter": "~0.2.0",
+    "async": "~0.2.10"
   },
   "scripts": {
     "start": "node app.js",

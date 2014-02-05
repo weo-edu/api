@@ -24,7 +24,12 @@ module.exports = {
    * Overrides for the settings in `config/controllers.js`
    * (specific to TeacherController)
    */
-  _config: {}
+  _config: {},
 
-  
+  _routes: {
+  	'POST @/:teacher/group': {
+      action: 'createNew',
+      controller: 'group'
+    }
+  }
 };
