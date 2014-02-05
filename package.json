@@ -31,14 +31,19 @@
     "chai-things": "~0.2.0",
     "chai-fuzzy": "~1.4.0",
     "chai-http": "~0.4.0",
-    "chai-properties": "~1.1.0"
+    "chai-properties": "~1.1.0",
+    "anchor": "~0.9.7"
   },
   "scripts": {
     "start": "node app.js",
-    "debug": "node debug app.js"
+    "debug": "node debug app.js",
+    "test": "mocha test/*.js"
   },
   "main": "app.js",
   "repository": "",
   "author": "",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "clarify": "~1.0.0"
+  }
 }
