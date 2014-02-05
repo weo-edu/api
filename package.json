@@ -24,7 +24,7 @@
     "hiredis": "~0.1.16",
     "seq": "~0.3.5",
     "sails-mongo": "~0.9.6",
-    "weo-error-codes": "git://github.com/weo-edu/weo-error-codes.git",
+    "weo-error-codes": "0.0.1",
     "supertest": "~0.9.0",
     "chai": "~1.8.1",
     "Faker": "weo-edu/Faker.js",

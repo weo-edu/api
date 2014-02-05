@@ -31,7 +31,7 @@ var model = module.exports = mergeModels({}, User, {
     title: {
       type: 'string',
       required: true,
-      in: ['Mrs.', 'Ms.', 'Mr.', 'Dr.', 'First']
+      in: ['Mrs.', 'Ms.', 'Mr.', 'Dr.', 'None']
     }
   }
 });
