@@ -14,13 +14,6 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
-var passwordHash = require('password-hash')
-  , moment = require('moment')
-  , _ = require('lodash')
-  , redis = require('redis').createClient()
-  , crypto = require('crypto')
-  , Seq = require('seq');
-
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
@@ -28,62 +21,9 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    '@/login': 'login',
-    '@/testAuthMethod': 'testAuthMethod',
     'POST @/:user/group': {
       action: 'createNew',
       controller: 'group'
     }
-  },
-  login: function(req, res) {
-    var username = req.param('username')
-      , password = req.param('password');
-
-    User.findOne({username: username})
-    .exec(function(err, user) {
-      if(err) throw err;
-      if(! user) {
-        return res.clientError('User not found')
-          .missing('user', 'username')
-          .send(404);
-      }
-
-      if(passwordHash.verify(password, user.password)) {
-        Seq()
-          .seq(function() {
-            crypto.randomBytes(16, this);
-          })
-          .seq(function(buf) {
-            this.vars.token = buf.toString('base64');
-            redis.set(this.vars.token, user.username, this);
-          })
-          .seq(function() {
-            redis.expire(this.vars.token,
-              moment.duration(7, 'days').asSeconds(),
-              this);
-          })
-          .seq(function() {
-            res.json({
-              token: this.vars.token,
-              role: user.type
-            });
-          })
-          .catch(function(err) {
-            throw err;
-          });
-      } else {
-        res.clientError('Incorrect password')
-          .invalid('user', 'password')
-          .send(401);
-      }
-    });
-  },
-  logout: function(req, res) {
-    // Stub, to maybe do something with later
-    res.send(200);
-  },
-  testAuthMethod: function(req, res) {
-    console.log('testAuthMethod called!', req.user);
-    res.send(200);
   }
 };
