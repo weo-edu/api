@@ -156,23 +156,5 @@ describe('User controller', function() {
         })
         .seq(done);
     });
-
-    it('should not allow duplicate email', function(done) {
-      Seq()
-        .seq(function() {
-          this.vars.user1 = User.create({}, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          User.create({email: this.vars.user1.email}, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(400);
-          expect(res).to.have
-            .ValidationError('already_exists', 'email', 'user', {rule: 'unique'});
-          this();
-        })
-        .seq(done);
-    });
   });
 });

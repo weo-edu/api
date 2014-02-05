@@ -20,7 +20,8 @@ var model = module.exports = mergeModels({}, User, {
       required: true
     },
     username: {
-      email: true
+      email: true,
+      unique: true
     },
     email: {
       type: 'virtual',

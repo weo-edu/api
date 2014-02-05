@@ -41,5 +41,8 @@
   "main": "app.js",
   "repository": "",
   "author": "",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "clarify": "~1.0.0"
+  }
 }

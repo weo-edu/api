@@ -30,7 +30,7 @@ module.exports = {
       minLength: 6,
     },
     email: {
-      type: 'email',
+      type: 'email'
     },
     tokens: 'array',
     salt: 'string',

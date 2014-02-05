@@ -5,31 +5,6 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var anchor = require('anchor');
-function anchorify(attrs) {
-  var validations = {};
-  for(var attr in attrs) {
-    var validation = validations[attr] = {};
-    var attrsVal = attrs[attr];
-
-    if(typeof attrsVal === 'string')
-      attrsVal = {type: attrsVal};
-
-    for(var prop in attrsVal) {
-      if(/^(defaultsTo|primaryKey|autoIncrement|unique|index|columnName)$/.test(prop)) continue;
-
-      // use the Anchor `in` method for enums
-      if(prop === 'enum') {
-        validation['in'] = attrsVal[prop];
-      }
-      else {
-        validation[prop] = attrsVal[prop];
-      }
-    }
-  }
-  return validations;
-}
-
 var anchorSchema = require('anchor-schema')
   , entitySchema = anchorSchema({
       id: {required: true, type: 'string'},
@@ -37,7 +12,7 @@ var anchorSchema = require('anchor-schema')
       url: {required: true, type: 'string'},
       avatar: 'string'
   });
-var entitySchema =
+
 module.exports = {
   types: {
     entity: function(entity) {
@@ -50,13 +25,17 @@ module.exports = {
       required: true
     },
     actor: {
-      type: 'entity'
+      type: 'json',
+      entity: true
     },
     verb: {
       type: 'string',
       required: true
     },
-    object: 'entity',
+    object: {
+      type: 'json',
+      entity: true
+    },
     type: {
       type: 'string',
       required: true

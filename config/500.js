@@ -19,7 +19,6 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
    * work just like their Express equivalents to handle HTTP requests, they also simulate
    * the same interface for receiving socket messages.
    */
-
   var viewFilePath = '500',
       statusCode = 500,
       i, errorToLog, errorToJSON;
@@ -35,7 +34,7 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
     // Log error(s) as clean `stack`
     // (avoids ending up with \n, etc.)
     if ( errorsToDisplay[i].original ) {
-      errorToLog = sails.util.inspect(errorsToDisplay[i].original, {depth: null});
+      errorToLog = sails.util.inspect(errorsToDisplay[i].original);
     }
     else {
       errorToLog = errorsToDisplay[i].stack;
@@ -86,6 +85,7 @@ module.exports[500] = function serverErrorOccurred(errors, req, res) {
         return;
       }
     }
+
     if(! errorsToDisplay[i].ValidationError) {
       sails.log.error('Server Error (500)');
       sails.log.error(errorToLog);
