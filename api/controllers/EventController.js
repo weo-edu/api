@@ -14,11 +14,32 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
-
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to EventController)
    */
-  _config: {}
+  _config: {},
+  _routes: {
+    '@/all': 'allForStudent'
+  },
+  allForStudent: function(req, res) {
+    res.json({user: req.user});
+  },
+  producedBy: function(req, res) {
+    var user = req.param('userId');
+    Event.find({'actor.id': user})
+      .exec(function(err, events) {
+        if(err) throw err;
+        res.json(events);
+      });
+  },
+  receivedBy: function(req, res) {
+    var group = req.param('groupId');
+    Event.find({group_id: group})
+      .exec(function(err, events) {
+        if(err) throw err;
+        res.json(events);
+      });
+  }
 };

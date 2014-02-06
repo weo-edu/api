@@ -22,6 +22,10 @@ module.exports = {
    * (specific to UserController)
    */
   _config: {},
-  _routes: {}
-
+  _routes: {
+    'GET @/:userId/events': {
+      controller: 'event',
+      action: 'producedBy'
+    }
+  }
 };

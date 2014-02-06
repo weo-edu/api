@@ -14,10 +14,11 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+var mergeModels = require('../../lib/mergeModels.js')
+  , UserController = require('./UserController.js')
+module.exports = mergeModels(UserController, {
 
-module.exports = {
-    
-  
+
 
 
   /**
@@ -26,5 +27,5 @@ module.exports = {
    */
   _config: {}
 
-  
-};
+
+});
