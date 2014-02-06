@@ -4,12 +4,12 @@ var Seq = require('seq')
 function parseId(id) {
   var selector = {};
   var key = null;
-  if (id.length === 6) {
-    selector.code = new RegExp('^' + id + '$');
-    key = 'code';
-  } else {
+  if (id.length === 24) {
     selector._id = id;
     key = 'id';
+  } else {
+    selector.code = new RegExp('^' + id + '$');
+    key = 'code';
   }
   return {selector: selector, key: key};
 }
@@ -51,7 +51,6 @@ module.exports = {
   get: function(req, res) {
     var id = req.param('id');
     var parsedId = parseId(id);
-   
     Group.findOne(parsedId.selector)
       .exec(function(err, group) {
         if (err) throw err;
