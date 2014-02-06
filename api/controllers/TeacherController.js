@@ -14,17 +14,24 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+var mergeModels = require('../../lib/mergeModels.js')
+  , UserController = require('./UserController.js')
 
-module.exports = {
-    
-  
+module.exports = mergeModels(UserController, {
+
+
 
 
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to TeacherController)
    */
-  _config: {}
+  _config: {},
 
-  
-};
+  _routes: {
+  	'POST @/:teacher/group': {
+      action: 'createNew',
+      controller: 'group'
+    }
+  }
+});

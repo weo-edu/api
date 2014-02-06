@@ -1,4 +1,18 @@
-var Seq = require('seq');
+var Seq = require('seq')
+  , modelHook = require('../../lib/modelHook');
+
+function parseId(id) {
+  var selector = {};
+  var key = null;
+  if (id.length === 24) {
+    selector._id = id;
+    key = 'id';
+  } else {
+    selector.code = new RegExp('^' + id + '$');
+    key = 'code';
+  }
+  return {selector: selector, key: key};
+}
 
 /**
  * GroupController
@@ -28,17 +42,25 @@ module.exports = {
     'GET @/:groupId/events': {
       controller: 'event',
       action: 'receivedBy'
+    },
+    '@/:group/assignments': {
+      action: 'findAssignments',
+      controller: 'assignment'
+    },
+    '@/:group/assignments/student/:student': {
+      action: 'findAssignments',
+      controller: 'assignment'
     }
   },
   get: function(req, res) {
     var id = req.param('id');
-    Group.findOne(id)
+    var parsedId = parseId(id);
+    Group.findOne(parsedId.selector)
       .exec(function(err, group) {
-        console.log('err', err, group);
         if (err) throw err;
         if (!group) {
           return res.clientError('Group not found')
-            .missing('group', 'id')
+            .missing('group', parsedId.key)
             .send(404);
         }
 
@@ -47,7 +69,8 @@ module.exports = {
   },
   createNew: function(req, res) {
     var name = req.param('name')
-      , userId = req.param('user');
+      , userId = req.param('teacher');
+
     Seq()
       .seq(function() {
         Group.create({name: name}).done(this);
@@ -57,19 +80,33 @@ module.exports = {
         User.addToGroup(userId, group.id, this)
       })
       .seq(function() {
-        res.json(this.vars.group);
+        res.json(201, this.vars.group);
       })
       .catch(function(err) {
         throw err;
       });
   },
   addMember: function(req, res) {
-    var userId = req.param('user')
-      , groupId = req.param('id');
 
-    User.addToGroup(userId, groupId,function(err) {
+    var userId = req.param('user')
+      , groupId = req.param('id')
+      , parsedId = parseId(groupId);
+
+    Group.findOne(parsedId.selector).done(function(err, group) {
       if (err) throw err;
-      res.json({groupId: groupId});
-    })
+      if (!group) {
+        return res.clientError('Group not found')
+          .missing('group', 'code')
+          .send(404);
+      }
+      User.addToGroup(userId, group.id, function(err, user) {
+        if (err) throw err;
+        modelHook.emit('group:addMember', {groupId: group.id, user: user}, function(err) {
+          if (err) console.error('Error in group:addMember hook:' + err.message);
+          res.send(204);
+        });
+      });
+    });
+
   }
 };

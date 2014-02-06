@@ -11,16 +11,22 @@ module.exports = {
   attributes: {
     type: {
       type: 'string',
-      in: ['class', 'group']
+      in: ['class', 'group', 'individual'],
+      defaultsTo: 'class'
     },
     name: {
       type: 'string',
       required: true
     },
-    id: {
+    code: {
       type: 'string',
       unique: true,
       required: true
+    },
+
+    //XXX implement and require
+    owners: {
+      type: 'array'
     }
   },
   beforeValidation: [function(attrs, next) {
@@ -28,12 +34,8 @@ module.exports = {
     hashids('Group', {offset: hashids.sixDigitOffset}, 
     function(err, code) {
       if(err) throw err;
-      attrs.id = code;
+      attrs.code = code;
       next();
     });
-  }],
-  afterCreate: function(values, next) {
-    console.log('values', values);
-    next();
-  }
+  }]
 };
