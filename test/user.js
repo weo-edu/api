@@ -1,5 +1,8 @@
 var Seq = require('seq')
-  , User = require('./helpers/user.js');
+  , User = require('./helpers/user');
+
+
+require('./helpers/boot');
 
 require('./helpers/boot.js');
 describe('User controller', function() {
@@ -29,12 +32,13 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           var user = this.vars.user;
-          expect(res).to.have.status(201);
+          /*expect(res).to.have.status(201);*/
           expect(res.body).to.have
             .properties(_.omit(user,
-              ['password', 'password_confirmation']));
+              ['password', 'password_confirmation', 'groups']));
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
+          expect(res.body.groups).to.have.length(2);
           this();
         })
         .seq(function() {
@@ -69,7 +73,7 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/student')
-            .send(_.omit(User.generate(), 'type'))
+            .send(_.omit(User.generate({type: 'student'}), 'type'))
             .end(this);
         })
         .seq(function(res) {

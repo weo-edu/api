@@ -3,7 +3,7 @@ var sails = require('sails')
   , chai = require('chai')
   , _ = require('lodash');
 
-chai.use(require('./chai.js'));
+chai.use(require('./chai'));
 chai.use(require('chai-properties'));
 chai.use(require('chai-fuzzy'));
 chai.use(require('chai-http'));
@@ -14,7 +14,7 @@ global.expect = chai.expect;
 
 before(function(done) {
   sails.lift();
-  sails.once('ready', function() {
+  sails.on('ready', function() {
     global.request = supertest(sails.express.app);
     setTimeout(done);
   });

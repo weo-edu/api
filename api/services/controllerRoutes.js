@@ -20,6 +20,5 @@ module.exports = function(sails) {
       });
     }
   });
-
   sails.router.flush();
 };
