@@ -9,9 +9,6 @@ var subSchema = require('../services/subSchema.js');
 
 module.exports = {
   types: {
-    // entity: function(entity) {
-    //   return entitySchema.$validate(entity);
-    // }
     entity: subSchema({
       id: {required: true, type: 'string'},
       name: {required: true, type: 'string'},
@@ -26,6 +23,7 @@ module.exports = {
     },
     actor: {
       type: 'json',
+      required: true,
       entity: true
     },
     verb: {
@@ -34,16 +32,13 @@ module.exports = {
     },
     object: {
       type: 'json',
+      required: true,
       entity: true
     },
     type: {
       type: 'string',
       required: true
     },
-    payload: 'object',
-    created_at: {
-      type: 'integer',
-      required: true
-    }
+    payload: 'json'
   }
 };

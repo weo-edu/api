@@ -14,7 +14,7 @@ var User = module.exports = {
       password_confirmation: opts.password || 'testpassword'
     });
     if(opts.type === 'teacher') {
-      opts.title = 'Mr.'
+      opts.title = 'Mr.';
     }
     return opts;
   },

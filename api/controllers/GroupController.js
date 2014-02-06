@@ -24,7 +24,11 @@ module.exports = {
   _config: {},
   _routes: {
     'PUT @/:id/members/:user': 'addMember',
-    '@/:id': 'get'
+    '@/:id': 'get',
+    'GET @/:groupId/events': {
+      controller: 'event',
+      action: 'receivedBy'
+    }
   },
   get: function(req, res) {
     var id = req.param('id');

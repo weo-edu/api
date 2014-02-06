@@ -24,6 +24,10 @@ module.exports = {
     'POST @/:user/group': {
       action: 'createNew',
       controller: 'group'
+    },
+    'GET @/:userId/events': {
+      controller: 'event',
+      action: 'producedBy'
     }
   }
 };

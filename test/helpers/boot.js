@@ -12,6 +12,11 @@ chai.use(require('chai-things'));
 global._ = _;
 global.expect = chai.expect;
 
+// Use a different port for API tests, so that api tests
+// can be run without killing any other serves that might
+// be running
+process.env.PORT = 1339;
+
 before(function(done) {
   sails.lift();
   sails.once('ready', function() {
