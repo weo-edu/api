@@ -44,22 +44,17 @@ module.exports = {
       }
 
       if(passwordHash.verify(password, user.password)) {
-        Seq()
-          .seq(function() {
-            createToken(user.username
-              , moment.duration(7, 'days').asSeconds()
-                , this);
-          })
-          .seq(function(token) {
-            res.json({
-              token: token,
-              role: user.type
+        Auth.createToken({id: user.id, username: user.username, role: user.type}
+            , moment.duration(7, 'days').asSeconds()
+            , function(err, token) {
+              if(err) throw err;
+              res.json({
+                id: user.id,
+                username: user.username,
+                token: token,
+                role: user.type
+              });
             });
-            this();
-          })
-          .catch(function(err) {
-            throw err;
-          });
       } else {
         res.clientError('Incorrect password')
           .invalid('auth', 'password')
@@ -74,7 +69,7 @@ module.exports = {
   user: function(req, res) {
     if(! req.user)
       return res.json(404);
-    User.findOne({username: req.user})
+    User.findOne(req.user.id)
       .exec(function(err, user) {
         if(err) throw err;
         res.json(user);

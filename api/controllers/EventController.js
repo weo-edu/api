@@ -20,26 +20,26 @@ module.exports = {
    * (specific to EventController)
    */
   _config: {},
-  _routes: {
-    '@/all': 'allForStudent'
-  },
-  allForStudent: function(req, res) {
-    res.json({user: req.user});
-  },
-  producedBy: function(req, res) {
-    var user = req.param('userId');
-    Event.find({'actor.id': user})
-      .exec(function(err, events) {
+  _routes: {},
+  emit: function(req, res) {
+    var evt = req.params.all();
+    User.findOne(req.user.id)
+      .exec(function(err, user) {
         if(err) throw err;
-        res.json(events);
-      });
-  },
-  receivedBy: function(req, res) {
-    var group = req.param('groupId');
-    Event.find({group_id: group})
-      .exec(function(err, events) {
-        if(err) throw err;
-        res.json(events);
+        if(! user) return res.send(404);
+
+        evt.groups = user.groups;
+        evt.actor = {
+          guid: user.id,
+          name: user.username,
+          url: user.url || 'test'
+        };
+
+        Event.create(evt)
+          .exec(function(err, createdEvent) {
+            if(err) return res.serverError(err);
+            res.json(201, createdEvent);
+          });
       });
   }
 };

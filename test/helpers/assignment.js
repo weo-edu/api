@@ -23,7 +23,7 @@ var Assignment = module.exports = {
       max_score: 10,
       reward: 10
     });
-    
+
     return opts;
   },
   create: function(cb) {
@@ -51,4 +51,3 @@ var Assignment = module.exports = {
       })
   }
 };
-
