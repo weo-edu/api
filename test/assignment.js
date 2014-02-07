@@ -43,7 +43,7 @@ describe('Assignment controller', function() {
 	      })
 	      .seq(function(res) {
 	        this.vars.group = res.body;
-	        var assignment = UserHelper.generate({teacher_id: this.vars.user.id, group_id: this.vars.group.id});
+	        var assignment = UserHelper.generate({teacher_id: this.vars.user.id, groups: this.vars.group.id});
 	        assignment.objective = 'doesnotexist';
 	        request.post('/assignment')
 	          .send(assignment)
@@ -89,12 +89,12 @@ describe('Assignment controller', function() {
   					.end(this);
 				})
 				.seq(function() {
-					var assignment = AssignmentHelper.generate({teacher_id: teacher.id, group_id: group.id});
+					var assignment = AssignmentHelper.generate({teacher_id: teacher.id, groups: group.id});
 					request.post('/assignment')
 						.send(assignment)
 						.end(this);
 				})
-				.seq(function() {
+				.seq(function(res) {
 					this();
 				})
 				.seq(done);
@@ -154,7 +154,7 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.student = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.group_id + '/members/' + this.vars.student.id)
+  					.put('/group/' + this.vars.assignment.groups[0] + '/members/' + this.vars.student.id)
   					.end(this);
 				})
 				.seq(function(res) {
@@ -185,7 +185,7 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.student = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.group_id + '/members/' + this.vars.student.id)
+  					.put('/group/' + this.vars.assignment.groups[0] + '/members/' + this.vars.student.id)
   					.end(this);
 				})
 				.seq(function(res) {

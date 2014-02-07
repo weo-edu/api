@@ -38,7 +38,7 @@ module.exports = {
   		, assignmentId = req.param('assignment');
 
   	var options = parseParams(req, ['student', 'group', 'assignment']);
-  	if (groupId) options.group_id = groupId;
+  	if (groupId) options.groups = groupId;
   	if(assignmentId) options.id = assignmentId;
 
   	Seq()

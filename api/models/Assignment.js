@@ -36,26 +36,22 @@ module.exports = {
   		required: true
   	},
 
-  	graded: {
-  		type: 'boolean'
-  	},
+    groups: {
+      type: 'array',
+      required: true
+    },
+
+    max_score: {
+      type: 'float',
+      required: true
+    },
+
+    reward: {
+      type: 'integer'
+    },
 
   	graded_at: {
   		type: 'datetime'
-  	},
-
-  	max_score: {
-  		type: 'float',
-  		required: true
-  	},
-
-  	reward: {
-  		type: 'integer'
-  	},
-
-  	group_id: {
-  		type: 'string',
-  		required: true
   	},
 
   	teacher_id: {
@@ -86,7 +82,8 @@ module.exports = {
   		.seq(function(objective) {
   			if (!objective) return this(new databaseError.NotFound('Objective'));
   			options.objective = objective;
-  			Student.find({groups: options.group_id, type: 'student'}).done(this);
+        // XXX have to clone because sails turns into a regex, ugh
+  			Student.find({groups: _.clone(options.groups), type: 'student'}).done(this);
   		})
   		.seq(function(students) {
   			options.students = {};
@@ -131,7 +128,7 @@ module.exports = {
   	update.students = {};
   	update.students[userId] = studentInit();
   	// XXX only add students to assignments that aren't due yet
-  	Assignment.update({group_id: groupId}, update, cb);
+  	Assignment.update({groups: groupId}, update, cb);
   }
 
 };
