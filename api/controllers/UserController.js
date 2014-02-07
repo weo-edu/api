@@ -23,9 +23,23 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    'GET @/:userId/events': {
-      controller: 'event',
-      action: 'producedBy'
-    }
+    'GET /user/groups': 'groups'
+  },
+
+  groups: function(req, res) {
+    //XXX switch to user object on pull
+    User.groups(req.user, req.param('type'), function(err, groups) {
+      if (err instanceof databaseError.NotFound) {
+        if (err && err.message === 'User') {
+          return res.clientError('User not found')
+            .missing('user', 'id')
+            .send(404);
+        }
+      }
+      if (err) throw err;
+      console.log('groups', groups);
+      res.json(_.map(groups, function(group) {return group.toJSON()}));
+    })
   }
+
 };

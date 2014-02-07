@@ -65,13 +65,14 @@ module.exports = {
     delete attrs.password;
     next();
   }, function(attrs, next) {
+    var type = 'individual';
     //XXX delete user on error
     Seq()
       .seq(function() {
-        Group.create({type: 'individual', name: attrs.username}, this);
+        Group.create({type: type, name: attrs.username}, this);
       })
       .seq(function(group) {
-        User.addToGroup(attrs.id, group.id, this);
+        User.addToGroup(attrs.id, group.id, type, this);
       })
       .seq(function(user) {
         attrs.groups = user.groups;
@@ -79,8 +80,16 @@ module.exports = {
       })
       .catch(next);
   }],
-  addToGroup: function(userId, groupId, cb) {
-    User.update({id: userId}, {$addToSet: {groups: groupId}}).done(function(err, users) {
+  addToGroup: function(userId, groupId, groupType, cb) {
+    if (_.isFunction(groupType)) {
+      cb = groupType;
+      groupType = undefined;
+    }
+    var update = {$addToSet: {groups: groupId}};
+    if (groupType && groupType === 'individual') {
+      update.group = groupId;
+    }
+    User.update({id: userId}, update).done(function(err, users) {
       if (err) return cb(err);
       if (users.length) {
         var user = users[0];
@@ -89,6 +98,17 @@ module.exports = {
         cb(new databaseError.NotFound('Assignment'));
       }
       
+    });
+  },
+  groups: function(userId, type, cb) {
+    User.findOne({username: userId}).done(function(err, user) {
+      if (err) return cb(err);
+      if (!user) {
+        cb(new databaseError.NotFound('User'));
+      }
+      var options = {id: user.groups};
+      if (type) options.type = type;
+      Group.find(options).done(cb);
     });
   }
 };

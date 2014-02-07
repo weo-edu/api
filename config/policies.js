@@ -21,6 +21,10 @@ module.exports.policies = {
   },
   AuthController: {
   	user: 'isAuthenticated'
+  },
+
+  UserController: {
+  	groups: 'isAuthenticated'
   }
   /*
 	// Here's an example of adding some policies to a controller
