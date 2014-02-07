@@ -14,8 +14,6 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
-
-
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
@@ -23,6 +21,7 @@ module.exports = {
    */
   _config: {},
   _routes: {
+<<<<<<< HEAD
     'GET /user/groups': 'groups'
   },
 
@@ -40,6 +39,35 @@ module.exports = {
       console.log('groups', groups);
       res.json(_.map(groups, function(group) {return group.toJSON()}));
     })
+=======
+    'GET @/feed': 'feed',
+    'POST @/events': {
+      controller: 'event',
+      action: 'emit'
+    },
+    'GET @/events': 'events'
+  },
+  events: function(req, res) {
+    Event.producedBy(req.user.id)
+      .exec(function(err, events) {
+        if(err) throw err;
+        res.json(events);
+      });
+  },
+  feed: function(req, res) {
+    User.findOne(req.user.id)
+      .exec(function(err, user) {
+        if(err) throw err;
+        if(! user) return res.send(404);
+
+        Event.receivedBy(user.groups)
+          .exec(function(err, events) {
+            if(err) throw err;
+            if(! events) return res.json(404);
+            res.json(events);
+          });
+      });
+>>>>>>> bc83c81791f7dcc105cebe857439628431454bc1
   }
 
 };

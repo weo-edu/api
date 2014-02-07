@@ -1,12 +1,11 @@
 var passport = require('passport')
-  , BearerStrategy = require('passport-http-bearer').Strategy
-  , redis = require('redis').createClient();
+  , BearerStrategy = require('passport-http-bearer').Strategy;
 
 passport.use(new BearerStrategy({},
   function(token, done) {
-    redis.get(token, function(err, reply) {
+    Auth.lookupToken(token, function(err, data) {
       if(err) throw err;
-      done(null, reply, {scope: 'all'});
+      done(null, data, {scope: 'all'});
     });
   }
 ));

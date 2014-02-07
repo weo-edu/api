@@ -8,11 +8,14 @@ var Seq = require('seq')
 require('./helpers/boot');
 
 describe('Assignment controller', function() {
-  
+
 
   describe('should create a new assignment', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
+  			.seq(function() {
+  				this.vars.user = UserHelper.create({}, this);
+  			})
   			.seq(function() {
   				AssignmentHelper.create(this)
   			})
@@ -95,7 +98,7 @@ describe('Assignment controller', function() {
 					this();
 				})
 				.seq(done);
-				
+
 		});
 
 		it('when looking by teacher', function(done) {

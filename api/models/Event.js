@@ -10,15 +10,15 @@ var subSchema = require('../services/subSchema.js');
 module.exports = {
   types: {
     entity: subSchema({
-      id: {required: true, type: 'string'},
+      guid: {required: true, type: 'string'},
       name: {required: true, type: 'string'},
       url: {required: true, type: 'string'},
       avatar: 'string'
     })
   },
   attributes: {
-    group_id: {
-      type: 'string',
+    groups: {
+      type: 'array',
       required: true
     },
     actor: {
@@ -40,5 +40,11 @@ module.exports = {
       required: true
     },
     payload: 'json'
+  },
+  receivedBy: function(groupIds) {
+    return Event.find({groups: groupIds});
+  },
+  producedBy: function(userId) {
+    return Event.find({'actor.guid': userId});
   }
 };
