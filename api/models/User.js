@@ -101,10 +101,10 @@ module.exports = {
     });
   },
   groups: function(userId, type, cb) {
-    User.findOne({username: userId}).done(function(err, user) {
+    User.findOne(userId).done(function(err, user) {
       if (err) return cb(err);
       if (!user) {
-        cb(new databaseError.NotFound('User'));
+        return cb(new databaseError.NotFound('User'));
       }
       var options = {id: user.groups};
       if (type) options.type = type;

@@ -21,13 +21,17 @@ module.exports = {
    */
   _config: {},
   _routes: {
-<<<<<<< HEAD
-    'GET /user/groups': 'groups'
+    'GET /user/groups': 'groups',
+    'GET @/feed': 'feed',
+    'POST @/events': {
+      controller: 'event',
+      action: 'emit'
+    },
+    'GET @/events': 'events'
   },
 
   groups: function(req, res) {
-    //XXX switch to user object on pull
-    User.groups(req.user, req.param('type'), function(err, groups) {
+    User.groups(req.user.id, req.param('type'), function(err, groups) {
       if (err instanceof databaseError.NotFound) {
         if (err && err.message === 'User') {
           return res.clientError('User not found')
@@ -39,13 +43,6 @@ module.exports = {
       console.log('groups', groups);
       res.json(_.map(groups, function(group) {return group.toJSON()}));
     })
-=======
-    'GET @/feed': 'feed',
-    'POST @/events': {
-      controller: 'event',
-      action: 'emit'
-    },
-    'GET @/events': 'events'
   },
   events: function(req, res) {
     Event.producedBy(req.user.id)
@@ -67,7 +64,6 @@ module.exports = {
             res.json(events);
           });
       });
->>>>>>> bc83c81791f7dcc105cebe857439628431454bc1
   }
 
 };
