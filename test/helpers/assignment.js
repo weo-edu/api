@@ -43,7 +43,7 @@ var Assignment = module.exports = {
       })
       .seq(function(res) {
         this.vars.group = res.body;
-        var assignment = self.generate({teacher_id: this.vars.user.id, groups: this.vars.group.id});
+        var assignment = self.generate({teacher: this.vars.user.id, groups: this.vars.group.id});
         request.post('/assignment')
           .send(assignment)
           .end(this);

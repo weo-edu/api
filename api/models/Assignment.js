@@ -54,7 +54,7 @@ module.exports = {
   		type: 'datetime'
   	},
 
-  	teacher_id: {
+  	teacher: {
   		type: 'string',
   		required: true
   	},
@@ -82,6 +82,7 @@ module.exports = {
   		.seq(function(objective) {
   			if (!objective) return this(new databaseError.NotFound('Objective'));
   			options.objective = objective;
+
         // XXX have to clone because sails turns into a regex, ugh
   			Student.find({groups: _.clone(options.groups), type: 'student'}).done(this);
   		})

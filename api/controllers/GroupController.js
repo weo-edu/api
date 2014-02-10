@@ -71,7 +71,6 @@ module.exports = {
   },
   studentsInGroups: function(req, res) {
     var groupIds = req.param('groups');
-    console.log('individualsInGroups');
     Group.students(groupIds, function(err, groups) {
       if(err) throw err;
       res.json(groups);
