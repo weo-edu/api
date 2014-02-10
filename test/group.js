@@ -7,16 +7,20 @@ var Seq = require('seq')
 require('./helpers/boot');
 
 describe('Group controller', function() {
-  
-
   describe('create', function(){
   	it('should create new group and add user to group', function(done) {
-  		Seq()
+      Seq()
   			.seq(function() {
-  				UserHelper.create({}, this);
+  				this.vars.user = UserHelper.create({}, this);
   			})
         .seq(function(res) {
-        	this.vars.user = res.body;
+          var user = this.vars.user;
+          UserHelper.login(user.username, user.password, this);
+        })
+        .seq(function(res) {
+          this.vars.user.id = res.body.id;
+          expect(res).to.have.status(200);
+          this.vars.authToken = 'Bearer ' + res.body.token;
           request
             .post('/teacher/' + this.vars.user.id + '/group')
             .send({name: Faker.Lorem.words()})
@@ -25,11 +29,14 @@ describe('Group controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.group = res.body;
+          var user = this.vars.user;
           request
-          	.get('/user/' + this.vars.user.id)
+          	.get('/' + [user.type, user.id].join('/'))
+            .set('Authorization', this.vars.authToken)
           	.end(this)
         })
         .seq(function(res) {
+          expect(res).to.have.status(200);
         	expect(res.body.groups).to.contain(this.vars.group.id);
         	this();
         })

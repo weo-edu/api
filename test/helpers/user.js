@@ -8,7 +8,7 @@ var User = module.exports = {
       type: 'teacher',
       first_name: Faker.Name.firstName(),
       last_name: Faker.Name.lastName(),
-      groups: ['group'],
+      groups: ['fakeGroupId'],
       username: Faker.Internet.email(),
       password: 'testpassword',
       password_confirmation: opts.password || 'testpassword'
@@ -19,11 +19,22 @@ var User = module.exports = {
     return opts;
   },
   create: function(opts, cb) {
+    if('function' === typeof opts) {
+      cb = opts;
+      opts = {};
+    }
+
     opts = User.generate(opts);
     request
       .post('/user')
       .send(opts)
-      .end(cb);
+      .end(function(err, res) {
+        // XXX Kind of hacky, but without it
+        // it's too easy to forget to do this
+        if(res.status === 201)
+          opts.id = res.body.id;
+        return cb.apply(this, arguments);
+      });
     return opts;
   },
   login: function(username, password, cb) {

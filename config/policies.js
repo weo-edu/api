@@ -15,12 +15,26 @@ module.exports.policies = {
   // (`true` allows public access)
   '*': true,
   EventController: {
- // 	'*': false,
-  	all: 'isAuthenticated',
-  	allForStudent: 'isAuthenticated'
+  	'*': ['isAuthenticated']
   },
   AuthController: {
   	user: 'isAuthenticated'
+  },
+  // For now the user controller is pure virtual
+  // which means that none of its routes should
+  // be accessible
+  UserController: {
+  	'*': false,
+  	create: true, 
+  	groups: 'isAuthenticated'
+  },
+  TeacherController: {
+  	'*': ['isAuthenticated', 'isTeacher'],
+  	create: true
+  },
+  StudentController: {
+  	'*': ['isAuthenticated'],
+  	create: true
   }
   /*
 	// Here's an example of adding some policies to a controller
