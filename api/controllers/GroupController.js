@@ -39,10 +39,6 @@ module.exports = {
   _routes: {
     'PUT @/:id/members/:user': 'addMember',
     '@/:id': 'get',
-    'GET @/:groupId/events': {
-      controller: 'event',
-      action: 'receivedBy'
-    },
     '@/:group/assignments': {
       action: 'findAssignments',
       controller: 'assignment'

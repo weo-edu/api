@@ -32,7 +32,7 @@ module.exports = {
         evt.actor = {
           guid: user.id,
           name: user.username,
-          url: user.url || 'test'
+          url: user.url || ''
         };
 
         Event.create(evt)
