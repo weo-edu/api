@@ -81,4 +81,36 @@ describe('Event controller', function() {
         .seq(done);
     });
   });
+
+  describe('reading the feed', function() {
+    it('should show up in chronological order', function(done) {
+      Seq(_.range(1, 20))
+        .seqEach(function() {
+          var self = this;
+          setTimeout(function() {
+            Event.post({}, user, authToken, self);
+          }, 20);
+        })
+        .seq(function(responses) {
+          _.each(responses, function(res) {
+            expect(res).to.have.status(201);
+          });
+
+          Event.feed(user, authToken, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an.array;
+          var last = Infinity;
+          _.each(res.body, function(item) {
+            var time = + new Date(item.createdAt);
+            expect(time).to.be.a.Number;
+            expect(time).to.be.below(last);
+            last = time;
+          });
+          this();
+        })
+        .seq(done);
+    });
+  });
 });

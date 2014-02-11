@@ -67,7 +67,6 @@ module.exports = {
     res.send(200);
   },
   user: function(req, res) {
-    console.log('user');
     if(! req.user)
       return res.json(404);
     User.findOne(req.user.id)
