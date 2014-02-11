@@ -32,7 +32,6 @@ module.exports = {
     },
     object: {
       type: 'json',
-      required: true,
       entity: true
     },
     type: {

@@ -37,5 +37,23 @@ module.exports = {
       attrs.code = code;
       next();
     });
-  }]
+  }],
+  students: function(groupIds, cb) {
+    User.find({groups: groupIds}).done(function(err, users) {
+      if (err) return cb(err);
+      var students = _.filter(users, function(user) {
+        return user.type === 'student';
+      })
+      var groups = _.map(students, function(user) {
+        var group = {};
+        group.name = [user.first_name, user.last_name].join(' ');
+        group.id = user.group;
+        group.type = 'individual';
+        return group;
+      });
+      console.log('groups', groups);
+      cb(null, groups);
+    });
+
+  }
 };

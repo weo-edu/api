@@ -38,6 +38,7 @@ module.exports = {
   _config: {},
   _routes: {
     'PUT @/:id/members/:user': 'addMember',
+    '@/students': 'studentsInGroups',
     '@/:id': 'get',
     '@/:group/assignments': {
       action: 'findAssignments',
@@ -47,6 +48,7 @@ module.exports = {
       action: 'findAssignments',
       controller: 'assignment'
     }
+    
   },
   get: function(req, res) {
     var id = req.param('id');
@@ -62,6 +64,13 @@ module.exports = {
 
         res.json(group);
       });
+  },
+  studentsInGroups: function(req, res) {
+    var groupIds = req.param('groups');
+    Group.students(groupIds, function(err, groups) {
+      if(err) throw err;
+      res.json(groups);
+    });
   },
   createNew: function(req, res) {
     var name = req.param('name')

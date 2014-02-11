@@ -21,6 +21,7 @@ module.exports = {
    */
   _config: {},
   _routes: {
+    'GET /user/groups': 'groups',
     'GET @/feed': 'feed',
     'POST @/events': {
       controller: 'event',
@@ -28,8 +29,25 @@ module.exports = {
     },
     'GET @/events': 'events'
   },
+
+  groups: function(req, res) {
+    User.groups(req.user.id, req.param('type'), function(err, groups) {
+      if (err instanceof databaseError.NotFound) {
+        if (err && err.message === 'User') {
+          return res.clientError('User not found')
+            .missing('user', 'id')
+            .send(404);
+        }
+      }
+      if (err) throw err;
+      console.log('groups', groups);
+      res.json(_.map(groups, function(group) {return group.toJSON()}));
+    })
+  },
   events: function(req, res) {
+    console.log('producedBy', req.user.id);
     Event.producedBy(req.user.id)
+      .sort('createdAt DESC')
       .exec(function(err, events) {
         if(err) throw err;
         res.json(events);
@@ -42,6 +60,7 @@ module.exports = {
         if(! user) return res.send(404);
 
         Event.receivedBy(user.groups)
+          .sort('createdAt DESC')
           .exec(function(err, events) {
             if(err) throw err;
             if(! events) return res.json(404);
@@ -49,4 +68,5 @@ module.exports = {
           });
       });
   }
+
 };

@@ -10,6 +10,7 @@ var Seq = require('seq');
 module.exports = {
 
   _routes: {
+    'GET @': 'findAssignments',
   	'POST @': 'createAssignment',
   	'@/:assignment': 'findAssignments',
   	'@/:assignment/student/:student': 'findAssignments',
@@ -25,7 +26,11 @@ module.exports = {
   					.missing('objective', 'objective')
   					.send(404);
   			}
-  		}
+  		} else if (err && err.ValidationError) {
+        return res.clientError('ValidationError')
+          .fromSails('assignment', [err])
+          .send(400);
+      }
   		if (err) throw err;
 
   		res.json(assignment.toJSON());
@@ -38,7 +43,7 @@ module.exports = {
   		, assignmentId = req.param('assignment');
 
   	var options = parseParams(req, ['student', 'group', 'assignment']);
-  	if (groupId) options.group_id = groupId;
+  	if (groupId) options.groups = groupId;
   	if(assignmentId) options.id = assignmentId;
 
   	Seq()
