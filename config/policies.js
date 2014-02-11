@@ -27,6 +27,7 @@ module.exports.policies = {
   	'*': false,
   	create: true,
     events: ['isAuthenticated'],
+    groups: ['isAuthenticated'],
     feed: ['isAuthenticated']
   },
   TeacherController: {
