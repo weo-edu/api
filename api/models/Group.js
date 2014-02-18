@@ -51,7 +51,6 @@ module.exports = {
         group.type = 'individual';
         return group;
       });
-      console.log('groups', groups);
       cb(null, groups);
     });
 

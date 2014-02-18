@@ -35,6 +35,9 @@ module.exports.policies = {
   StudentController: {
   	'*': ['isAuthenticated'],
   	create: true
+  },
+  S3Controller: {
+  	upload: 'isAuthenticated'
   }
   /*
 	// Here's an example of adding some policies to a controller

@@ -40,7 +40,6 @@ module.exports = {
         }
       }
       if (err) throw err;
-      console.log('groups', groups);
       res.json(_.map(groups, function(group) {return group.toJSON()}));
     })
   },
