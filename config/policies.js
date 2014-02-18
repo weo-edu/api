@@ -25,8 +25,10 @@ module.exports.policies = {
   // be accessible
   UserController: {
   	'*': false,
-  	create: true, 
-  	groups: 'isAuthenticated'
+  	create: true,
+    events: ['isAuthenticated'],
+    groups: ['isAuthenticated'],
+    feed: ['isAuthenticated']
   },
   TeacherController: {
   	'*': ['isAuthenticated', 'isTeacher'],

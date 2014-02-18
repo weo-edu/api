@@ -44,7 +44,9 @@ module.exports = {
     })
   },
   events: function(req, res) {
+    console.log('producedBy', req.user.id);
     Event.producedBy(req.user.id)
+      .sort('createdAt DESC')
       .exec(function(err, events) {
         if(err) throw err;
         res.json(events);
@@ -57,6 +59,7 @@ module.exports = {
         if(! user) return res.send(404);
 
         Event.receivedBy(user.groups)
+          .sort('createdAt DESC')
           .exec(function(err, events) {
             if(err) throw err;
             if(! events) return res.json(404);
