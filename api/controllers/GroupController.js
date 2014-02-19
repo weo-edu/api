@@ -111,7 +111,7 @@ module.exports = {
 
   studentsInGroups: function(req, res) {
     var groupIds = req.param('groups');
-    Student.findByGroups(groupIds, function(err, groups) {
+    Student.findAssignable(groupIds, function(err, groups) {
       if(err) throw err;
       res.json(groups);
     });

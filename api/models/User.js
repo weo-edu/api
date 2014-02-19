@@ -79,7 +79,7 @@ module.exports = {
       } else {
         cb(new databaseError.NotFound('Assignment'));
       }
-      
+
     });
   },
   groups: function(userId, type, cb) {

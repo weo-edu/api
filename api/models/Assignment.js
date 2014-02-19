@@ -54,6 +54,10 @@ module.exports = {
   		type: 'datetime'
   	},
 
+    turned_in_at: {
+      type: 'datetime'
+    },
+
   	teacher: {
   		type: 'string',
   		required: true
