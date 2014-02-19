@@ -13,7 +13,6 @@
  */
 
 module.exports[500] = function serverErrorOccurred(errors, req, res) {
-
   /*
    * NOTE: This function is Sails middleware-- that means that not only do `req` and `res`
    * work just like their Express equivalents to handle HTTP requests, they also simulate

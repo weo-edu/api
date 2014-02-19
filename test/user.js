@@ -25,20 +25,51 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    it('should create a new user and login successfully', function(done) {
+    it('should create a new student and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = User.create({}, this);
+          this.vars.user = User.generate({type: 'student'});
+          request
+            .post('/student')
+            .send(this.vars.user)
+            .end(this);
         })
         .seq(function(res) {
           var user = this.vars.user;
-          /*expect(res).to.have.status(201);*/
+          expect(res).to.have.status(201);
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
-          expect(res.body.groups).to.have.length(2);
+          expect(res.body.groups).to.have.length(1);
+          this();
+        })
+        .seq(function() {
+          var user = this.vars.user;
+          User.login(user.username, user.password, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should create a new teacher and login successfully', function(done) {
+      Seq()
+        .seq(function() {
+          this.vars.user = User.create({type: 'teacher'}, this);
+        })
+        .seq(function(res) {
+          var user = this.vars.user;
+          expect(res).to.have.status(201);
+          expect(res.body).to.have
+            .properties(_.omit(user,
+              ['password', 'password_confirmation', 'groups']));
+          expect(res.body).not.to.have.key('password');
+          expect(res.body).not.to.have.key('password_confirmation');
+          expect(res.body.groups).to.have.length(1);
           this();
         })
         .seq(function() {

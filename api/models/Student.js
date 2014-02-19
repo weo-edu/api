@@ -36,13 +36,5 @@ module.exports = mergeModels(User, {
       minLength: 1,
       required: true
     }
-  },
-  // Event-callbacks here must use array style
-  // so that they can be _.merge'd with User
-  beforeCreate: [
-    function(attrs, next) {
-      delete attrs.password_confirmation;
-      next();
-    }
-  ]
+  }
 });
