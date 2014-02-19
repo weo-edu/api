@@ -38,7 +38,7 @@ describe('Assignment controller', function() {
       })
       .seq(function(res) {
         this.vars.group = res.body;
-        this.vars.assignment = AssignmentHelper.generate({teacher: this.vars.user.id, groups: this.vars.group.id});
+        this.vars.assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
         request.post('/objective')
         	.send(this.vars.assignment.objective)
         	.end(this);
@@ -76,7 +76,7 @@ describe('Assignment controller', function() {
 	      })
 	      .seq(function(res) {
 	        this.vars.group = res.body;
-	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, groups: this.vars.group.id});
+	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
 	        assignment.objective = 'doesnotexist';
 	        request.post('/assignment')
 	          .send(assignment)
@@ -110,7 +110,7 @@ describe('Assignment controller', function() {
 	      })
 	      .seq(function(res) {
 	        this.vars.group = res.body;
-	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, groups: this.vars.group.id});
+	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
 	        delete assignment.due_at;
 	        request.post('/assignment')
 	          .send(assignment)
@@ -144,7 +144,6 @@ describe('Assignment controller', function() {
 				.seq(function(teacherRes, studentRes) {
 					teacher = teacherRes.body;
 					student = studentRes.body;
-
 					request
 	          .post('/teacher/' + teacher.id + '/group')
 	          .send({name: Faker.Lorem.words()})
@@ -157,7 +156,7 @@ describe('Assignment controller', function() {
   					.end(this);
 				})
 				.seq(function() {
-					var assignment = AssignmentHelper.generate({teacher: teacher.id, groups: group.id});
+					var assignment = AssignmentHelper.generate({teacher: teacher.id, to: group.id});
 					request.post('/assignment')
 						.send(assignment)
 						.end(this);
@@ -222,7 +221,7 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.student = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.groups[0] + '/members/' + this.vars.student.id)
+  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + this.vars.student.id)
   					.end(this);
 				})
 				.seq(function(res) {
@@ -253,7 +252,7 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.student = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.groups[0] + '/members/' + this.vars.student.id)
+  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + this.vars.student.id)
   					.end(this);
 				})
 				.seq(function(res) {

@@ -40,11 +40,11 @@ module.exports = {
     'PUT @/:id/members/:user': 'addMember',
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
-    '@/:group/assignments': {
+    '@/:to/assignments': {
       action: 'findAssignments',
       controller: 'assignment'
     },
-    '@/:group/assignments/student/:student': {
+    '@/:to/assignments/student/:student': {
       action: 'findAssignments',
       controller: 'assignment'
     }
@@ -65,13 +65,7 @@ module.exports = {
         res.json(group);
       });
   },
-  studentsInGroups: function(req, res) {
-    var groupIds = req.param('groups');
-    Group.students(groupIds, function(err, groups) {
-      if(err) throw err;
-      res.json(groups);
-    });
-  },
+  
   createNew: function(req, res) {
     var name = req.param('name')
       , userId = req.param('teacher');
@@ -113,5 +107,13 @@ module.exports = {
       });
     });
 
+  },
+
+  studentsInGroups: function(req, res) {
+    var groupIds = req.param('groups');
+    Student.findByGroups(groupIds, function(err, groups) {
+      if(err) throw err;
+      res.json(groups);
+    });
   }
 };

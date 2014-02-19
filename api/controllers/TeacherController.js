@@ -30,4 +30,6 @@ module.exports = mergeModels(UserController, {
       controller: 'group'
     }
   }
+
+  
 });

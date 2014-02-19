@@ -64,21 +64,6 @@ module.exports = {
   afterCreate: [function(attrs, next) {
     delete attrs.password;
     next();
-  }, function(attrs, next) {
-    var type = 'individual';
-    //XXX delete user on error
-    Seq()
-      .seq(function() {
-        Group.create({type: type, name: attrs.username}, this);
-      })
-      .seq(function(group) {
-        User.addToGroup(attrs.id, group.id, type, this);
-      })
-      .seq(function(user) {
-        attrs.groups = user.groups;
-        next();
-      })
-      .catch(next);
   }],
   addToGroup: function(userId, groupId, groupType, cb) {
     if (_.isFunction(groupType)) {
@@ -86,9 +71,6 @@ module.exports = {
       groupType = undefined;
     }
     var update = {$addToSet: {groups: groupId}};
-    if (groupType && groupType === 'individual') {
-      update.group = groupId;
-    }
     User.update({id: userId}, update).done(function(err, users) {
       if (err) return cb(err);
       if (users.length) {

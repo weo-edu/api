@@ -44,5 +44,21 @@ module.exports = mergeModels(User, {
       delete attrs.password_confirmation;
       next();
     }
-  ]
+  ],
+
+  findByGroups: function(groupIds, cb) {
+    User.find({groups: groupIds, type: 'student'}).done(function(err, users) {
+      if (err) return cb(err);
+      var students = _.filter(users, function(user) {
+        return user.type === 'student';
+      })
+      var groups = _.map(students, function(user) {
+        var group = {};
+        group.name = [user.first_name, user.last_name].join(' ');
+        group.id = user.id;
+        return group;
+      });
+      cb(null, groups);
+    });
+  }
 });

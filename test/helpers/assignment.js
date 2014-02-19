@@ -24,7 +24,7 @@ var Assignment = module.exports = {
       reward: 10
     });
 
-    opts.groups = [].concat(opts.groups);
+    opts.to = [].concat(opts.to);
 
     return opts;
   },
@@ -43,7 +43,7 @@ var Assignment = module.exports = {
       })
       .seq(function(res) {
         this.vars.group = res.body;
-        var assignment = self.generate({teacher: this.vars.user.id, groups: this.vars.group.id});
+        var assignment = self.generate({teacher: this.vars.user.id, to: this.vars.group.id});
         request.post('/assignment')
           .send(assignment)
           .end(this);

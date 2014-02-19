@@ -39,13 +39,12 @@ module.exports = {
   
   findAssignments: function(req, res) {
   	var studentId = req.param('student')
-  		, groupId = req.param('group')
+  		, toIds = req.param('to')
   		, assignmentId = req.param('assignment');
 
-  	var options = parseParams(req, ['student', 'group', 'assignment']);
-  	if (groupId) options.groups = groupId;
+  	var options = parseParams(req, ['student', 'to', 'assignment']);
+  	if (toIds) options.to = toIds;
   	if(assignmentId) options.id = assignmentId;
-
   	Seq()
   		.seq(function() {
   			Assignment.findAndTransform(studentId, options, this);
