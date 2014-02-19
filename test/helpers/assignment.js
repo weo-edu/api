@@ -28,7 +28,7 @@ var Assignment = module.exports = {
 
     return opts;
   },
-  create: function(cb) {
+  create: function(cb, opts) {
     var self = this;
     Seq()
       .seq(function() {

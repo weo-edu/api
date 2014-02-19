@@ -41,11 +41,11 @@ module.exports = {
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
     '@/:to/assignments': {
-      action: 'findAssignments',
+      action: 'find',
       controller: 'assignment'
     },
     '@/:to/assignments/student/:student': {
-      action: 'findAssignments',
+      action: 'find',
       controller: 'assignment'
     }
     

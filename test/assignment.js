@@ -2,7 +2,8 @@ var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , AssignmentHelper = require('./helpers/assignment')
   , Faker = require('Faker')
-  , _ = require('lodash');
+  , _ = require('lodash')
+  , moment = require('moment');
 
 
 require('./helpers/boot');
@@ -271,6 +272,58 @@ describe('Assignment controller', function() {
 					this();
 				})
 				.seq(done);
+		});
+	});
+
+	describe('should sort assignments', function() {
+		it('when adding lots of assignments', function(done) {
+			var dueDates = [];
+			var now = new Date();
+			var day = 1000*60*60*24;
+			_.times(10, function(n) {
+				dueDates.push(new Date(+now + day* (n+1)));
+			});
+			var shuffled = _.shuffle(dueDates);
+			Seq()
+				.seq(function() {
+					UserHelper.create({}, this);
+				})
+				.seq(function(res) {
+					this.vars.user = res.body;
+	        request
+	          .post('/teacher/' + this.vars.user.id + '/group')
+	          .send({name: Faker.Lorem.words()})
+	          .end(this);
+				})
+				.seq(function(res) {
+					this.vars.group = res.body;
+					var self = this;
+					Seq(shuffled)
+						.seqEach(function(dueDate) {
+							var assignment = AssignmentHelper.generate({teacher: self.vars.user.id, to: self.vars.group.id, due_at: dueDate});
+							request.post('/assignment')
+			          .send(assignment)
+			          .end(this);
+						})
+						.seq(function() {
+							self();
+						});
+				})
+				.seq(function() {
+					console.log('active');
+					request
+						.get('/assignment/active')
+						.query({to: this.vars.group.id, now: now})
+						.end(this);
+				})
+				.seq(function(res) {
+					var assignments = res.body;
+					_.each(assignments, function(assignment, idx) {
+						expect(assignment.due_at).to.equal(dueDates[idx].toISOString());
+					});
+					done();
+				})
+			
 		});
 	});
 

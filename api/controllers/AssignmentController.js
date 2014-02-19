@@ -10,14 +10,15 @@ var Seq = require('seq');
 module.exports = {
 
   _routes: {
-    'GET @': 'findAssignments',
-  	'POST @': 'createAssignment',
-  	'@/:assignment': 'findAssignments',
-  	'@/:assignment/student/:student': 'findAssignments',
+    'GET @': 'find',
+  	'POST @': 'create',
+    'GET @/active': 'active',
+  	'@/:assignment': 'find',
+  	'@/:assignment/student/:student': 'find',
   	'PATCH @/:assignment/student/:student/score': 'score'
   },
 
-  createAssignment: function(req, res) {
+  create: function(req, res) {
   	var assignment = req.params.all();
   	Assignment.createFromObjective(assignment.objective, assignment, function(err, assignment) {
   		if (err instanceof databaseError.NotFound) {
@@ -36,8 +37,25 @@ module.exports = {
   		res.json(assignment.toJSON());
   	});
   },
+
+  active: function(req, res) {
+    var studentId = req.param('student')
+      , toIds = req.param('to')
+      , now = req.param('now');
+
+    var options = {where: {to: toIds, due_at: {'>=': now} }, sort: 'due_at ASC'};
+    console.log('options', options);
+    Seq()
+      .seq(function() {
+        Assignment.findAndTransform(studentId, options, this)
+      })
+      .seq(findNormalizeResponse(res))
+      .catch(function(err) {
+        throw err;
+      });
+  },
   
-  findAssignments: function(req, res) {
+  find: function(req, res) {
   	var studentId = req.param('student')
   		, toIds = req.param('to')
   		, assignmentId = req.param('assignment');
@@ -49,19 +67,7 @@ module.exports = {
   		.seq(function() {
   			Assignment.findAndTransform(studentId, options, this);
   		})
-  		.seq(function(assignments) {
-  			if (assignmentId) {
-  				var assignment = assignments[0];
-  				if (!assignment) {
-  					res.clientError('Assignment not found')
-  						.missing('assignment', 'id')
-  						.send(404);
-  				} else {
-  					res.json(assignment.toJSON());
-  				}
-  			} else
-  				res.json(_.map(assignments, function(model) { return model.toJSON()}));
-  		})
+  		.seq(findNormalizeResponse(res, assignmentId))
   		.catch(function(err) {
   			throw err;
   		});
@@ -87,3 +93,19 @@ module.exports = {
   }
 
 };
+
+function findNormalizeResponse(res, assignmentId) {
+  return function(assignments) {
+    if (assignmentId) {
+      var assignment = assignments[0];
+      if (!assignment) {
+        res.clientError('Assignment not found')
+          .missing('assignment', 'id')
+          .send(404);
+      } else {
+        res.json(assignment.toJSON());
+      }
+    } else
+      res.json(_.map(assignments, function(model) { return model.toJSON()}));
+  }
+}
