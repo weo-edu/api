@@ -310,10 +310,9 @@ describe('Assignment controller', function() {
 						});
 				})
 				.seq(function() {
-					console.log('active');
 					request
 						.get('/assignment/active')
-						.query({to: this.vars.group.id, now: now})
+						.query({to: this.vars.group.id})
 						.end(this);
 				})
 				.seq(function(res) {

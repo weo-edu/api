@@ -76,9 +76,6 @@ module.exports = {
   },
 
   beforeCreate: [function(attrs, next) {
-    if (attrs.due_at) {
-      attrs.due_at = new Date(attrs.due_at);
-    }
     next();
   }],
 

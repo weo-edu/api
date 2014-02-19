@@ -44,7 +44,6 @@ module.exports = {
     })
   },
   events: function(req, res) {
-    console.log('producedBy', req.user.id);
     Event.producedBy(req.user.id)
       .sort('createdAt DESC')
       .exec(function(err, events) {
