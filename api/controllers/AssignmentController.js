@@ -42,7 +42,7 @@ module.exports = {
     var studentId = req.param('student')
       , toIds = req.param('to');
 
-    var options = {where: {to: toIds, due_at: {'>=': new Date()} }, sort: 'due_at ASC'};
+    var options = {where: {to: toIds, due_at: {'>=': new Date()} }, sort: {'due_at': 1, 'createdAt': -1}};
     Seq()
       .seq(function() {
         Assignment.findAndTransform(studentId, options, this)

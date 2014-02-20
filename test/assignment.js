@@ -276,7 +276,7 @@ describe('Assignment controller', function() {
 	});
 
 	describe('should sort assignments', function() {
-		it('when adding lots of assignments', function(done) {
+		it.only('when adding lots of assignments', function(done) {
 			var dueDates = [];
 			var now = new Date();
 			var day = 1000*60*60*24;
