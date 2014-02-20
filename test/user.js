@@ -4,7 +4,6 @@ var Seq = require('seq')
 
 require('./helpers/boot');
 
-require('./helpers/boot.js');
 describe('User controller', function() {
   describe('create', function() {
     it('should validate new user data', function(done) {

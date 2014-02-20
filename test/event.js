@@ -1,8 +1,8 @@
 var Seq = require('seq')
-  , User = require('./helpers/user.js')
-  , Event = require('./helpers/event.js');
+  , User = require('./helpers/user')
+  , Event = require('./helpers/event');
 
-require('./helpers/boot.js');
+require('./helpers/boot');
 describe('Event controller', function() {
   var authToken
     , user;

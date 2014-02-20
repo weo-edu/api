@@ -1,7 +1,7 @@
 var Seq = require('seq')
-  , User = require('./helpers/user.js');
+  , User = require('./helpers/user');
 
-require('./helpers/boot.js');
+require('./helpers/boot');
 
 describe('Auth controller', function() {
   describe('login', function() {

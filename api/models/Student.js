@@ -5,8 +5,8 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var mergeModels = require('../../lib/mergeModels.js')
-  , UserSchema = require('./User.js')
+var mergeModels = require('../../lib/mergeModels')
+  , UserSchema = require('./User')
   , _ = require('lodash');
 
 module.exports = mergeModels(UserSchema, {

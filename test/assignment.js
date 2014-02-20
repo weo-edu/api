@@ -280,7 +280,8 @@ describe('Assignment controller', function() {
 			var dueDates = [];
 			var now = new Date();
 			var day = 1000*60*60*24;
-			_.times(10, function(n) {
+			var numDates = 10;
+			_.times(numDates, function(n) {
 				dueDates.push(new Date(+now + day* n));
 			});
 			var shuffled = _.shuffle(dueDates);
@@ -317,7 +318,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
 					var assignments = res.body;
-					expect(assignments).to.have.length(9)
+					expect(assignments).to.have.length(numDates - 1);
 					_.each(assignments, function(assignment, idx) {
 						expect(assignment.due_at).to.equal(dueDates[idx+1].toISOString());
 					});
