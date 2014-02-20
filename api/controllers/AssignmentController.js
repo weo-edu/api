@@ -53,7 +53,7 @@ module.exports = {
         throw err;
       });
   },
-  
+
   find: function(req, res) {
   	var studentId = req.param('student')
   		, toIds = req.param('to')
@@ -95,6 +95,7 @@ module.exports = {
 
 function findNormalizeResponse(res, assignmentId) {
   return function(assignments) {
+    console.log('assignments', assignments);
     if (assignmentId) {
       var assignment = assignments[0];
       if (!assignment) {
