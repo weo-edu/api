@@ -2,7 +2,7 @@
 
 - times are stored as ISODates in UTC
 - only server should use `new Date`
-- cononical time of day is 12:00 PM
+- canonical time of day is 12:00 PM
 - clients wanting to use relative times should pass timezone and offset to server
 
 
@@ -14,5 +14,6 @@
 
 ## Database Upgrade Policy
 
-- limit $250/month for hosted
+- limit of $250/month for mongoHQ
+- switch from mongoHQ to EC2
 
