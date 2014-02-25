@@ -10,14 +10,14 @@ var subSchema = require('../services/subSchema.js');
 module.exports = {
   types: {
     entity: subSchema({
-      guid: {required: true, type: 'string'},
+      id: {required: true, type: 'string'},
       name: {required: true, type: 'string'},
       url: {required: true, type: 'string'},
       avatar: 'string'
     })
   },
   attributes: {
-    groups: {
+    to: {
       type: 'array',
       required: true
     },
@@ -40,10 +40,10 @@ module.exports = {
     },
     payload: 'json'
   },
-  receivedBy: function(groupIds) {
-    return Event.find({groups: groupIds});
+  receivedBy: function(to) {
+    return Event.find({to: to});
   },
   producedBy: function(userId) {
-    return Event.find({'actor.guid': userId});
+    return Event.find({'actor.id': userId});
   }
 };

@@ -28,9 +28,8 @@ module.exports = {
         if(err) throw err;
         if(! user) return res.send(404);
 
-        evt.groups = user.groups;
         evt.actor = {
-          guid: user.id,
+          id: user.id,
           name: user.username,
           url: '/user/' + user.id
         };

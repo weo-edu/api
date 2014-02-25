@@ -7,6 +7,7 @@ var verbs = ['completed', 'liked', 'joined', 'assigned', 'created']
 var Event = module.exports = {
   post: function(opts, user, authToken, cb) {
     var evt = Event.generate(opts);
+    evt.to = user.groups;
     request
       .post('/' + [user.type, 'events'].join('/'))
       .set('Authorization', authToken)
@@ -39,7 +40,7 @@ var Event = module.exports = {
     opts = opts || {};
     var name = Faker.Company.catchPhrase();
     return _.defaults(opts, {
-      guid: 'fakeObjectId',
+      id: 'fakeObjectId',
       name: name,
       url: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });

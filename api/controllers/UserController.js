@@ -52,18 +52,14 @@ module.exports = {
       });
   },
   feed: function(req, res) {
-    User.findOne(req.user.id)
-      .exec(function(err, user) {
+    var to = req.param('to');
+    Event.receivedBy(to)
+      .sort('createdAt DESC')
+      .exec(function(err, events) {
         if(err) throw err;
-        if(! user) return res.send(404);
-
-        Event.receivedBy(user.groups)
-          .sort('createdAt DESC')
-          .exec(function(err, events) {
-            if(err) throw err;
-            if(! events) return res.json(404);
-            res.json(events);
-          });
+        if(! events) return res.json(404);
+        res.json(events);
       });
+    
   }
 };

@@ -30,7 +30,7 @@ describe('Event controller', function() {
         .seq(function(res) {
           var evt = this.vars.evt;
           expect(res).to.have.status(201);
-          delete evt.object.guid;
+          delete evt.object.id;
           request
             .post('/' + [user.type, 'events'].join('/'))
             .set('Authorization', authToken)
