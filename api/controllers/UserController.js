@@ -21,7 +21,7 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    'GET /user/groups': 'groups',
+    'GET /user/groups/:type': 'groups',
     'GET @/feed': 'feed',
     'POST @/events': {
       controller: 'event',
@@ -66,5 +66,4 @@ module.exports = {
           });
       });
   }
-
 };
