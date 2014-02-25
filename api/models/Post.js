@@ -15,6 +15,16 @@ module.exports = {
   		required: true
   	},
 
+  	user_first: {
+  		type: 'string',
+  		required: true
+  	},
+
+  	user_last: {
+  		type: 'string',
+  		required: true
+  	},
+
   	body: {
   		type: 'string',
   		required: true
@@ -28,7 +38,8 @@ module.exports = {
   	type: {
   		type: 'string',
   		required: true,
-  		in: ['question', 'answer', 'comment']
+  		in: ['question', 'answer', 'comment', 'post'],
+  		defaultsTo: 'post'
   	},
 
   	title: {

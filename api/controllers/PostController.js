@@ -38,7 +38,7 @@ module.exports = {
   	var options = {
 				limit: req.param('limit') || undefined,
 				skip: req.param('skip') || req.param('offset') || undefined,
-				sort: req.param('sort') || req.param('order') || undefined,
+				sort: {createdAt: 1},
 				where: {discussion_id: discussionId, type: type},
 			};
 

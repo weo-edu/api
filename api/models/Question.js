@@ -14,6 +14,9 @@ module.exports = mergeModels(PostSchema, {
 		title: {
 			required: true
 		},
+		body: {
+			required: false
+		},
   	views: {
   		type: 'integer',
   		defaultsTo: 0
