@@ -95,7 +95,6 @@ module.exports = {
 
 function findNormalizeResponse(res, assignmentId) {
   return function(assignments) {
-    console.log('assignments', assignments);
     if (assignmentId) {
       var assignment = assignments[0];
       if (!assignment) {

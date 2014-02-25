@@ -15,12 +15,7 @@ module.exports = {
   		required: true
   	},
 
-  	user_first: {
-  		type: 'string',
-  		required: true
-  	},
-
-  	user_last: {
+  	user_name: {
   		type: 'string',
   		required: true
   	},

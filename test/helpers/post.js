@@ -10,7 +10,8 @@ var Post = module.exports = {
     _.defaults(opts, {
       user: '' + Math.random(),
       title: Faker.Lorem.words(),
-      body: Faker.Lorem.paragraph()
+      body: Faker.Lorem.paragraph(),
+      user_name: Faker.Name.findName()
     });
 
     return opts;
