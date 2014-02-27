@@ -20,9 +20,13 @@ module.exports = {
    * (specific to EventController)
    */
   _config: {},
-  _routes: {},
+  _routes: {
+    'POST @/subscription': 'createSubscription',
+    'DELETE @/subscription': 'deleteSubscription'
+  },
   emit: function(req, res) {
     var evt = req.params.all();
+    var to = evt.to;
     User.findOne(req.user.id)
       .exec(function(err, user) {
         if(err) throw err;
@@ -37,8 +41,49 @@ module.exports = {
         Event.create(evt)
           .exec(function(err, createdEvent) {
             if(err) return res.serverError(err);
+            if (req.socket) {
+              _.each(createdEvent.to, function(to) {
+                Event.publish(to, {
+                  model: Event.identity,
+                  verb: 'add',
+                  data: createdEvent,
+                  id: to
+                }, req.socket);
+              });
+            }
+            
             res.json(201, createdEvent);
           });
       });
+  },
+  createSubscription: function(req, res) {
+    var to = req.param('to');
+    Event.subscribe(req.socket, to);
+    res.send(201);
+  },
+  deleteSubscription: function(req, res) {
+    var to = req.param('to');
+    Event.unsubscribe(req.socket, to);
+    res.send(204);
+  },
+  events: function(req, res) {
+    Event.producedBy(req.user.id)
+      .sort('createdAt DESC')
+      .exec(function(err, events) {
+        if(err) throw err;
+        res.json(events);
+      });
+  },
+  feed: function(req, res) {
+    var to = req.param('to');
+
+    Event.receivedBy(to)
+      .sort('createdAt DESC')
+      .exec(function(err, events) {
+        if(err) throw err;
+        if(! events) return res.json(404);
+        res.json(events);
+      });
+    
   }
 };

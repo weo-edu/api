@@ -10,6 +10,7 @@ module.exports = {
   Answer: require('../models/Answer'),
   Comment: require('../models/Comment'),
   Post: require('../models/Post'),
-  Event: require('../models/Event')
+  Event: require('../models/Event'),
+  Discussion: require('../models/Discussion')
 };
 

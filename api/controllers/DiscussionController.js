@@ -1,5 +1,5 @@
 /**
- * UserController
+ * DiscussionController
  *
  * @module      :: Controller
  * @description	:: A set of functions called `actions`.
@@ -14,39 +14,31 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+
 module.exports = {
+    
+  
+
+
   /**
    * Overrides for the settings in `config/controllers.js`
-   * (specific to UserController)
+   * (specific to DiscussionController)
    */
   _config: {},
   _routes: {
-    'GET /user/groups/:type': 'groups',
-    'GET @/feed': {
-      controller: 'event',
-      action: 'feed'
-    },
-    'POST @/events': {
-      controller: 'event',
-      action: 'emit'
-    },
-    'GET @/events': {
-      controller: 'event',
-      action: 'events'
-    }
+  	'POST @/:id/subscription': 'createSubscription',
+  	'DELETE @/:id/subscription': 'deleteSubscription'
   },
 
-  groups: function(req, res) {
-    User.groups(req.user.id, req.param('type'), function(err, groups) {
-      if (err instanceof databaseError.NotFound) {
-        if (err && err.message === 'User') {
-          return res.clientError('User not found')
-            .missing('user', 'id')
-            .send(404);
-        }
-      }
-      if (err) throw err;
-      res.json(_.map(groups, function(group) {return group.toJSON()}));
-    })
+  createSubscription: function(req, res) {
+  	Discussion.subscribe(req.socket, req.param('id'));
+  	res.send(201);
+  },
+
+  deleteSubscription: function(req, res) {
+  	Discussion.unsubscribe(req.socket, req.param('id'));
+  	res.send(201);
   }
+
+  
 };
