@@ -30,7 +30,7 @@
         crypto.randomBytes(16, this);
       })
       .seq(function(buf) {
-        this.vars.token = buf.toString('base64');
+        this.vars.token = buf.toString('base64').slice(0, -2);
         redis.set(this.vars.token, JSON.stringify(data), this);
       })
       .seq(function() {

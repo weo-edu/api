@@ -60,6 +60,6 @@ module.exports = {
         if(! events) return res.json(404);
         res.json(events);
       });
-    
+
   }
 };
