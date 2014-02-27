@@ -26,6 +26,14 @@ module.exports = {
 
   	Model.create(post, function(err, post) {
   		if (err) return res.serverError(err);
+      if (req.socket) {
+        Discussion.publish(discussionId, {
+          model: Discussion.identity,
+          verb: 'add',
+          data: post,
+          id: discussionId
+        }, req.socket);
+      }
   		res.status(201);
   		res.json(post.toJSON());
   	});
