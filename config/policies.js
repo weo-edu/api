@@ -10,12 +10,14 @@
  * For more information on policies, check out:
  * http://sailsjs.org/#documentation
  */
+var belongsToGroup = require('../api/policies/belongsToGroup');
 module.exports.policies = {
   // Default policy for all controllers and actions
   // (`true` allows public access)
   '*': true,
   EventController: {
-  	'*': ['isAuthenticated']
+  	'*': ['isAuthenticated'],
+    feed: ['isAuthenticated', belongsToGroup('to')]
   },
   AuthController: {
   	user: 'isAuthenticated'
