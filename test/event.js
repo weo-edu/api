@@ -64,16 +64,18 @@ describe('Event controller', function() {
         .seq(done);
     });
 
-    it('should show up in the users groups feeds', function(done) {
+    it.only('should show up in the users groups feeds', function(done) {
       Seq()
         .seq(function() {
           this.vars.evt = Event.post({}, user, authToken, this);
         })
         .seq(function(res) {
+          console.log('res.bod', res.body);
           expect(res).to.have.status(201);
           Event.feed(user, authToken, this);
         })
         .seq(function(res) {
+          console.log('res.bod', res.body);
           expect(res).to.have.status(200);
           expect(res.body).to.include.an.item.with.properties(this.vars.evt);
           this();

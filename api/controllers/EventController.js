@@ -34,8 +34,8 @@ module.exports = {
 
         evt.actor = {
           id: user.id,
-          name: user.username,
-          url: '/user/' + user.id
+          name: user.name,
+          link: '/user/' + user.id
         };
 
         Event.create(evt)
@@ -76,7 +76,7 @@ module.exports = {
   },
   feed: function(req, res) {
     var to = req.param('to');
-
+    console.log('feed', to);
     Event.receivedBy(to)
       .sort('createdAt DESC')
       .exec(function(err, events) {

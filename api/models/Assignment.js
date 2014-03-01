@@ -1,6 +1,8 @@
 var Seq = require('seq')
 	, _ = require('lodash')
-	, modelHook = require('../../lib/modelHook');
+	, modelHook = require('../../lib/modelHook')
+  , moment = require('moment')
+  
 
 function studentInit() {
 	return {progress: 0, score: 0, reward_claimed: false};
@@ -50,24 +52,24 @@ module.exports = {
       type: 'integer'
     },
 
-  	graded_at: {
-  		type: 'datetime'
-  	},
-
-    turned_in_at: {
-      type: 'datetime'
-    },
-
   	teacher: {
   		type: 'string',
   		required: true
   	},
 
+
+    //link to assignment
+    link: {
+      type: 'string'
+    },
+
   	/**
   	 * Map of students who received assignment
-  	 * @progress {float} progress out of 1
-  	 * @score {float} score on assignment
-  	 * @reward_claimed {boolean} whether reward was claimed
+  	 * @param {float} progress progress out of 1
+  	 * @param {float} score score on assignment
+  	 * @param {boolean} reward_claimed whether reward was claimed
+     * @param {datetime} submitted_at date assignment was submitted
+     * @param {datetime} graded_at date assignment was graded
   	 */
   	students: {
   		type: 'json'
@@ -90,6 +92,8 @@ module.exports = {
   		.seq(function(objective) {
   			if (!objective) return this(new databaseError.NotFound('Objective'));
   			options.objective = objective;
+        options.id = new ObjectId;
+        options.link = _.template(objective.assignmentLink, {assignment: options});
         // XXX have to clone because sails turns into a regex, ugh
   			Student.find({groups: _.clone(options.to), type: 'student'}).done(this);
   		})
@@ -101,7 +105,12 @@ module.exports = {
   			Assignment.create(options).done(this);
   		})
   		.seq(function(assignment) {
-  			cb(null, assignment)
+        if (moment(assignment.due_at).diff(moment()) < 0) {
+          Assignment.toEvent(assignment, function(err) {
+            cb(err, assignment);
+          });
+        } else
+  			 cb(null, assignment)
   		})
   		.catch(function(err) {
   			cb(err);
@@ -138,6 +147,37 @@ module.exports = {
   	// XXX only add students to assignments that aren't due yet
   	Assignment.update({to: groupId}, update, function(err, assignment) {
       cb(err, assignment);
+    });
+  },
+
+  toEvent: function(assignment, cb) {
+    Teacher.findOne(assignment.teacher, function(err, user) {
+      if (err) return cb(err);
+      if (!user) return cb(new databaseError.NotFound('User'));
+      var e = {
+        to: assignment.to,
+        actor: {
+          id: user.id,
+          avatar: user.avatar,
+          name: user.name,
+          link: '/user/' + user.id
+        },
+        verb: 'assigned',
+        object: {
+          id: assignment.id,
+          link: assignment.link,
+          name: assignment.objective.title,
+          icon: assignment.objective.icon,
+
+        },
+        type: 'assignment',
+        payload: {
+          get: '/assignment/' + assignment.id //XXX include host? use template?
+        }
+      };
+      Event.create(e, function(err, e) {
+        cb(err, e);
+      });
     });
   }
 

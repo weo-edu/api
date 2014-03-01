@@ -7,13 +7,18 @@
  */
 var subSchema = require('../services/subSchema.js');
 
+//XXX should events have an `at` param so that you can set future events
+
 module.exports = {
   types: {
     entity: subSchema({
       id: {required: true, type: 'string'},
       name: {required: true, type: 'string'},
-      url: {required: true, type: 'string'},
-      avatar: 'string'
+      link: {required: true, type: 'string'},
+
+      // actor uses avatar, object uses icon
+      avatar: 'string',
+      icon: 'string'
     })
   },
   attributes: {

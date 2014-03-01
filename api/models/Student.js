@@ -9,14 +9,16 @@ var mergeModels = require('../../lib/mergeModels')
   , UserSchema = require('./User')
   , _ = require('lodash');
 
-module.exports = mergeModels(UserSchema, {
+var model = module.exports = mergeModels(UserSchema, {
   types: {
     password_confirmation: function(password_confirmation) {
       return password_confirmation === this.password;
     },
     password: function(password) {
       return password === this.password_confirmation;
-    }
+    },
+    virtual: function() { return true; },
+    fn: function() { return true; }
   },
   attributes: {
   	type: {
@@ -35,6 +37,12 @@ module.exports = mergeModels(UserSchema, {
       type: 'array',
       minLength: 1,
       required: true
+    },
+    name: {
+      type: 'virtual',
+      fn: function() {
+        return this.first_name + ' ' + this.last_name;
+      }
     }
   },
 
@@ -46,7 +54,7 @@ module.exports = mergeModels(UserSchema, {
       })
       var groups = _.map(students, function(user) {
         var group = {};
-        group.name = [user.first_name, user.last_name].join(' ');
+        group.name = user.name;
         group.id = user.id;
         return group;
       });
@@ -54,3 +62,6 @@ module.exports = mergeModels(UserSchema, {
     });
   }
 });
+
+model.beforeCreate.push(require('../services/virtualize.js')(model.attributes));
+model.beforeUpdate = [require('../services/virtualize.js')(model.attributes)];

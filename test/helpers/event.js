@@ -21,10 +21,16 @@ var Event = module.exports = {
       .set('Authorization', authToken)
       .end(cb);
   },
-  feed: function(user, authToken, cb) {
+  feed: function(user, groups, authToken, cb) {
+    if (!cb) {
+      cb = authToken;
+      authToken = groups;
+      groups = undefined;
+    }
     request
       .get('/' + [user.type, 'feed'].join('/'))
       .set('Authorization', authToken)
+      .query({to: groups})
       .end(cb);
   },
   generate: function(opts) {
@@ -42,7 +48,7 @@ var Event = module.exports = {
     return _.defaults(opts, {
       id: 'fakeObjectId',
       name: name,
-      url: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
+      link: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });
   }
 };

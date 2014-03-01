@@ -26,7 +26,7 @@ var User = module.exports = {
 
     opts = User.generate(opts);
     request
-      .post('/user')
+      .post('/' + opts.type)
       .send(opts)
       .end(function(err, res) {
         // XXX Kind of hacky, but without it
