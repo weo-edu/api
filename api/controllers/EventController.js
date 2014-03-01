@@ -51,7 +51,7 @@ module.exports = {
                 }, req.socket);
               });
             }
-            
+
             res.json(201, createdEvent);
           });
       });
@@ -76,7 +76,6 @@ module.exports = {
   },
   feed: function(req, res) {
     var to = req.param('to');
-
     Event.receivedBy(to)
       .sort('createdAt DESC')
       .exec(function(err, events) {
@@ -84,6 +83,5 @@ module.exports = {
         if(! events) return res.json(404);
         res.json(events);
       });
-    
   }
 };
