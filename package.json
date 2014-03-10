@@ -34,7 +34,7 @@
     "chai-properties": "~1.1.0",
     "async-eventemitter": "~0.2.0",
     "anchor": "~0.9.7",
-    "anchor-schema": "0.0.0",
+    "anchor-schema": "git://github.com/weo-edu/anchor-schema",
     "clarify": "~1.0.0",
     "s3-policy": "~0.2.0",
     "bytes": "~0.2.1"
