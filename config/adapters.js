@@ -27,7 +27,7 @@ var adapters = module.exports.adapters = {
     module: 'sails-mongo',
     host: 'localhost',
     port: 27017,
-    database: 'sails'
+    database: 'sails',
   },
   // MySQL is the world's most popular relational database.
   // Learn more: http://en.wikipedia.org/wiki/MySQL
