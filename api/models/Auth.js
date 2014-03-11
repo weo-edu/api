@@ -9,7 +9,6 @@
    , crypto = require('crypto');
 
  module.exports = {
-  adapter: 'sails-redis',
   attributes: {
 
   	/* e.g.
