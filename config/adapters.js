@@ -12,6 +12,24 @@
  * http://sailsjs.org/#documentation
  */
 
+function mongoHqParse(href) {
+  var parsed = require('url').parse(href)
+    , parts = parsed.auth.split(':');
+
+  return {
+    module: 'sails-mongo',
+    host: parsed.hostname,
+    port: parsed.port,
+    database: parsed.path.slice(1)
+    user: parts[0],
+    password: parts[1]
+  };
+}
+
+var mongoHq = null;
+if(process.env.MONGOHQ_URL)
+  mongoHq = mongoHqParse(process.env.MONGOHQ_URL);
+
 var adapters = module.exports.adapters = {
 
   // If you leave the adapter config unspecified
@@ -23,7 +41,7 @@ var adapters = module.exports.adapters = {
   disk: {
     module: 'sails-disk'
   },
-  mongo: {
+  mongo: mongoHq || {
     module: 'sails-mongo',
     host: 'localhost',
     port: 27017,

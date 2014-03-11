@@ -6,8 +6,7 @@
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
  var Seq = require('seq')
-   , crypto = require('crypto')
-   , redis = require('redis').createClient();
+   , crypto = require('crypto');
 
  module.exports = {
   adapter: 'sails-redis',
