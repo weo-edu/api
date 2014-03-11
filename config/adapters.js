@@ -20,7 +20,7 @@ function mongoHqParse(href) {
     module: 'sails-mongo',
     host: parsed.hostname,
     port: parsed.port,
-    database: parsed.path.slice(1)
+    database: parsed.path.slice(1),
     user: parts[0],
     password: parts[1]
   };
