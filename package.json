@@ -42,13 +42,16 @@
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "test": "mocha test/*.js"
+    "test": "mocha test/*.js",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "main": "app.js",
   "repository": "",
   "author": "",
   "license": "",
   "devDependencies": {
-    "clarify": "~1.0.0"
+    "clarify": "~1.0.0",
+    "coveralls": "~2.8.0",
+    "mocha": "~1.17.1"
   }
 }
