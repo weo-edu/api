@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "description": "a Sails application",
   "dependencies": {
-    "sails": "~0.9.8",
+    "sails": "git://github.com/weo-edu/sails#weo",
     "grunt": "0.4.1",
     "sails-disk": "~0.9.0",
     "ejs": "0.8.4",
@@ -24,7 +24,7 @@
     "hiredis": "~0.1.16",
     "seq": "~0.3.5",
     "sails-mongo": "~0.9.7",
-    "weo-error-codes": "0.0.1",
+    "weo-error-codes": "git://github.com/weo-edu/weo-error-codes",
     "supertest": "~0.9.0",
     "chai": "~1.8.1",
     "Faker": "weo-edu/Faker.js",
@@ -34,7 +34,7 @@
     "chai-properties": "~1.1.0",
     "async-eventemitter": "~0.2.0",
     "anchor": "~0.9.7",
-    "anchor-schema": "0.0.0",
+    "anchor-schema": "git://github.com/weo-edu/anchor-schema",
     "clarify": "~1.0.0",
     "s3-policy": "~0.2.0",
     "bytes": "~0.2.1",
@@ -43,13 +43,16 @@
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "test": "mocha test/*.js"
+    "test": "mocha test/*.js",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "main": "app.js",
   "repository": "",
   "author": "",
   "license": "",
   "devDependencies": {
-    "clarify": "~1.0.0"
+    "clarify": "~1.0.0",
+    "coveralls": "~2.8.0",
+    "mocha": "~1.17.1"
   }
 }
