@@ -50,5 +50,21 @@ module.exports = {
   },
   producedBy: function(userId) {
     return Event.find({'actor.id': userId});
+  },
+  createAndEmit: function(evt, cb) {
+    Event.create(evt)
+      .exec(function(err, createdEvent) {
+        if(err) return cb(err);
+        _.each(createdEvent.to, function(to) {
+          Event.publish(to, {
+            model: Event.identity,
+            verb: 'add',
+            data: createdEvent,
+            id: to
+          });
+        });
+        cb(null, createdEvent);
+      });
+
   }
 };

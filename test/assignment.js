@@ -10,6 +10,28 @@ require('./helpers/boot');
 
 describe('Assignment controller', function() {
 
+  var authToken, teacher, authToken2, student;
+  before(function(done) {
+    Seq()
+      .seq(function() {
+        teacher = UserHelper.create(this);
+      })
+      .seq(function() {
+        UserHelper.login(teacher.username, teacher.password, this);
+      })
+      .seq(function(res) {
+        authToken = 'Bearer ' + res.body.token;
+        student = UserHelper.create({type: 'student'}, this);
+      })
+      .seq(function() {
+      	UserHelper.login(student.username, student.password, this);
+      })
+      .seq(function(res) {
+      	authToken2 = 'Bearer ' + res.body.token;
+      	this();
+      })
+      .seq(done);
+  });
 
   describe('should create a new assignment', function() {
   	it('when information is entered properly', function(done) {
@@ -59,7 +81,34 @@ describe('Assignment controller', function() {
   			this();
       })
       .seq(done);
-  	})
+  	});
+
+		it('when no due date is provided', function(done) {
+			Seq()
+	      .seq(function() {
+	        UserHelper.create({}, this);
+	      })
+	      .seq(function(res) {
+	        this.vars.user = res.body;
+	        request
+	          .post('/teacher/' + this.vars.user.id + '/group')
+	          .send({name: Faker.Lorem.words()})
+	          .end(this);
+	      })
+	      .seq(function(res) {
+	        this.vars.group = res.body;
+	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
+	        delete assignment.due_at;
+	        request.post('/assignment')
+	          .send(assignment)
+	          .end(this);
+	      })
+	      .seq(function(res) {
+	        expect(res.body).to.have.property('due_at');
+	        this();
+	      })
+	      .seq(done)
+		})
   });
 
   describe('should return an error on create new', function() {
@@ -96,55 +145,14 @@ describe('Assignment controller', function() {
 	      .seq(done)
   	});
 
-		it('when due date is missing', function(done) {
-
-			Seq()
-	      .seq(function() {
-	        UserHelper.create({}, this);
-	      })
-	      .seq(function(res) {
-	        this.vars.user = res.body;
-	        request
-	          .post('/teacher/' + this.vars.user.id + '/group')
-	          .send({name: Faker.Lorem.words()})
-	          .end(this);
-	      })
-	      .seq(function(res) {
-	        this.vars.group = res.body;
-	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
-	        delete assignment.due_at;
-	        request.post('/assignment')
-	          .send(assignment)
-	          .end(this);
-	      })
-	      .seq(function(res) {
-	        expect(res).to.have.status(400);
-	        expect(res.body.message).to.equal('ValidationError');
-          expect(res.body.errors).to.include.something.that.deep.equals({
-            resource: 'assignment',
-            field: 'due_at',
-            code: 'invalid',
-            details: {data: null, rule: 'datetime'}
-          });
-	        this();
-	      })
-	      .seq(done)
-		});
+		
   });
 
 	describe('should find created assignments', function() {
-		var teacher, student, group;
+		var group;
 		before(function(done) {
 			Seq()
-				.par(function() {
-					UserHelper.create({}, this);
-				})
-				.par(function() {
-					UserHelper.create({type: 'student'}, this);
-				})
-				.seq(function(teacherRes, studentRes) {
-					teacher = teacherRes.body;
-					student = studentRes.body;
+				.seq(function() {
 					request
 	          .post('/teacher/' + teacher.id + '/group')
 	          .send({name: Faker.Lorem.words()})
@@ -174,6 +182,7 @@ describe('Assignment controller', function() {
 				.seq(function() {
 					request
 						.get('/group/' + group.id + '/assignments')
+						.set('Authorization', authToken)
 						.end(this);
 				})
 				.seq(function(res) {
@@ -189,7 +198,8 @@ describe('Assignment controller', function() {
 			Seq()
 				.seq(function() {
 					request
-						.get('/group/' + group.id + '/assignments/student/' + student.id)
+						.get('/group/' + group.id + '/assignments')
+						.set('Authorization', authToken2)
 						.end(this);
 				})
 				.seq(function(res) {
@@ -217,18 +227,15 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(assignment) {
 					this.vars.assignment = assignment;
-					UserHelper.create({type: 'student'}, this);
-				})
-				.seq(function(res) {
-					this.vars.student = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + this.vars.student.id)
+  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
   					.end(this);
 				})
 				.seq(function(res) {
-					var url = '/assignment/' + this.vars.assignment.id + '/student/' + this.vars.student.id;
+					var url = '/assignment/' + this.vars.assignment.id;
 					request
 						.get(url)
+						.set('Authorization', authToken2)
 						.end(this);
 				})
 				.seq(function(res) {
@@ -248,24 +255,21 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(assignment) {
 					this.vars.assignment = assignment;
-					UserHelper.create({type: 'student'}, this);
-				})
-				.seq(function(res) {
-					this.vars.student = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + this.vars.student.id)
+  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
   					.end(this);
 				})
 				.seq(function(res) {
-					var url = '/assignment/' + this.vars.assignment.id + '/student/' + this.vars.student.id + '/score';
+					var url = '/assignment/' + this.vars.assignment.id + '/score'
 					request
 						.patch(url)
+						.set('Authorization', authToken2)
 						.send({score: 5})
 						.end(this);
 				})
 				.seq(function(res) {
 					var assignment = res.body;
-					var assignment_student = assignment.students[this.vars.student.id];
+					var assignment_student = assignment.students[student.id];
 					expect(assignment_student.score).to.equal(5);
 					expect(assignment_student.progress).to.equal(1);
 					expect(assignment_student.reward_claimed).to.equal(false);

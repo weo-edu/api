@@ -27,6 +27,8 @@ module.exports = {
     payload: {
       type: 'json'
     },
+
+    // page link
     assignmentLink: {
       type: 'string',
       defaultsTo: '${assignment.objective.link}/${assignment.id}'

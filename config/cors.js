@@ -40,7 +40,7 @@ module.exports.cors = {
 
 	// Which methods should be allowed for CORS requests?  This is only used
 	// in response to preflight requests (see article linked above for more info)
-	methods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD',
+	methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
 
 	// Which headers should be allowed for CORS requests?  This is only used
 	// in response to preflight requests.

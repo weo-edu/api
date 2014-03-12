@@ -13,9 +13,8 @@ module.exports = function(paramName) {
           req.body[paramName] = belongsTo;
           groups = belongsTo;
         }
-
-        if(_.intersection([].concat(groups), belongsTo).length
-            === groups.length)
+        groups = [].concat(groups);
+        if(_.intersection(groups, belongsTo).length === groups.length)
           next();
         else
           next('Access denied');

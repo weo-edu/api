@@ -43,10 +43,6 @@ module.exports = {
     '@/:to/assignments': {
       action: 'find',
       controller: 'assignment'
-    },
-    '@/:to/assignments/student/:student': {
-      action: 'find',
-      controller: 'assignment'
     }
     
   },

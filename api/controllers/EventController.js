@@ -37,23 +37,10 @@ module.exports = {
           name: user.name,
           link: '/user/' + user.id
         };
-
-        Event.create(evt)
-          .exec(function(err, createdEvent) {
-            if(err) return res.serverError(err);
-            if (req.socket) {
-              _.each(createdEvent.to, function(to) {
-                Event.publish(to, {
-                  model: Event.identity,
-                  verb: 'add',
-                  data: createdEvent,
-                  id: to
-                }, req.socket);
-              });
-            }
-
-            res.json(201, createdEvent);
-          });
+        Event.createAndEmit(evt, function(err, createdEvent) {
+          if (err) return res.serverError(err);
+          res.json(201, createdEvent);
+        });
       });
   },
   createSubscription: function(req, res) {

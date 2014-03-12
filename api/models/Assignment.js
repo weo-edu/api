@@ -91,9 +91,17 @@ module.exports = {
   		})
   		.seq(function(objective) {
   			if (!objective) return this(new databaseError.NotFound('Objective'));
+        
   			options.objective = objective;
         options.id = new ObjectId;
+
+        // link templating
+        if (objective.payload && objective.payload.get)
+          objective.payload.get = _.template(objective.payload.get, {assignment: options});
         options.link = _.template(objective.assignmentLink, {assignment: options});
+        delete objective.assignmentLink;
+
+
         // XXX have to clone because sails turns into a regex, ugh
   			Student.find({groups: _.clone(options.to), type: 'student'}).done(this);
   		})
@@ -102,6 +110,9 @@ module.exports = {
   			_.each(students, function(student) {
   				options.students[student.id] = studentInit();
   			});
+        if (!options.due_at) {
+          options.due_at = moment();
+        }
   			Assignment.create(options).done(this);
   		})
   		.seq(function(assignment) {
@@ -166,20 +177,20 @@ module.exports = {
         object: {
           id: assignment.id,
           link: assignment.link,
-          name: assignment.objective.title,
+          name: assignment.objective.type,
           icon: assignment.objective.icon,
 
         },
         type: 'assignment',
         payload: {
-          get: '/assignment/' + assignment.id //XXX include host? use template?
+          title: assignment.objective.title,
         }
       };
-      Event.create(e, function(err, e) {
-        cb(err, e);
-      });
+      Event.createAndEmit(e, cb);
     });
-  }
+  },
+
+
 
 };
 

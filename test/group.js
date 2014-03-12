@@ -7,6 +7,8 @@ var Seq = require('seq')
 require('./helpers/boot');
 
 describe('Group controller', function() {
+
+
   describe('create', function(){
   	it('should create new group and add user to group', function(done) {
       Seq()
