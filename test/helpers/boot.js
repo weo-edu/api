@@ -18,6 +18,7 @@ global.expect = chai.expect;
 process.env.PORT = 1339;
 
 before(function(done) {
+  this.timeout(4000);
   sails.lift();
   sails.on('ready', function() {
     global.request = supertest(sails.express.app);
