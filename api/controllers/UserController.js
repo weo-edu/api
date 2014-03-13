@@ -33,6 +33,10 @@ module.exports = {
     'GET @/events': {
       controller: 'event',
       action: 'events'
+    },
+    'PATCH @/avatar': {
+      controller: 'avatar',
+      action: 'change'
     }
   },
 

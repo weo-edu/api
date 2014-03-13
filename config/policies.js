@@ -46,6 +46,9 @@ module.exports.policies = {
   AssignmentController: {
     score: 'isAuthenticated',
     find: 'isAuthenticated'
+  },
+  AvatarController: {
+    change: 'isAuthenticated'
   }
   /*
 	// Here's an example of adding some policies to a controller

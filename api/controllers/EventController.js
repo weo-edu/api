@@ -34,6 +34,7 @@ module.exports = {
 
         evt.actor = {
           id: user.id,
+          avatar: avatar(user.id),
           name: user.name,
           link: '/user/' + user.id
         };
