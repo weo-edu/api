@@ -30,9 +30,14 @@ module.exports = {
 
   change: function(req, res) {
   	var imageUrl = req.param('image');
+  	if (!imageUrl) {
+  		return res.clientError('No new image provided')
+  			.missing('avatar', 'image')
+  			.send(400);
+  	}
+
   	var imagePath = url.parse(imageUrl).pathname;
   	var user = req.user.id;
-  	console.log('imagePath', imagePath);
   	client.copyFile(imagePath, '/' + user, { 'x-amz-acl': 'public-read' }, function(err, s3Res){
   		if (err) return res.serverError(err);
   		res.send(204);
