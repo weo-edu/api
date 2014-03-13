@@ -1,3 +1,3 @@
 module.exports = function(id) {
-	return '//avatar.eos.io/' + id;
+	return 'http://avatar.eos.io/' + id;
 }
