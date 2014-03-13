@@ -1,5 +1,5 @@
 [![Build Status](https://drone.io/github.com/weo-edu/api/status.png)](https://drone.io/github.com/weo-edu/api/latest)
-[![Coverage Status](https://coveralls.io/repos/weo-edu/api/badge.png)](https://coveralls.io/r/weo-edu/api)
+[![Coverage Status](https://drone.io/github.com/weo-edu/api/files/badge.png)](https://drone.io/github.com/weo-edu/api/files/coverage/lcov-report/index.html)
 
 ## Time Policy
 
