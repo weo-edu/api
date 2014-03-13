@@ -14,8 +14,7 @@ module.exports = {
   	'POST @': 'create',
     'GET @/active': 'active',
   	'@/:assignment': 'find',
-  	'@/:assignment/student/:student': 'find',
-  	'PATCH @/:assignment/student/:student/score': 'score'
+  	'PATCH @/:assignment/score': 'score'
   },
 
   create: function(req, res) {
@@ -34,7 +33,7 @@ module.exports = {
       }
   		if (err) throw err;
 
-  		res.json(assignment.toJSON());
+  		res.json(201, assignment.toJSON());
   	});
   },
 
@@ -55,9 +54,10 @@ module.exports = {
   },
 
   find: function(req, res) {
-  	var studentId = req.param('student')
-  		, toIds = req.param('to')
+  	var toIds = req.param('to')
   		, assignmentId = req.param('assignment');
+
+    var studentId = req.user.role === 'student' && req.user.id;
 
   	var options = parseParams(req, ['student', 'to', 'assignment']);
   	if (toIds) options.to = toIds;
@@ -74,11 +74,12 @@ module.exports = {
 
   score: function(req, res) {
   	var assignmentId = req.param('assignment')
-  		, studentId = req.param('student')
+  		, studentId = req.user.id
   		, score = req.param('score');
 
   	var update = {};
-  	update['students.' + studentId + '.score'] = 5;
+  	if (!_.isUndefined(score))
+      update['students.' + studentId + '.score'] = score;
   	update['students.' + studentId + '.progress'] = 1;
   	Assignment.update({id: assignmentId}, update, function(err, assignments){
   		var assignment = assignments[0];

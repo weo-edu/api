@@ -42,6 +42,10 @@ module.exports.policies = {
   },
   S3Controller: {
   	upload: 'isAuthenticated'
+  },
+  AssignmentController: {
+    score: 'isAuthenticated',
+    find: 'isAuthenticated'
   }
   /*
 	// Here's an example of adding some policies to a controller

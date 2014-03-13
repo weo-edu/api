@@ -11,6 +11,9 @@ module.exports = {
   Comment: require('../models/Comment'),
   Post: require('../models/Post'),
   Event: require('../models/Event'),
-  Discussion: require('../models/Discussion')
+  Discussion: require('../models/Discussion'),
+  Form: require('../models/Form'),
+  FormQuestion: require('../models/FormQuestion'),
+  Response: require('../models/Response')
 };
 

@@ -1,6 +1,8 @@
 var Seq = require('seq')
 	, _ = require('lodash')
-	, modelHook = require('../../lib/modelHook');
+	, modelHook = require('../../lib/modelHook')
+  , moment = require('moment')
+  
 
 function studentInit() {
 	return {progress: 0, score: 0, reward_claimed: false};
@@ -50,24 +52,24 @@ module.exports = {
       type: 'integer'
     },
 
-  	graded_at: {
-  		type: 'datetime'
-  	},
-
-    turned_in_at: {
-      type: 'datetime'
-    },
-
   	teacher: {
   		type: 'string',
   		required: true
   	},
 
+
+    //link to assignment
+    link: {
+      type: 'string'
+    },
+
   	/**
   	 * Map of students who received assignment
-  	 * @progress {float} progress out of 1
-  	 * @score {float} score on assignment
-  	 * @reward_claimed {boolean} whether reward was claimed
+  	 * @param {float} progress progress out of 1
+  	 * @param {float} score score on assignment
+  	 * @param {boolean} reward_claimed whether reward was claimed
+     * @param {datetime} submitted_at date assignment was submitted
+     * @param {datetime} graded_at date assignment was graded
   	 */
   	students: {
   		type: 'json'
@@ -89,7 +91,17 @@ module.exports = {
   		})
   		.seq(function(objective) {
   			if (!objective) return this(new databaseError.NotFound('Objective'));
+        
   			options.objective = objective;
+        options.id = new ObjectId;
+
+        // link templating
+        if (objective.payload && objective.payload.get)
+          objective.payload.get = _.template(objective.payload.get, {assignment: options});
+        options.link = _.template(objective.assignmentLink, {assignment: options});
+        delete objective.assignmentLink;
+
+
         // XXX have to clone because sails turns into a regex, ugh
   			Student.find({groups: _.clone(options.to), type: 'student'}).done(this);
   		})
@@ -98,10 +110,18 @@ module.exports = {
   			_.each(students, function(student) {
   				options.students[student.id] = studentInit();
   			});
+        if (!options.due_at) {
+          options.due_at = moment();
+        }
   			Assignment.create(options).done(this);
   		})
   		.seq(function(assignment) {
-  			cb(null, assignment)
+        if (moment(assignment.due_at).diff(moment()) < 0) {
+          Assignment.toEvent(assignment, function(err) {
+            cb(err, assignment);
+          });
+        } else
+  			 cb(null, assignment)
   		})
   		.catch(function(err) {
   			cb(err);
@@ -139,7 +159,38 @@ module.exports = {
   	Assignment.update({to: groupId}, update, function(err, assignment) {
       cb(err, assignment);
     });
-  }
+  },
+
+  toEvent: function(assignment, cb) {
+    Teacher.findOne(assignment.teacher, function(err, user) {
+      if (err) return cb(err);
+      if (!user) return cb(new databaseError.NotFound('User'));
+      var e = {
+        to: assignment.to,
+        actor: {
+          id: user.id,
+          avatar: user.avatar,
+          name: user.name,
+          link: '/user/' + user.id
+        },
+        verb: 'assigned',
+        object: {
+          id: assignment.id,
+          link: assignment.link,
+          name: assignment.objective.type,
+          icon: assignment.objective.icon,
+
+        },
+        type: 'assignment',
+        payload: {
+          title: assignment.objective.title,
+        }
+      };
+      Event.createAndEmit(e, cb);
+    });
+  },
+
+
 
 };
 

@@ -9,10 +9,11 @@ describe('User controller', function() {
     it('should validate new user data', function(done) {
       Seq()
         .seq(function() {
-          User.create({
-            username: 'a',
-            type: 'notAValidType'
-          }, this);
+          var user = User.generate({username: 'a', type: 'notAValidType'});
+          request
+            .post('/user')
+            .send(user)
+            .end(this);
         })
         .seq(function(res) {
           expect(res).to.have
@@ -185,7 +186,7 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(400);
           expect(res).to.have
-            .ValidationError('already_exists', 'username', 'user', {rule: 'unique'});
+            .ValidationError('already_exists', 'username', 'teacher', {rule: 'unique'});
           this();
         })
         .seq(done);

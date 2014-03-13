@@ -11,7 +11,7 @@ var mergeModels = require('../../lib/mergeModels.js')
 var model = module.exports = mergeModels({}, User, {
   types: {
     virtual: function() { return true; },
-    fn: function() { return true; },
+    fn: function() { return true; }
   },
   attributes: {
     type: {
@@ -33,6 +33,16 @@ var model = module.exports = mergeModels({}, User, {
       type: 'string',
       required: true,
       in: ['Mrs.', 'Ms.', 'Mr.', 'Dr.', 'None']
+    },
+    name: {
+      type: 'virtual',
+      fn: function() {
+        if (this.title !== 'None') {
+          return this.title + ' ' + this.last_name;
+        } else {
+          return this.first_name + ' ' + this.last_name;
+        }
+      }
     }
   }
 });
