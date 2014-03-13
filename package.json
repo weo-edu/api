@@ -44,8 +44,8 @@
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "test": "mocha test/*.js",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "test": "istanbul test _mocha --report lcov -- -R spec",
+    "badge": "coverage-badge `coverage-percentage ./coverage/lcov.info --lcov` badge.png"
   },
   "main": "app.js",
   "repository": "",
@@ -54,6 +54,9 @@
   "devDependencies": {
     "clarify": "~1.0.0",
     "coveralls": "~2.8.0",
-    "mocha": "~1.17.1"
+    "mocha": "~1.17.1",
+    "coverage-percentage": "0.0.2",
+    "coverage-badge": "git://github.com/ashaffer/node-coverage-badge#patch-1",
+    "istanbul": "~0.2.6"
   }
 }
