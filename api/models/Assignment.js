@@ -169,7 +169,7 @@ module.exports = {
         to: assignment.to,
         actor: {
           id: user.id,
-          avatar: user.avatar,
+          avatar: avatar(user.id),
           name: user.name,
           link: '/user/' + user.id
         },
