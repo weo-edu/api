@@ -1,5 +1,5 @@
 [![Build Status](https://drone.io/github.com/weo-edu/api/status.png)](https://drone.io/github.com/weo-edu/api/latest)
-[![Coverage Status](https://s3-us-west-1.amazonaws.com/misc.eos.io/api/badge.png)](https://s3-us-west-1.amazonaws.com/misc.eos.io/api/lcov-report/index.html)
+[![Coverage Status](https://s3-us-west-1.amazonaws.com/misc.eos.io/api/badge.png)](https://s3-us-west-1.amazonaws.com/misc.eos.io/api/coverage/lcov-report/index.html)
 ## Time Policy
 
 - times are stored as ISODates in UTC
