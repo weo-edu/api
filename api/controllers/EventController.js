@@ -46,12 +46,26 @@ module.exports = {
   },
   createSubscription: function(req, res) {
     var to = req.param('to');
-    Event.subscribe(req.socket, to);
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('subscription', 'to')
+        .send(400);
+    }
+    if (req.socket) {
+      Event.subscribe(req.socket, to);
+    }
     res.send(201);
   },
   deleteSubscription: function(req, res) {
     var to = req.param('to');
-    Event.unsubscribe(req.socket, to);
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('subscription', 'to')
+        .send(400);
+    }
+    if (req.socket) {
+      Event.unsubscribe(req.socket, to);
+    }
     res.send(204);
   },
   events: function(req, res) {
@@ -64,6 +78,11 @@ module.exports = {
   },
   feed: function(req, res) {
     var to = req.param('to');
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('event', 'to')
+        .send(400);
+    }
     Event.receivedBy(to)
       .sort('createdAt DESC')
       .exec(function(err, events) {
