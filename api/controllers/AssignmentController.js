@@ -88,7 +88,7 @@ module.exports = {
   				.missing('assignment', 'id')
   				.send(404);
   		}
-  		res.json(assignment.toJSON());
+  		res.json(Assignment.transformAssignment(assignment, studentId).toJSON());
   	})
   }
 
