@@ -269,10 +269,9 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
 					var assignment = res.body;
-					var assignment_student = assignment.students[student.id];
-					expect(assignment_student.score).to.equal(5);
-					expect(assignment_student.progress).to.equal(1);
-					expect(assignment_student.reward_claimed).to.equal(false);
+					expect(assignment.score).to.equal(5);
+					expect(assignment.progress).to.equal(1);
+					expect(assignment.reward_claimed).to.equal(false);
 					this();
 				})
 				.seq(done);
