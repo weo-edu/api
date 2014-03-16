@@ -9,7 +9,8 @@ module.exports.express = {
       }
       next();
     });
-    
+
+    app.use(express.logger('dev'));
     app.use(passport.initialize());
     app.use(weoErrorCodes());
   }
