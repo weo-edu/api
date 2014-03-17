@@ -4,11 +4,6 @@ var passport = require('passport')
 module.exports.express = {
   customMiddleware: function(app) {
     app.use(function(req, res, next) {
-      console.log('req', req.url);
-      next();
-    });
-
-    app.use(function(req, res, next) {
       if(! req.headers.authorization && req.cookies.authToken) {
         req.headers.authorization = 'Bearer ' + req.cookies.authToken;
       }
