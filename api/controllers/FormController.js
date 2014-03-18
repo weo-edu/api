@@ -18,7 +18,6 @@ module.exports = {
 			if (err) return res.serverError(err);
 			if (req.socket) {
 				Response.subscribe(req.socket, collection);
-				console.log('subscribe', collection);
 			} 
 			res.json(form.toJSON());
 		});

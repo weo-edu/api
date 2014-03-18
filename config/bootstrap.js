@@ -36,7 +36,7 @@ module.exports.bootstrap = function (cb) {
 
   sails.on('router:route', function(data) {
   	var token = data.req.socket && data.req.socket.handshake && data.req.socket.handshake.query.token;
-  	if (!data.req.headers.authorization && token) {
+  	if (token) {
   		data.req.headers.authorization = 'Bearer ' + token;
   	}
   });

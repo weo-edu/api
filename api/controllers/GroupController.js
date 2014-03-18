@@ -82,7 +82,6 @@ module.exports = {
       });
   },
   addMember: function(req, res) {
-
     var userId = req.param('user')
       , groupId = req.param('id')
       , parsedId = parseId(groupId);

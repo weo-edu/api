@@ -14,7 +14,6 @@ module.exports = {
 
   create: function(req, res) {
   	var response = req.params.all();
-  	console.log('create', response);
   	Response.create(response, function(err, response) {
   		if (err) return res.serverError(err);
   		Response.publish(response.collection, {
@@ -38,7 +37,6 @@ module.exports = {
             .send(404);
   		}
   		var response = updates[0];
-  		console.log('publish update');
   		Response.publish(response.collection, {
   			model: Response.identity,
   			verb: 'update',

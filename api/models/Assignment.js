@@ -91,7 +91,7 @@ module.exports = {
   		})
   		.seq(function(objective) {
   			if (!objective) return this(new databaseError.NotFound('Objective'));
-        
+
   			options.objective = objective;
         options.id = new ObjectId;
 
@@ -157,6 +157,7 @@ module.exports = {
   	update.students[userId] = studentInit();
   	// XXX only add students to assignments that aren't due yet
   	Assignment.update({to: groupId}, update, function(err, assignment) {
+      console.log('finish adding');
       cb(err, assignment);
     });
   },

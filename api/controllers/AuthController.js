@@ -55,6 +55,7 @@ module.exports = {
                 role: user.type
               });
             });
+
       } else {
         res.clientError('Incorrect password')
           .invalid('auth', 'password')
