@@ -64,6 +64,22 @@ module.exports = {
   afterCreate: [function(attrs, next) {
     delete attrs.password;
     next();
+  }, function(attrs, next) {
+    var groups = attrs.groups;
+    if (groups && groups.length) {
+      Seq(groups)
+        .parEach(function(group) {
+          modelHook.emit('group:addMember', {groupId: group.id, user: attrs}, this);
+        })
+        .seq(function() {
+          next();
+        })
+        .catch(function(err) {
+          next(err);
+        });
+    } else {
+      next();
+    }
   }],
   addToGroup: function(userId, groupId, groupType, cb) {
     if (_.isFunction(groupType)) {
