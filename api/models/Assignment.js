@@ -2,7 +2,7 @@ var Seq = require('seq')
 	, _ = require('lodash')
 	, modelHook = require('../../lib/modelHook')
   , moment = require('moment')
-  
+
 
 function studentInit() {
 	return {progress: 0, score: 0, reward_claimed: false};
@@ -11,7 +11,7 @@ function studentInit() {
 modelHook.on('group:addMember', function(data, next) {
 	if (data.user.type === 'student')
 		Assignment.addStudent(data.groupId, data.user.id, next);
-	else 
+	else
 		next();
 });
 
@@ -27,7 +27,7 @@ modelHook.on('group:addMember', function(data, next) {
 module.exports = {
 
   attributes: {
-  	
+
   	objective: {
   		type: 'json',
   		required: true
@@ -74,7 +74,7 @@ module.exports = {
   	students: {
   		type: 'json'
   	}
-    
+
   },
 
   beforeCreate: [function(attrs, next) {
@@ -156,10 +156,7 @@ module.exports = {
   	update.students = {};
   	update.students[userId] = studentInit();
   	// XXX only add students to assignments that aren't due yet
-  	Assignment.update({to: groupId}, update, function(err, assignment) {
-      console.log('finish adding');
-      cb(err, assignment);
-    });
+  	Assignment.update({to: groupId}, update, cb);
   },
 
   toEvent: function(assignment, cb) {

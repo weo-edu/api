@@ -9,7 +9,7 @@
  * For more information on configuring the session, check out:
  * http://sailsjs.org/#documentation
  */
-var redis = require('./redis');
+var redis = require('./redis').redis;
 module.exports.session = {
 
   // Session secret is automatically generated when your new app is created
