@@ -30,7 +30,7 @@ modelHook.on('group:create', function(group, next) {
 	actor.name = 'Weo Tips';
 	Event.createAndEmit({
 		to: [group.id],
-		actor: Event.userToActor(user),
+		actor: actor,
 		verb: 'shared',
 		type: 'tip',
 		visibility: 'teacher',
