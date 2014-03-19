@@ -1,13 +1,8 @@
-var redis = require('redis')
-  , client;
+var redis = require('redis');
+var config = require('../../config/redis');
 
-if(process.env.REDISTOGO_URL) {
-  var parsed = require('url').parse(process.env.REDISTOGO_URL)
-    , parts = parsed.auth.split(':');
-
-  client = redis.createClient(parsed.port, parsed.hostname);
-  client.auth(parts[1]);
-} else
-  client = redis.createClient();
+var client = redis.createClient(config.port, config.hostname);
+if(config.password)
+  client.auth(config.password);
 
 module.exports = client;
