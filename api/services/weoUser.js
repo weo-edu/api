@@ -15,7 +15,6 @@ User.findOne(weoId).exec(function(err, u) {
 			type: 'admin'
 		}).done(function(err, u) {
 			_.extend(user, u);
-			console.log('user', user);
 		})
 	} else {
 		_.extend(user, u);
@@ -39,12 +38,9 @@ modelHook.on('group:create', function(group, next) {
 			name: group.name,
 			type: 'code'
 		}
-
 	}, function(err) {
 		if (err) {
 			console.error(err.ValidationError);
-		} else {
-			console.log('Group Tip Created');
 		}
 	});
 });
