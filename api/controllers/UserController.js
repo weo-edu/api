@@ -21,7 +21,7 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    'GET /user/groups/:type': 'groups',
+    'GET /user/groups/:type?': 'groups',
     'GET @/feed': {
       controller: 'event',
       action: 'feed'
@@ -39,7 +39,6 @@ module.exports = {
       action: 'change'
     }
   },
-
   groups: function(req, res) {
     User.groups(req.user.id, req.param('type'), function(err, groups) {
       if (err instanceof databaseError.NotFound) {
@@ -50,7 +49,7 @@ module.exports = {
         }
       }
       if (err) throw err;
-      res.json(_.map(groups, function(group) {return group.toJSON()}));
+      res.json(_.invoke(groups, 'toJSON'));
     })
   }
 };

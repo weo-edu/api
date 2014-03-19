@@ -16,10 +16,6 @@
  */
 
 module.exports = {
-    
-  
-
-
   /**
    * Overrides for the settings in `config/controllers.js`
    * (specific to DiscussionController)
@@ -29,16 +25,12 @@ module.exports = {
   	'POST @/:id/subscription': 'createSubscription',
   	'DELETE @/:id/subscription': 'deleteSubscription'
   },
-
   createSubscription: function(req, res) {
   	Discussion.subscribe(req.socket, req.param('id'));
   	res.send(201);
   },
-
   deleteSubscription: function(req, res) {
   	Discussion.unsubscribe(req.socket, req.param('id'));
   	res.send(201);
   }
-
-  
 };

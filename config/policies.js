@@ -49,6 +49,9 @@ module.exports.policies = {
   },
   AvatarController: {
     change: 'isAuthenticated'
+  },
+  DiscussionController: {
+    '*': ['isAuthenticated']
   }
   /*
 	// Here's an example of adding some policies to a controller

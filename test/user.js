@@ -1,5 +1,6 @@
 var Seq = require('seq')
-  , User = require('./helpers/user');
+  , User = require('./helpers/user')
+  , Group = require('./helpers/group');
 
 
 require('./helpers/boot');
@@ -187,6 +188,61 @@ describe('User controller', function() {
           expect(res).to.have.status(400);
           expect(res).to.have
             .ValidationError('already_exists', 'username', 'teacher', {rule: 'unique'});
+          this();
+        })
+        .seq(done);
+    });
+  });
+
+  describe('groups method', function() {
+    var authToken
+      , user
+      , group;
+    before(function(done) {
+      Seq()
+        .seq(function() {
+          Group.create(this);
+        })
+        .seq(function(res) {
+          group = res.body;
+          user = User.create({groups: res.body.id}, this);
+        })
+        .seq(function(res) {
+          User.login(user.username, user.password, this);
+        })
+        .seq(function(res) {
+          authToken = 'Bearer ' + res.body.token;
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not allow unauthenticated requests', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .get('/user/groups')
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(401);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should return the list of groups', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .get('/user/groups')
+            .set('Authorization', authToken)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          expect(res.body).to.have.length(1);
+          expect(res.body[0]).to.deep.equal(group);
           this();
         })
         .seq(done);
