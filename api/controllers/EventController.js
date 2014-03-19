@@ -32,12 +32,7 @@ module.exports = {
         if(err) throw err;
         if(! user) return res.send(404);
 
-        evt.actor = {
-          id: user.id,
-          avatar: avatar(user.id),
-          name: user.name,
-          link: '/user/' + user.id
-        };
+        evt.actor = Event.userToActor(user);
         Event.createAndEmit(evt, function(err, createdEvent) {
           if (err) return res.serverError(err);
           res.json(201, createdEvent);
@@ -83,7 +78,7 @@ module.exports = {
         .missing('event', 'to')
         .send(400);
     }
-    Event.receivedBy(to)
+    Event.receivedBy(to, req.user.role)
       .sort('createdAt DESC')
       .exec(function(err, events) {
         if(err) throw err;

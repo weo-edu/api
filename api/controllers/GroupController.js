@@ -51,7 +51,7 @@ module.exports = {
     var parsedId = parseId(id);
     Group.findOne(parsedId.selector)
       .exec(function(err, group) {
-        if (err) throw err;
+        if (err) return res.serverErorr(err);
         if (!group) {
           return res.clientError('Group not found')
             .missing('group', parsedId.key)
@@ -75,10 +75,11 @@ module.exports = {
         User.addToGroup(userId, group.id, this)
       })
       .seq(function() {
+        modelHook.emit('group:create', this.vars.group);
         res.json(201, this.vars.group);
       })
       .catch(function(err) {
-        throw err;
+        res.serverErorr(err);
       });
   },
   addMember: function(req, res) {
@@ -87,14 +88,14 @@ module.exports = {
       , parsedId = parseId(groupId);
 
     Group.findOne(parsedId.selector).done(function(err, group) {
-      if (err) throw err;
+      if (err) return res.serverErorr(err);
       if (!group) {
         return res.clientError('Group not found')
           .missing('group', 'code')
           .send(404);
       }
       User.addToGroup(userId, group.id, function(err, user) {
-        if (err) throw err;
+        if (err) return res.serverErorr(err);
         modelHook.emit('group:addMember', {groupId: group.id, user: user}, function(err) {
           if (err) console.error('Error in group:addMember hook:' + err.message);
           res.send(204);

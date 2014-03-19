@@ -41,7 +41,7 @@ module.exports = {
     type: {
       type: 'string',
       required: true,
-      in: ['student', 'teacher', 'parent']
+      in: ['student', 'teacher', 'parent', 'admin']
     },
     groups: 'array'
   },

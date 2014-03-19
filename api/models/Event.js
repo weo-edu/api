@@ -12,7 +12,7 @@ var subSchema = require('../services/subSchema.js');
 module.exports = {
   types: {
     entity: subSchema({
-      id: {required: true, type: 'string'},
+      id: {required: true},
       name: {required: true, type: 'string'},
       link: {required: true, type: 'string'},
 
@@ -43,10 +43,14 @@ module.exports = {
       type: 'string',
       required: true
     },
+    // defines which roles can see event
+    visibility: {
+      type: 'string'
+    },
     payload: 'json'
   },
-  receivedBy: function(to) {
-    return Event.find({to: to});
+  receivedBy: function(to, role) {
+    return Event.find({to: to, or: [{visibility: role}, {visibility: undefined}]});
   },
   producedBy: function(userId) {
     return Event.find({'actor.id': userId});
@@ -66,5 +70,13 @@ module.exports = {
         cb(null, createdEvent);
       });
 
+  },
+  userToActor: function(user) {
+    return {
+      id: user.id,
+      avatar: avatar(user.id),
+      name: user.name,
+      link: '/user/' + user.id
+    }
   }
 };
