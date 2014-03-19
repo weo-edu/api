@@ -25,7 +25,7 @@ var client = knox.createClient({
  */
 
 module.exports = {
-    
+
   _config: {},
 
   change: function(req, res) {
@@ -40,8 +40,10 @@ module.exports = {
   	var user = req.user.id;
   	client.copyFile(imagePath, '/' + user, { 'x-amz-acl': 'public-read' }, function(err, s3Res){
   		if (err) return res.serverError(err);
+      if(s3Res.statusCode === 404)
+        return res.notFound('Avatar not found');
+
   		res.send(204);
 		});
   }
-
 };

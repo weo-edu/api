@@ -7,4 +7,4 @@ module.exports =  function() {
 	  "secret": "XrXyocH3bg8NjSWMPyrwdwT7STwpHwsH2i8JDFZQ",
 	  "bucket": bucket
 	};
-}
+};
