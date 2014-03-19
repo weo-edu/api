@@ -1,4 +1,4 @@
 var redisUrl = process.env.REDISTOGO_URL || 'redis://0:@localhost:6379';
 var parseRedisUrl = require('parse-redis-url')();
 
-module.exports = parseRedisUrl.parse(redisUrl);
+module.exports.redis = parseRedisUrl.parse(redisUrl);
