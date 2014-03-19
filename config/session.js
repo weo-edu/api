@@ -30,7 +30,7 @@ module.exports.session = {
   port: redis.port,
   ttl: 60*60*24*7,
   db: redis.database,
-  //pass: <redis auth password>
+  pass: redis.password,
   prefix: 'sess:'
 
 
