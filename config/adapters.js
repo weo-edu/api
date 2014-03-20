@@ -60,7 +60,7 @@ var adapters = module.exports.adapters = {
     database: 'YOUR_MYSQL_DB'
   }
 };
-
+console.log('mongo adapter', adapters.mongo);
 // function randomDbName(prefix) {
 //   return (prefix || '') + '_' + (new Date);
 // }
