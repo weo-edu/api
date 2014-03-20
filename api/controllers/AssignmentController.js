@@ -19,6 +19,7 @@ module.exports = {
 
   create: function(req, res) {
   	var assignment = req.params.all();
+    assignment.teacher = req.user.id;
   	Assignment.createFromObjective(assignment.objective, assignment, function(err, assignment) {
   		if (err instanceof databaseError.NotFound) {
   			if (err && err.message === 'Objective') {
@@ -91,7 +92,6 @@ module.exports = {
   		res.json(Assignment.transformAssignment(assignment, studentId).toJSON());
   	})
   }
-
 };
 
 function findNormalizeResponse(res, assignmentId) {

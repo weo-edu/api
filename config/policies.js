@@ -11,6 +11,7 @@
  * http://sailsjs.org/#documentation
  */
 var belongsToGroup = require('../api/policies/belongsToGroup');
+var ownsGroup = require('../api/policies/ownsGroup');
 module.exports.policies = {
   // Default policy for all controllers and actions
   // (`true` allows public access)
@@ -44,14 +45,24 @@ module.exports.policies = {
   	upload: 'isAuthenticated'
   },
   AssignmentController: {
-    score: 'isAuthenticated',
-    find: 'isAuthenticated'
+    '*': ['isAuthenticated'],
+    create: ['isAuthenticated', 'isTeacher', ownsGroup('to')],
+    score: ['isAuthenticated'],
+    find: ['isAuthenticated']
   },
   AvatarController: {
     change: 'isAuthenticated'
   },
   DiscussionController: {
     '*': ['isAuthenticated']
+  },
+  FormController: {
+    '*': ['isAuthenticated'],
+    create: ['isAuthenticated', 'isTeacher']
+  },
+  GroupController: {
+    '*': ['isAuthenticated'],
+    create: ['isAuthenticated', 'isTeacher']
   }
   /*
 	// Here's an example of adding some policies to a controller

@@ -23,15 +23,14 @@ module.exports = {
       unique: true,
       required: true
     },
-
-    //XXX implement and require
     owners: {
-      type: 'array'
+      type: 'array',
+      required: true
     }
   },
   beforeValidation: [function(attrs, next) {
     if (attrs.id) return next();
-    hashids('Group', {offset: hashids.sixDigitOffset}, 
+    hashids('Group', {offset: hashids.sixDigitOffset},
     function(err, code) {
       if(err) throw err;
       attrs.code = code;

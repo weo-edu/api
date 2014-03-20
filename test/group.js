@@ -1,84 +1,101 @@
-var Seq = require('seq')
-  , UserHelper = require('./helpers/user')
-  , Faker = require('Faker')
-  , _ = require('lodash');
+var Seq = require('seq');
+var UserHelper = require('./helpers/user');
+var GroupHelper = require('./helpers/group');
+var Faker = require('Faker');
+var _ = require('lodash');
 
 
 require('./helpers/boot');
 
-describe('Group controller', function() {
-
+describe('GroupHelper controller', function() {
+  var user, authToken;
+  before(function(done) {
+    Seq()
+      .seq(function() {
+        user = UserHelper.create(this);
+      })
+      .seq(function(res) {
+        UserHelper.login(user.username, user.password, this);
+      })
+      .seq(function(res) {
+        authToken = 'Bearer ' + res.body.token;
+        this();
+      })
+      .seq(done);
+  });
 
   describe('create', function(){
   	it('should create new group and add user to group', function(done) {
+      var group;
       Seq()
-  			.seq(function() {
-  				this.vars.user = UserHelper.create({}, this);
-  			})
-        .seq(function(res) {
-          var user = this.vars.user;
-          UserHelper.login(user.username, user.password, this);
-        })
-        .seq(function(res) {
-          this.vars.user.id = res.body.id;
-          expect(res).to.have.status(200);
-          this.vars.authToken = 'Bearer ' + res.body.token;
+        .seq(function() {
           request
-            .post('/teacher/' + this.vars.user.id + '/group')
-            .send({name: Faker.Lorem.words()})
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', authToken)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          this.vars.group = res.body;
-          var user = this.vars.user;
+          group = res.body;
           request
           	.get('/' + [user.type, user.id].join('/'))
-            .set('Authorization', this.vars.authToken)
+            .set('Authorization', authToken)
           	.end(this)
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-        	expect(res.body.groups).to.contain(this.vars.group.id);
+        	expect(res.body.groups).to.contain(group.id);
         	this();
         })
         .seq(done);
   	});
-
   });
 
   describe('get', function() {
   	it('should get an object by id', function(done) {
+      var group;
   		Seq()
   			.seq(function() {
-  				Group.create({name: Faker.Lorem.words()}).done(this)
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', authToken)
+            .end(this);
   			})
-  			.seq(function(group) {
-  				this.vars.group = group.toJSON();
+  			.seq(function(res) {
+  				group = res.body;
   				request
   					.get('/group/' + group.id)
+            .set('Authorization', authToken)
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(this.vars.group, 'createdAt', 'updatedAt'));
+  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(group, 'createdAt', 'updatedAt'));
   				this();
   			})
   			.seq(done);
   	});
 
   	it('should get an object by code', function(done) {
+      var group;
   		Seq()
   			.seq(function() {
-  				Group.create({name: Faker.Lorem.words()}).done(this)
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', authToken)
+            .end(this);
   			})
-  			.seq(function(group) {
-  				this.vars.group = group.toJSON();
+  			.seq(function(res) {
+          group = res.body;
   				request
   					.get('/group/' + group.code)
+            .set('Authorization', authToken)
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(this.vars.group, 'createdAt', 'updatedAt'));
+  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(group, 'createdAt', 'updatedAt'));
   				this();
   			})
   			.seq(done);
@@ -87,40 +104,51 @@ describe('Group controller', function() {
 
   describe('addMember', function() {
   	it('should add member to existing group', function(done) {
+      var user;
   		Seq()
   			.seq(function() {
-  				UserHelper.create({}, this);
+  				UserHelper.create(this);
   			})
   			.seq(function(res) {
-  				this.vars.user = res.body;
-  				Group.create({name: Faker.Lorem.words()}).done(this)
+          user = res.body;
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', authToken)
+            .end(this);
   			})
-  			.seq(function(group) {
-  				this.vars.group = group.toJSON();
+  			.seq(function(res) {
+          group = res.body;
   				request
-  					.put('/group/' + group.code + '/members/' + this.vars.user.id)
+  					.put('/group/' + group.code + '/members/' + user.id)
+            .set('Authorization', authToken)
   					.end(this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(204);
-  				User.findOne(this.vars.user.id).done(this);
+          request
+            .get('/teacher/' + user.id)
+            .set('Authorization', authToken)
+            .end(this);
   			})
-  			.seq(function(user) {
-  				expect(user.groups).to.contain(this.vars.group.id);
+  			.seq(function(res) {
+  				expect(res.body.groups).to.contain(group.id);
   				this();
   			})
   			.seq(done);
   	});
 
   	it('should handle non existent group', function(done) {
+      var user;
   		Seq()
   			.seq(function() {
   				UserHelper.create({}, this);
   			})
   			.seq(function(res) {
-  				this.vars.user = res.body;
+  				user = res.body;
   				request
-  					.put('/group/doesntexist/members/' + this.vars.user.id)
+  					.put('/group/doesntexist/members/' + user.id)
+            .set('Authorization', authToken)
   					.end(this);
   			})
   			.seq(function(res) {
@@ -135,6 +163,5 @@ describe('Group controller', function() {
   			})
   			.seq(done);
   	});
-  })
-
+  });
 });

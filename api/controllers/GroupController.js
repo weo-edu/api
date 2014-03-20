@@ -40,11 +40,11 @@ module.exports = {
     'PUT @/:id/members/:user': 'addMember',
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
+    'POST @/create': 'create',
     '@/:to/assignments': {
       action: 'find',
       controller: 'assignment'
-    }
-    
+    },
   },
   get: function(req, res) {
     var id = req.param('id');
@@ -61,25 +61,27 @@ module.exports = {
         res.json(group);
       });
   },
-  
-  createNew: function(req, res) {
-    var name = req.param('name')
-      , userId = req.param('teacher');
+
+  create: function(req, res) {
+    var name = req.param('name');
 
     Seq()
       .seq(function() {
-        Group.create({name: name}).done(this);
+        Group.create({
+          name: name,
+          owners: [req.user.id]
+        }).done(this);
       })
       .seq(function(group) {
         this.vars.group = group;
-        User.addToGroup(userId, group.id, this)
+        User.addToGroup(req.user.id, group.id, this)
       })
       .seq(function() {
         modelHook.emit('group:create', this.vars.group);
         res.json(201, this.vars.group);
       })
       .catch(function(err) {
-        res.serverErorr(err);
+        res.serverError(err);
       });
   },
   addMember: function(req, res) {

@@ -1,5 +1,6 @@
 var Seq = require('seq')
   , UserHelper = require('./helpers/user')
+  , GroupHelper = require('./helpers/group')
   , AssignmentHelper = require('./helpers/assignment')
   , Faker = require('Faker')
   , _ = require('lodash')
@@ -10,7 +11,7 @@ require('./helpers/boot');
 
 describe('Assignment controller', function() {
 
-  var authToken, teacher, authToken2, student;
+  var teacherToken, teacher, studentToken2, student;
   before(function(done) {
     Seq()
       .seq(function() {
@@ -20,15 +21,32 @@ describe('Assignment controller', function() {
         UserHelper.login(teacher.username, teacher.password, this);
       })
       .seq(function(res) {
-        authToken = 'Bearer ' + res.body.token;
+        teacherToken = 'Bearer ' + res.body.token;
         student = UserHelper.create({type: 'student'}, this);
       })
       .seq(function() {
       	UserHelper.login(student.username, student.password, this);
       })
       .seq(function(res) {
-      	authToken2 = 'Bearer ' + res.body.token;
+      	studentToken = 'Bearer ' + res.body.token;
       	this();
+      })
+      .seq(done);
+  });
+
+  var group;
+  beforeEach(function(done) {
+    Seq()
+      .seq(function() {
+        request
+          .post('/group')
+          .set('Authorization', teacherToken)
+          .send(GroupHelper.generate())
+          .end(this);
+      })
+      .seq(function(res) {
+        group = res.body;
+        this();
       })
       .seq(done);
   });
@@ -37,11 +55,15 @@ describe('Assignment controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-  				AssignmentHelper.create(this)
+          request
+            .post('/assignment')
+            .send(AssignmentHelper.generate({to: group.id}))
+            .set('Authorization', teacherToken)
+            .end(this);
   			})
-  			.seq(function(assignment) {
-  				expect(assignment.objective).to.have.property('id');
-  				expect(_.keys(assignment.students)).to.have.length(0);
+  			.seq(function(res) {
+  				expect(res.body.objective).to.have.property('id');
+  				expect(_.keys(res.body.students)).to.have.length(0);
   				this();
   			})
   			.seq(done);
@@ -49,29 +71,22 @@ describe('Assignment controller', function() {
 
   	it('when objective is referenced', function(done) {
   		Seq()
-      .seq(function() {
-        UserHelper.create({}, this);
-      })
       .seq(function(res) {
-        this.vars.user = res.body;
+        this.vars.assignment = AssignmentHelper.generate({to: group.id});
         request
-          .post('/teacher/' + this.vars.user.id + '/group')
-          .send({name: Faker.Lorem.words()})
-          .end(this);
-      })
-      .seq(function(res) {
-        this.vars.group = res.body;
-        this.vars.assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
-        request.post('/objective')
+          .post('/objective')
         	.send(this.vars.assignment.objective)
+          .set('Authorization', teacherToken)
         	.end(this);
       })
       .seq(function(res) {
       	var objective = res.body;
       	var assignment = this.vars.assignment;
       	assignment.objective = objective.id;
-        request.post('/assignment')
+        request
+          .post('/assignment')
           .send(assignment)
+          .set('Authorization', teacherToken)
           .end(this);
       })
       .seq(function(res) {
@@ -85,21 +100,12 @@ describe('Assignment controller', function() {
 
 		it('when no due date is provided', function(done) {
 			Seq()
-	      .seq(function() {
-	        UserHelper.create({}, this);
-	      })
 	      .seq(function(res) {
-	        this.vars.user = res.body;
-	        request
-	          .post('/teacher/' + this.vars.user.id + '/group')
-	          .send({name: Faker.Lorem.words()})
-	          .end(this);
-	      })
-	      .seq(function(res) {
-	        this.vars.group = res.body;
-	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
+	        var assignment = AssignmentHelper.generate({to: group.id});
 	        delete assignment.due_at;
-	        request.post('/assignment')
+	        request
+            .post('/assignment')
+            .set('Authorization', teacherToken)
 	          .send(assignment)
 	          .end(this);
 	      })
@@ -114,21 +120,12 @@ describe('Assignment controller', function() {
   describe('should return an error on create new', function() {
   	it('when objective does not exist', function(done) {
   		 Seq()
-	      .seq(function() {
-	        UserHelper.create({}, this);
-	      })
 	      .seq(function(res) {
-	        this.vars.user = res.body;
-	        request
-	          .post('/teacher/' + this.vars.user.id + '/group')
-	          .send({name: Faker.Lorem.words()})
-	          .end(this);
-	      })
-	      .seq(function(res) {
-	        this.vars.group = res.body;
-	        var assignment = AssignmentHelper.generate({teacher: this.vars.user.id, to: this.vars.group.id});
+	        var assignment = AssignmentHelper.generate({to: group.id});
 	        assignment.objective = 'doesnotexist';
-	        request.post('/assignment')
+	        request
+            .post('/assignment')
+            .set('Authorization', teacherToken)
 	          .send(assignment)
 	          .end(this);
 	      })
@@ -144,37 +141,25 @@ describe('Assignment controller', function() {
 	      })
 	      .seq(done)
   	});
-
-		
   });
 
 	describe('should find created assignments', function() {
-		var group;
-		before(function(done) {
+		beforeEach(function(done) {
 			Seq()
-				.seq(function() {
-					request
-	          .post('/teacher/' + teacher.id + '/group')
-	          .send({name: Faker.Lorem.words()})
-	          .end(this);
-				})
 				.seq(function(res) {
-					group = res.body;
   				request
-  					.put('/group/' + group.code + '/members/' + student.id)
+            .put('/group/' + group.code + '/members/' + student.id)
+            .set('Authorization', teacherToken)
   					.end(this);
 				})
 				.seq(function() {
-					var assignment = AssignmentHelper.generate({teacher: teacher.id, to: group.id});
-					request.post('/assignment')
-						.send(assignment)
+					request
+            .post('/assignment')
+            .set('Authorization', teacherToken)
+						.send(AssignmentHelper.generate({to: group.id}))
 						.end(this);
 				})
-				.seq(function(res) {
-					this();
-				})
-				.seq(done);
-
+        .seq(function() { done(); });
 		});
 
 		it('when looking by teacher', function(done) {
@@ -182,7 +167,7 @@ describe('Assignment controller', function() {
 				.seq(function() {
 					request
 						.get('/group/' + group.id + '/assignments')
-						.set('Authorization', authToken)
+						.set('Authorization', teacherToken)
 						.end(this);
 				})
 				.seq(function(res) {
@@ -199,7 +184,7 @@ describe('Assignment controller', function() {
 				.seq(function() {
 					request
 						.get('/group/' + group.id + '/assignments')
-						.set('Authorization', authToken2)
+						.set('Authorization', studentToken)
 						.end(this);
 				})
 				.seq(function(res) {
@@ -215,27 +200,30 @@ describe('Assignment controller', function() {
 				})
 				.seq(done);
 		});
-
-
 	});
 
 	describe('should add student to assignment', function() {
 		it('when student is added to group', function(done) {
 			Seq()
 				.seq(function() {
-					AssignmentHelper.create(this)
+          request.post('/assignment')
+            .set('Authorization', teacherToken)
+            .send(AssignmentHelper.generate({to: group.id}))
+            .end(this);
 				})
-				.seq(function(assignment) {
-					this.vars.assignment = assignment;
+				.seq(function(res) {
+					this.vars.assignment = res.body;
 					request
   					.put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
+            .set('Authorization', teacherToken)
   					.end(this);
 				})
 				.seq(function(res) {
+          expect(res).to.have.status(204);
 					var url = '/assignment/' + this.vars.assignment.id;
 					request
 						.get(url)
-						.set('Authorization', authToken2)
+						.set('Authorization', studentToken)
 						.end(this);
 				})
 				.seq(function(res) {
@@ -251,19 +239,23 @@ describe('Assignment controller', function() {
 		it('when information is entered properly', function(done) {
 			Seq()
 				.seq(function() {
-					AssignmentHelper.create(this)
+          request
+            .post('/assignment')
+            .set('Authorization', teacherToken)
+            .send(AssignmentHelper.generate({to: group.id}))
+            .end(this);
 				})
-				.seq(function(assignment) {
-					this.vars.assignment = assignment;
+				.seq(function(res) {
+					this.vars.assignment = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
+            .put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
+            .set('Authorization', teacherToken)
   					.end(this);
 				})
 				.seq(function(res) {
-					var url = '/assignment/' + this.vars.assignment.id + '/score'
 					request
-						.patch(url)
-						.set('Authorization', authToken2)
+						.patch('/assignment/' + this.vars.assignment.id + '/score')
+						.set('Authorization', studentToken)
 						.send({score: 5})
 						.end(this);
 				})
@@ -280,43 +272,34 @@ describe('Assignment controller', function() {
 
 	describe('should sort assignments', function() {
 		it('when adding lots of assignments', function(done) {
-			var dueDates = [];
 			var now = new Date();
 			var day = 1000*60*60*24;
 			var numDates = 10;
-			_.times(numDates, function(n) {
-				dueDates.push(new Date(+now + day* n));
+			var dueDates = _.times(numDates, function(n) {
+				return new Date(+now + day* n);
 			});
 			var shuffled = _.shuffle(dueDates);
 			Seq()
-				.seq(function() {
-					UserHelper.create({}, this);
-				})
 				.seq(function(res) {
-					this.vars.user = res.body;
-	        request
-	          .post('/teacher/' + this.vars.user.id + '/group')
-	          .send({name: Faker.Lorem.words()})
-	          .end(this);
-				})
-				.seq(function(res) {
-					this.vars.group = res.body;
 					var self = this;
 					Seq(shuffled)
 						.seqEach(function(dueDate) {
-							var assignment = AssignmentHelper.generate({teacher: self.vars.user.id, to: self.vars.group.id, due_at: dueDate});
-							request.post('/assignment')
+							var assignment = AssignmentHelper.generate({to: group.id, due_at: dueDate});
+							request
+                .post('/assignment')
+                .set('Authorization', teacherToken)
 			          .send(assignment)
 			          .end(this);
 						})
 						.seq(function() {
-							self();
-						});
+              self();
+            });
 				})
 				.seq(function() {
 					request
 						.get('/assignment/active')
-						.query({to: this.vars.group.id})
+            .set('Authorization', studentToken)
+						.query({to: group.id})
 						.end(this);
 				})
 				.seq(function(res) {
@@ -325,9 +308,9 @@ describe('Assignment controller', function() {
 					_.each(assignments, function(assignment, idx) {
 						expect(assignment.due_at).to.equal(dueDates[idx+1].toISOString());
 					});
-					done();
-				})
-			
+          this();
+        })
+        .seq(done);
 		});
 	});
 

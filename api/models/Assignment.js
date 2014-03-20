@@ -186,10 +186,5 @@ module.exports = {
       };
       Event.createAndEmit(e, cb);
     });
-  },
-
-
-
+  }
 };
-
-

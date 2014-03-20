@@ -1,6 +1,7 @@
 var Seq = require('seq')
-  , User = require('./helpers/user')
-  , Poll = require('./helpers/poll')
+  , UserHelper = require('./helpers/user')
+  , PollHelper = require('./helpers/poll')
+  , GroupHelper = require('./helpers/group')
   , Faker = require('Faker')
   , Event = require('./helpers/event');
 
@@ -11,10 +12,10 @@ describe('Poll controller', function() {
 	before(function(done) {
 		Seq()
 			.seq(function() {
-				user = User.create(this);
+				user = UserHelper.create(this);
 			})
 			.seq(function() {
-        User.login(user.username, user.password, this);
+        UserHelper.login(user.username, user.password, this);
       })
       .seq(function(res) {
         authToken = 'Bearer ' + res.body.token;
@@ -22,8 +23,9 @@ describe('Poll controller', function() {
       })
 			.seq(function() {
 				request
-          .post('/teacher/' + user.id + '/group')
-          .send({name: Faker.Lorem.words()})
+          .post('/group')
+          .send(GroupHelper.generate())
+          .set('Authorization', authToken)
           .end(this);
 			})
 			.seq(function(res) {
@@ -33,17 +35,26 @@ describe('Poll controller', function() {
 	});
 
 	it('should create poll form', function(done) {
-		Poll.create(user.id, function(err, form) {
-			expect(form.id).to.exist;
-			expect(form.type).to.equal('poll');
-			done();
-		});
+    Seq()
+      .seq(function() {
+        request
+          .post('/form')
+          .set('Authorization', authToken)
+          .send(PollHelper.generate())
+          .end(this);
+      })
+      .seq(function(res) {
+  			expect(res.body.id).to.exist;
+  			expect(res.body.type).to.equal('poll');
+        this();
+  		})
+      .seq(done);
 	});
 
 	it('should assign a form and create a new event', function(done) {
 		Seq()
 			.seq(function() {
-				Poll.assign(user.id, [group.id], this);
+				PollHelper.assign(authToken, [group.id], this);
 			})
 			.seq(function(assignRes) {
 				this.vars.form = assignRes.form;

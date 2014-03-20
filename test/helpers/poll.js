@@ -1,32 +1,38 @@
 var Faker = require('Faker')
-  , Form = require('./form')
+  , FormHelper = require('./form')
   , Seq = require('seq')
   , FormSchema = require('../../api/models/Form')
   , Assignment = require('./assignment')
   , moment = require('moment');
 
-module.exports = {
-	create: function(creator, cb) {
-		Form.create({type: 'poll', creator: creator}, cb);
+var PollHelper = module.exports = {
+	generate: function(opts) {
+		opts = opts || {};
+		opts.type = 'poll';
+		return FormHelper.generate(opts);
 	},
-	assign: function(creator, to, cb) {
+	assign: function(authToken, to, cb) {
 		Seq()
 			.seq(function() {
-				Form.create({creator: creator}, this);
+				request
+					.post('/form')
+					.send(PollHelper.generate())
+					.set('Authorization', authToken)
+					.end(this);
 			})
-			.seq(function(form) {
-				this.vars.form = form;
-				var objective = FormSchema.attributes.toObjective.call(form);
-				var assignment = Assignment.generate({
-					objective: objective,
-					due_at: moment(),
-					max_score: null,
-					reward: null,
-					to: to,
-					teacher: creator
-				});
-				request.post('/assignment')
-					.send(assignment)
+			.seq(function(res) {
+				this.vars.form = res.body;
+				var objective = FormSchema.attributes.toObjective.call(this.vars.form);
+				request
+					.post('/assignment')
+					.send(Assignment.generate({
+						objective: objective,
+						due_at: moment(),
+						max_score: null,
+						reward: null,
+						to: to
+					}))
+					.set('Authorization', authToken)
 					.end(this);
 			})
 			.seq(function(res) {

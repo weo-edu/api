@@ -27,29 +27,5 @@ var Assignment = module.exports = {
     opts.to = [].concat(opts.to);
 
     return opts;
-  },
-  create: function(cb, opts) {
-    var self = this;
-    Seq()
-      .seq(function() {
-        UserHelper.create({}, this);
-      })
-      .seq(function(res) {
-        this.vars.user = res.body;
-        request
-          .post('/teacher/' + this.vars.user.id + '/group')
-          .send({name: Faker.Lorem.words()})
-          .end(this);
-      })
-      .seq(function(res) {
-        this.vars.group = res.body;
-        var assignment = self.generate({teacher: this.vars.user.id, to: this.vars.group.id});
-        request.post('/assignment')
-          .send(assignment)
-          .end(this);
-      })
-      .seq(function(res) {
-        cb(null, res.body);
-      })
   }
 };

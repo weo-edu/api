@@ -1,6 +1,6 @@
 var Seq = require('seq')
   , User = require('./helpers/user')
-  , Group = require('./helpers/group');
+  , GroupHelper = require('./helpers/group');
 
 
 require('./helpers/boot');
@@ -201,20 +201,23 @@ describe('User controller', function() {
     before(function(done) {
       Seq()
         .seq(function() {
-          Group.create(this);
-        })
-        .seq(function(res) {
-          group = res.body;
-          user = User.create({groups: res.body.id}, this);
+          user = User.create({}, this);
         })
         .seq(function(res) {
           User.login(user.username, user.password, this);
         })
         .seq(function(res) {
           authToken = 'Bearer ' + res.body.token;
-          this();
+          request
+            .post('/group')
+            .set('Authorization', authToken)
+            .send(GroupHelper.generate())
+            .end(this);
         })
-        .seq(done);
+        .seq(function(res) {
+          group = res.body;
+          done();
+        });
     });
 
     it('should not allow unauthenticated requests', function(done) {

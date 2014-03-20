@@ -14,20 +14,5 @@ module.exports = {
     	return FormQuestion.generate();
     });
     return opts;
-	},
-	create: function(opts, cb) {
-		if('function' === typeof opts) {
-      cb = opts;
-      opts = {};
-    }
-
-    opts = this.generate(opts);
-    request
-      .post('/form')
-      .send(opts)
-      .end(function(err, res) {
-      	cb(null, res.body);
-      });
-    return opts;
 	}
 }

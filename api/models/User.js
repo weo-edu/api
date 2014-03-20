@@ -69,7 +69,7 @@ module.exports = {
     if (groups && groups.length) {
       Seq(groups)
         .parEach(function(group) {
-          modelHook.emit('group:addMember', {groupId: group.id, user: attrs}, this);
+          modelHook.emit('group:addMember', {groupId: group, user: attrs}, this);
         })
         .seq(function() {
           next();
@@ -81,11 +81,7 @@ module.exports = {
       next();
     }
   }],
-  addToGroup: function(userId, groupId, groupType, cb) {
-    if (_.isFunction(groupType)) {
-      cb = groupType;
-      groupType = undefined;
-    }
+  addToGroup: function(userId, groupId, cb) {
     var update = {$addToSet: {groups: groupId}};
     User.update({id: userId}, update).done(function(err, users) {
       if (err) return cb(err);
