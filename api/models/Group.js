@@ -29,7 +29,7 @@ module.exports = {
     }
   },
   beforeValidation: [function(attrs, next) {
-    if (attrs.id) return next();
+    if (attrs.code) return next();
     hashids('Group', {offset: hashids.sixDigitOffset},
     function(err, code) {
       if(err) throw err;
