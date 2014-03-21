@@ -50,6 +50,33 @@ describe('GroupHelper controller', function() {
         })
         .seq(done);
   	});
+
+    it('should respond with error if name taken', function(done) {
+      var group = GroupHelper.generate();
+      Seq()
+        .seq(function() {
+          request
+            .post('/group')
+            .send(group)
+            .set('Authorization', authToken)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          var group2 = GroupHelper.generate();
+          group2.name = group.name;
+          request
+            .post('/group')
+            .send(group2)
+            .set('Authorization', authToken)
+            .end(this);
+        })
+        .seq(function(res){
+          expect(res).to.have.status(409);
+          this();
+        })
+        .seq(done);
+    });
   });
 
   describe('get', function() {
