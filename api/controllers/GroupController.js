@@ -50,25 +50,36 @@ module.exports = {
   },
   create: function(req, res) {
     var name = req.param('name');
+    var type = req.param('type') || 'class';
+    var user = req.user.id;
 
-    Seq()
-      .seq(function() {
-        Group.create({
-          name: name,
-          owners: [req.user.id]
-        }).done(this);
-      })
-      .seq(function(group) {
-        this.vars.group = group;
-        User.addToGroup(req.user.id, group.id, this)
-      })
-      .seq(function() {
-        modelHook.emit('group:create', this.vars.group);
-        res.json(201, this.vars.group);
-      })
-      .catch(function(err) {
-        res.serverError(err);
-      });
+    User.groups(user, type, function(err, groups) {
+      var find = _.where(groups, {name: name});
+      if (find.length) {
+        res.clientError('Group name taken')
+          .invalid('group', 'name')
+          .send(409);
+      } else {
+         Seq()
+          .seq(function() {
+            Group.create({
+              name: name,
+              owners: [req.user.id]
+            }).done(this);
+          })
+          .seq(function(group) {
+            this.vars.group = group;
+            User.addToGroup(req.user.id, group.id, this);
+          })
+          .seq(function() {
+            modelHook.emit('group:create', this.vars.group);
+            res.json(201, this.vars.group);
+          })
+          .catch(function(err) {
+            res.serverError(err);
+          });
+      }
+    });
   },
   lookup: function(req, res) {
     var code = req.param('code');
