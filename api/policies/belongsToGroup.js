@@ -17,7 +17,7 @@ module.exports = function(paramName) {
         if(_.intersection(groups, belongsTo).length === groups.length)
           next();
         else
-          next('Access denied');
+          res.send(403, 'You are not a member of that group');
       });
   };
 };

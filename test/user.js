@@ -160,21 +160,6 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    it('should not allow a student with no group', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .post('/student')
-            .send(User.generate({type: 'student', groups: []}))
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.ValidationError('missing_field', 'groups');
-          this();
-        })
-        .seq(done);
-    });
-
     it('should not allow duplicate username', function(done) {
       Seq()
         .seq(function() {

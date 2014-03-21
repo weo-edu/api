@@ -24,9 +24,9 @@ module.exports = {
    */
   _config: {},
   _routes: {
+    'PUT @/join/:code': 'join',
+    'GET @/lookup/:code': 'lookup',
     'PUT @/:id/members/:user': 'addMember',
-    'PUT @/:code/join': 'join',
-    'PUT @/:code/lookup': 'lookup',
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
     'POST @/create': 'create',
@@ -71,7 +71,8 @@ module.exports = {
       });
   },
   lookup: function(req, res) {
-    Group.findOne({code: req.param('code')}).done(function(err, group) {
+    var code = req.param('code');
+    Group.findOne({code: caseSensitive(code)}).done(function(err, group) {
       if(err) return res.serverError(err);
       if(! group) {
         return res.clientError('Group not found')
@@ -82,7 +83,8 @@ module.exports = {
     });
   },
   join: function(req, res) {
-    Group.addUser({code: req.param('code')}, req.user.id, function(err) {
+    var code = req.param('code');
+    Group.addUser({code: caseSensitive(code)}, req.user.id, function(err) {
       if(err instanceof databaseError.NotFound) {
         return res.clientError(err.message + ' not found')
           .missing(err.message.toLowerCase(), err.message === 'Group' ? 'code' : 'id')

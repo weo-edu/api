@@ -1,24 +1,19 @@
 var Seq = require('seq');
 var UserHelper = require('./helpers/user');
 var GroupHelper = require('./helpers/group');
-var Faker = require('Faker');
 var _ = require('lodash');
-
 
 require('./helpers/boot');
 
 describe('GroupHelper controller', function() {
-  var user, authToken;
+  var user;
   before(function(done) {
     Seq()
       .seq(function() {
-        user = UserHelper.create(this);
+        UserHelper.createAndLogin(this);
       })
-      .seq(function(res) {
-        UserHelper.login(user.username, user.password, this);
-      })
-      .seq(function(res) {
-        authToken = 'Bearer ' + res.body.token;
+      .seq(function(teacher) {
+        user = teacher;
         this();
       })
       .seq(done);
@@ -32,7 +27,7 @@ describe('GroupHelper controller', function() {
           request
             .post('/group')
             .send(GroupHelper.generate())
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
             .end(this);
         })
         .seq(function(res) {
@@ -40,8 +35,8 @@ describe('GroupHelper controller', function() {
           group = res.body;
           request
           	.get('/' + [user.type, user.id].join('/'))
-            .set('Authorization', authToken)
-          	.end(this)
+            .set('Authorization', user.token)
+          	.end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -50,6 +45,26 @@ describe('GroupHelper controller', function() {
         })
         .seq(done);
   	});
+
+    it('should not allow a student to create a group', function(done) {
+      var student;
+      Seq()
+        .seq(function() {
+          UserHelper.createAndLogin({type: 'student'}, this);
+        })
+        .seq(function(student) {
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res.statusCode).to.equal(403);
+          this();
+        })
+        .seq(done);
+    });
   });
 
   describe('get', function() {
@@ -60,14 +75,14 @@ describe('GroupHelper controller', function() {
           request
             .post('/group')
             .send(GroupHelper.generate())
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
             .end(this);
   			})
   			.seq(function(res) {
   				group = res.body;
   				request
   					.get('/group/' + group.id)
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
@@ -84,14 +99,14 @@ describe('GroupHelper controller', function() {
           request
             .post('/group')
             .send(GroupHelper.generate())
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
             .end(this);
   			})
   			.seq(function(res) {
           group = res.body;
   				request
   					.get('/group/' + group.id)
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
@@ -104,31 +119,31 @@ describe('GroupHelper controller', function() {
 
   describe('addMember method', function() {
   	it('should add member to existing group', function(done) {
-      var user;
+      var member;
   		Seq()
   			.seq(function() {
   				UserHelper.create(this);
   			})
   			.seq(function(res) {
-          user = res.body;
+          member = res.body;
           request
             .post('/group')
             .send(GroupHelper.generate())
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
             .end(this);
   			})
   			.seq(function(res) {
           group = res.body;
   				request
-  					.put('/group/' + group.id + '/members/' + user.id)
-            .set('Authorization', authToken)
+  					.put('/group/' + group.id + '/members/' + member.id)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(204);
           request
             .get('/teacher/' + user.id)
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
             .end(this);
   			})
   			.seq(function(res) {
@@ -139,16 +154,16 @@ describe('GroupHelper controller', function() {
   	});
 
   	it('should handle non existent group', function(done) {
-      var user;
+      var newUser;
   		Seq()
   			.seq(function() {
   				UserHelper.create({}, this);
   			})
   			.seq(function(res) {
-  				user = res.body;
+  				newUser = res.body;
   				request
-  					.put('/group/doesntexist/members/' + user.id)
-            .set('Authorization', authToken)
+  					.put('/group/doesntexist/members/' + newUser.id)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
@@ -166,32 +181,40 @@ describe('GroupHelper controller', function() {
   });
 
   describe('join method', function() {
-    it('join existing group', function(done) {
-      var user, studentToken;
+    var student, group;
+    beforeEach(function(done) {
       Seq()
         .seq(function() {
           UserHelper.createAndLogin({type: 'student'}, this);
         })
-        .seq(function(res) {
-          user = res.body;
+        .seq(function(newUser) {
+          student = newUser;
           request
             .post('/group')
             .send(GroupHelper.generate())
-            .set('Authorization', authToken)
+            .set('Authorization', user.token)
             .end(this);
         })
         .seq(function(res) {
           group = res.body;
+          this();
+        })
+        .seq(done);
+    });
+
+    it('join existing group', function(done) {
+      Seq()
+        .seq(function() {
           request
-            .put('/group/' + group.code + '/join')
-            .set('Authorization', user.token)
+            .put('/group/join/' + group.code)
+            .set('Authorization', student.token)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(204);
           request
-            .get('/teacher/' + user.id)
-            .set('Authorization', authToken)
+            .get('/student/' + student.id)
+            .set('Authorization', student.token)
             .end(this);
         })
         .seq(function(res) {
@@ -201,16 +224,36 @@ describe('GroupHelper controller', function() {
         .seq(done);
     });
 
-    it('should handle non existent group', function(done) {
-      var user;
+    it('should be case sensitive', function(done) {
+      function invertCase(str) {
+        return str.replace(/[a-zA-Z]/g, function(match) {
+          if(/[a-z]/.test(match))
+            return match.toUpperCase();
+          return match.toLowerCase();
+        });
+      }
+
+      var code = invertCase(group.code);
       Seq()
         .seq(function() {
-          UserHelper.createAndLogin(this);
+          request
+            .put('/group/join/' + code)
+            .set('Authorization', student.token)
+            .end(this);
         })
         .seq(function(res) {
+          expect(res).to.have.status(404);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should handle non existent group', function(done) {
+      Seq()
+        .seq(function() {
           request
-            .put('/group/doesntexist/join')
-            .set('Authorization', res.body.token)
+            .put('/group/join/doesntexist')
+            .set('Authorization', student.token)
             .end(this);
         })
         .seq(function(res) {

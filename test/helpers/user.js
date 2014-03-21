@@ -61,8 +61,8 @@ var User = module.exports = {
       })
       .seq(function(res) {
         if(res.statusCode !== 200) return cb('User login failed', res);
-        res.body.token = 'Bearer ' + res.body.token;
-        cb(null, res);
+        user.token = 'Bearer ' + res.body.token;
+        cb(null, user);
       });
   }
 };

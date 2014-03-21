@@ -15,7 +15,9 @@ module.exports = function(paramName) {
           .exec(this);
       })
       .seq(function(group) {
-        next(group ? undefined : 'You are not the owner of that group');
+        group
+          ? next()
+          : res.send(403, 'You are not the owner of that group');
         this();
       })
       .catch(function() {

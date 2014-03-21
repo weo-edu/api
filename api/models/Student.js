@@ -34,9 +34,7 @@ var model = module.exports = mergeModels(UserSchema, {
       password: true
     },
     groups: {
-      type: 'array',
-      minLength: 1,
-      required: true
+      type: 'array'
     },
     name: {
       type: 'virtual',

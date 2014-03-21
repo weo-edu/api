@@ -62,7 +62,8 @@ module.exports.policies = {
   },
   GroupController: {
     '*': ['isAuthenticated'],
-    create: ['isAuthenticated', 'isTeacher']
+    create: ['isAuthenticated', 'isTeacher'],
+    lookup: true
   }
   /*
 	// Here's an example of adding some policies to a controller
