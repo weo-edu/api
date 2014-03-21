@@ -82,16 +82,20 @@ module.exports = {
     }
   }],
   addToGroup: function(userId, groupId, cb) {
-    var update = {$addToSet: {groups: groupId}};
-    User.update({id: userId}, update).done(function(err, users) {
-      if (err) return cb(err);
-      if (users.length) {
-        var user = users[0];
-        cb(null, user);
-      } else {
-        cb(new databaseError.NotFound('Assignment'));
+    User.update(userId, {
+      $addToSet: {
+        groups: groupId
       }
-
+    }).done(function(err, users) {
+      if(! err && ! users.length)
+        err = new databaseError.NotFound('Assignment');
+      if(! err) {
+        modelHook.emit('group:addMember', {groupId: groupId, user: users[0]}, function(err) {
+          if (err) console.error('Error in group:addMember hook:' + err.message);
+          cb(err, users[0]);
+        });
+      } else
+        cb(err);
     });
   },
   groups: function(userId, type, cb) {

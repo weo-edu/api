@@ -1,5 +1,6 @@
-var Faker = require('Faker')
-  , chai = require('chai');
+var Faker = require('Faker');
+var chai = require('chai');
+var Seq = require('seq');
 
 var User = module.exports = {
   generate: function(opts) {
@@ -42,5 +43,26 @@ var User = module.exports = {
       .post('/auth/login')
       .send({username: username, password: password})
       .end(cb);
+  },
+  createAndLogin: function(opts, cb) {
+    var user;
+    if('function' === typeof opts) {
+      cb = opts;
+      opts = {};
+    }
+
+    Seq()
+      .seq(function() {
+        user = User.create(opts, this);
+      })
+      .seq(function(res) {
+        if(res.statusCode !== 201) return cb('User creation failed', res);
+        User.login(user.username, user.password, this);
+      })
+      .seq(function(res) {
+        if(res.statusCode !== 200) return cb('User login failed', res);
+        res.body.token = 'Bearer ' + res.body.token;
+        cb(null, res);
+      });
   }
 };

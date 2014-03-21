@@ -36,5 +36,19 @@ module.exports = {
       attrs.code = code;
       next();
     });
-  }]
+  }],
+  addUser: function(selector, userId, cb) {
+    return Group.findOne(selector).done(function(err, group) {
+      if(! err && ! group)
+        err = new databaseError.NotFound('Group');
+      if(err)
+        return cb(err, null);
+      User.addToGroup(userId, group.id, function(err, user) {
+        if(! err && ! user)
+          err = new databaseError.NotFound('User');
+        // Return the group, since this is a group model method
+        cb(err, group);
+      });
+    });
+  }
 };

@@ -1,19 +1,6 @@
 var Seq = require('seq')
   , modelHook = require('../../lib/modelHook');
 
-function parseId(id) {
-  var selector = {};
-  var key = null;
-  if (id.length === 24) {
-    selector._id = id;
-    key = 'id';
-  } else {
-    selector.code = new RegExp('^' + id + '$');
-    key = 'code';
-  }
-  return {selector: selector, key: key};
-}
-
 /**
  * GroupController
  *
@@ -38,6 +25,8 @@ module.exports = {
   _config: {},
   _routes: {
     'PUT @/:id/members/:user': 'addMember',
+    'PUT @/:code/join': 'join',
+    'PUT @/:code/lookup': 'lookup',
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
     'POST @/create': 'create',
@@ -47,21 +36,18 @@ module.exports = {
     },
   },
   get: function(req, res) {
-    var id = req.param('id');
-    var parsedId = parseId(id);
-    Group.findOne(parsedId.selector)
+    Group.findOne(req.param('id'))
       .exec(function(err, group) {
         if (err) return res.serverErorr(err);
         if (!group) {
           return res.clientError('Group not found')
-            .missing('group', parsedId.key)
+            .missing('group', 'id')
             .send(404);
         }
 
         res.json(group);
       });
   },
-
   create: function(req, res) {
     var name = req.param('name');
 
@@ -84,29 +70,39 @@ module.exports = {
         res.serverError(err);
       });
   },
-  addMember: function(req, res) {
-    var userId = req.param('user')
-      , groupId = req.param('id')
-      , parsedId = parseId(groupId);
-
-    Group.findOne(parsedId.selector).done(function(err, group) {
-      if (err) return res.serverErorr(err);
-      if (!group) {
+  lookup: function(req, res) {
+    Group.findOne({code: req.param('code')}).done(function(err, group) {
+      if(err) return res.serverError(err);
+      if(! group) {
         return res.clientError('Group not found')
           .missing('group', 'code')
           .send(404);
       }
-      User.addToGroup(userId, group.id, function(err, user) {
-        if (err) return res.serverErorr(err);
-        modelHook.emit('group:addMember', {groupId: group.id, user: user}, function(err) {
-          if (err) console.error('Error in group:addMember hook:' + err.message);
-          res.send(204);
-        });
-      });
+      res.send(204);
     });
-
   },
+  join: function(req, res) {
+    Group.addUser({code: req.param('code')}, req.user.id, function(err) {
+      if(err instanceof databaseError.NotFound) {
+        return res.clientError(err.message + ' not found')
+          .missing(err.message.toLowerCase(), err.message === 'Group' ? 'code' : 'id')
+          .send(404);
+      }
 
+      res.send(204);
+    });
+  },
+  addMember: function(req, res) {
+    Group.addUser(req.param('id'), req.param('user'), function(err) {
+      if(err instanceof databaseError.NotFound) {
+        return res.clientError(err.message + ' not found')
+          .missing(err.message.toLowerCase(), 'id')
+          .send(404);
+      }
+
+      res.send(204);
+    });
+  },
   studentsInGroups: function(req, res) {
     var groupIds = req.param('groups');
     Student.findAssignable(groupIds, function(err, groups) {

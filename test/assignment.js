@@ -146,9 +146,9 @@ describe('Assignment controller', function() {
 	describe('should find created assignments', function() {
 		beforeEach(function(done) {
 			Seq()
-				.seq(function(res) {
+				.seq(function() {
   				request
-            .put('/group/' + group.code + '/members/' + student.id)
+            .put('/group/' + group.id + '/members/' + student.id)
             .set('Authorization', teacherToken)
   					.end(this);
 				})
