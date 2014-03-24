@@ -219,7 +219,7 @@ describe('Assignment controller', function() {
   					.end(this);
 				})
 				.seq(function(res) {
-          expect(res).to.have.status(204);
+          expect(res).to.have.status(200);
 					var url = '/assignment/' + this.vars.assignment.id;
 					request
 						.get(url)

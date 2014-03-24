@@ -165,7 +165,7 @@ describe('GroupHelper controller', function() {
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(res).to.have.status(204);
+  				expect(res).to.have.status(200);
           request
             .get('/teacher/' + user.id)
             .set('Authorization', user.token)
@@ -236,7 +236,7 @@ describe('GroupHelper controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.status(204);
+          expect(res).to.have.status(200);
           request
             .get('/student/' + student.id)
             .set('Authorization', student.token)
