@@ -57,7 +57,7 @@ module.exports = {
       var find = _.where(groups, {name: name});
       if (find.length) {
         res.clientError('Group name taken')
-          .invalid('group', 'name')
+          .alreadyExists('group', 'name')
           .send(409);
       } else {
          Seq()
@@ -95,25 +95,23 @@ module.exports = {
   },
   join: function(req, res) {
     var code = req.param('code');
-    Group.addUser({code: caseSensitive(code)}, req.user.id, function(err) {
+    Group.addUser({code: caseSensitive(code)}, req.user.id, function(err, group) {
       if(err instanceof databaseError.NotFound) {
         return res.clientError(err.message + ' not found')
           .missing(err.message.toLowerCase(), err.message === 'Group' ? 'code' : 'id')
           .send(404);
       }
-
-      res.send(204);
+      res.json(group);
     });
   },
   addMember: function(req, res) {
-    Group.addUser(req.param('id'), req.param('user'), function(err) {
+    Group.addUser(req.param('id'), req.param('user'), function(err, group) {
       if(err instanceof databaseError.NotFound) {
         return res.clientError(err.message + ' not found')
           .missing(err.message.toLowerCase(), 'id')
           .send(404);
       }
-
-      res.send(204);
+      res.json(group);
     });
   },
   studentsInGroups: function(req, res) {
