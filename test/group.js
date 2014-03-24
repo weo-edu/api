@@ -250,27 +250,26 @@ describe('GroupHelper controller', function() {
     });
 
     it('should be case sensitive', function(done) {
-      function invertCase(str) {
-        return str.replace(/[a-zA-Z]/g, function(match) {
-          if(/[a-z]/.test(match))
-            return match.toUpperCase();
-          return match.toLowerCase();
-        });
-      }
-
-      var code = invertCase(group.code);
       Seq()
         .seq(function() {
+          Group.create(GroupHelper.generate({
+            code: 'test code',
+            owners: [user.id]
+          }))
+          .done(this);
+        })
+        .seq(function(group) {
+          this.vars.group = group;
           request
-            .put('/group/join/' + code)
+            .put('/group/join/' + this.vars.group.code.toUpperCase())
             .set('Authorization', student.token)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(404);
-          this();
+          Group.destroy(this.vars.group.id).done(this);
         })
-        .seq(done);
+        .seq(function() { done(); })
     });
 
     it('should handle non existent group', function(done) {
