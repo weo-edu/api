@@ -63,7 +63,7 @@ module.exports = {
   }],
   afterCreate: [function(attrs, next) {
     delete attrs.password;
-    next();
+    modelHook.emit('user:create', attrs, next);
   }, function(attrs, next) {
     var groups = attrs.groups;
     if (groups && groups.length) {
