@@ -2,21 +2,36 @@ var Faker = require('Faker');
 var chai = require('chai');
 var Seq = require('seq');
 
+function teacherDefaults() {
+  return {
+    type: 'teacher',
+    first_name: Faker.Name.firstName(),
+    last_name: Faker.Name.lastName(),
+    groups: ['fakeGroupId'],
+    username: Faker.Internet.email(),
+    password: 'testpassword',
+    password_confirmation: 'testpassword',
+    title: 'Mr.'
+  };
+}
+
+function studentDefaults() {
+  var defaults = teacherDefaults();
+  defaults.username = Faker.Internet.userName();
+  delete defaults.title;
+  return defaults;
+}
+
 var User = module.exports = {
   generate: function(opts) {
     opts = opts || {};
-    _.defaults(opts, {
-      type: 'teacher',
-      first_name: Faker.Name.firstName(),
-      last_name: Faker.Name.lastName(),
-      groups: ['fakeGroupId'],
-      username: Faker.Internet.email(),
-      password: 'testpassword',
-      password_confirmation: opts.password || 'testpassword'
-    });
-    if(opts.type === 'teacher') {
-      opts.title = 'Mr.';
+    var defaults = null;
+    if (opts.type === 'student') {
+      defaults = studentDefaults();
+    } else {
+      defaults = teacherDefaults();
     }
+    _.defaults(opts, defaults);
     return opts;
   },
   create: function(opts, cb) {
