@@ -15,7 +15,7 @@ var internet = {
             result = Faker.random.first_name();
             break;
         case 1:
-            result = Faker.random.first_name() + Faker.random.array_element([".", "_"]) + Faker.random.last_name();
+            result = Faker.random.first_name() + Faker.random.last_name();
             break;
         }
         return randomPrefix() + result;

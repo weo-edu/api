@@ -36,6 +36,9 @@ var model = module.exports = mergeModels(UserSchema, {
     groups: {
       type: 'array'
     },
+    username: {
+      alphanumeric: true
+    },
     name: {
       type: 'virtual',
       fn: function() {

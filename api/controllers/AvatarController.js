@@ -8,13 +8,14 @@ var client = knox.createClient({
   region: 'us-west-1'
 });
 
+//XXX placing next in callback makes account creation feel long
 modelHook.on('user:create', function(user, next) {
 	client.copyFile('/originals/default/default.png', '/' + user.id, {'x-amz-acl': 'public-read'}, function(err) {
 		if (err) {
 			console.error('Error setting up avatar for user:' + user.id);
 		}
-		next();
 	});
+	next();
 })
 
 /**
