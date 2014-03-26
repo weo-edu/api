@@ -49,6 +49,7 @@ module.exports = {
       });
   },
   create: function(req, res) {
+    console.log('group controller create received', req.param('name'), req.param('type'));
     var name = req.param('name');
     var type = req.param('type') || 'class';
     var user = req.user.id;
