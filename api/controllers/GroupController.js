@@ -64,6 +64,7 @@ module.exports = {
       });
   },
   create: function(req, res) {
+    console.log('group controller create received', req.param('name'), req.param('type'));
     var name = req.param('name');
     var type = req.param('type') || 'class';
     var user = req.user.id;
@@ -71,6 +72,7 @@ module.exports = {
     User.groups(user, type, function(err, groups) {
       var find = _.where(groups, {name: name});
       if (find.length) {
+        console.log('sending clientError 409');
         res.clientError('Group name taken')
           .alreadyExists('group', 'name')
           .send(409);
@@ -88,9 +90,11 @@ module.exports = {
           })
           .seq(function() {
             modelHook.emit('group:create', this.vars.group);
+            console.log('creating group and sending 201 ', this.vars.group);
             res.json(201, this.vars.group);
           })
           .catch(function(err) {
+            console.log('failed creating group', err);
             res.serverError(err);
           });
       }

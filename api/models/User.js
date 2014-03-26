@@ -104,7 +104,7 @@ module.exports = {
       if (!user) {
         return cb(new databaseError.NotFound('User'));
       }
-      var options = {id: user.groups};
+      var options = {id: [].concat(user.groups)};
       if (type) options.type = type;
       Group.find(options).done(cb);
     });
