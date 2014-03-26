@@ -15,6 +15,7 @@ module.exports = {
   		required: true
   	},
 
+    // This is not the username of the user. It is the name of the user.
   	user_name: {
   		type: 'string',
   		required: true

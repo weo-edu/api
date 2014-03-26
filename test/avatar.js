@@ -3,6 +3,8 @@ var Seq = require('seq')
 
 require('./helpers/boot');
 
+//XXX test avatar created when user is created
+
 describe('Avatar controller', function() {
   describe('unathenticated requests', function() {
     it('should not be allowed', function(done) {

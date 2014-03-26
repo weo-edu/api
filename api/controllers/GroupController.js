@@ -1,6 +1,18 @@
 var Seq = require('seq')
   , modelHook = require('../../lib/modelHook');
 
+modelHook.on('group:addMember', function(data, next) {
+  var group = data.groupId;
+  var user = data.user;
+  Group.publish(group, {
+    model: Group.identity,
+    verb: 'add',
+    data: user,
+    id: group
+  });
+  next();
+});
+
 /**
  * GroupController
  *
@@ -34,6 +46,9 @@ module.exports = {
       action: 'find',
       controller: 'assignment'
     },
+    'POST @/members/subscription': 'createSubscription',
+    'DELTE @/members/subscription': 'deleteSubscription'
+    
   },
   get: function(req, res) {
     Group.findOne(req.param('id'))
@@ -124,5 +139,30 @@ module.exports = {
       if(err) throw err;
       res.json(groups);
     });
+  },
+  createSubscription: function(req, res) {
+    var to = req.param('to');
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('subscription', 'to')
+        .send(400);
+    }
+    if (req.socket) {
+      Group.subscribe(req.socket, to);
+    }
+    res.send(201);
+  },
+  deleteSubscription: function(req, res) {
+    var to = req.param('to');
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('subscription', 'to')
+        .send(400);
+    }
+    if (req.socket) {
+      Group.unsubscribe(req.socket, to);
+    }
+    res.send(204);
   }
+
 };
