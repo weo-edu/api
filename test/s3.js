@@ -70,7 +70,9 @@ describe('S3 controller', function() {
   			.seq(function(res) {
   				var file = res.body;
   				expect(file.completed).to.equal(true);
-  				expect(file.base).to.equal('dev.eos.io.s3.amazonaws.com/uploads/');
+          // have to use only a partial domain name, otherwise
+          // this test will fail in production/ci
+  				expect(file.base).to.contain('eos.io.s3.amazonaws.com/uploads/');
   				this();
   			})
   			.seq(done);
