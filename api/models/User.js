@@ -108,5 +108,20 @@ module.exports = {
       if (type) options.type = type;
       Group.find(options).done(cb);
     });
+  },
+  get: function(userIdOrUser, cb) {
+    if (_.isObject(userIdOrUser)) {
+      cb(userIdOrUser);
+    } else {
+      User.findOne(userIdOrUser)
+        .exec(function(err, user) {
+          if (err) return cb(err);
+          if (!user) return cb(new databaseError.NotFound('User'));
+          cb(null, user);
+        })
+    }
+  },
+  defaultName: function(user) {
+    return user.firstName + ' ' + user.lastName; 
   }
 };

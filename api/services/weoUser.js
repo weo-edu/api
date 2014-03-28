@@ -25,11 +25,8 @@ module.exports = user;
 
 
 modelHook.on('group:create', function(group, next) {
-	var actor = Event.userToActor(user);
-	actor.name = 'Weo Tips';
-	Event.createAndEmit({
+	Event.createAndEmit(user, {
 		to: [group.id],
-		actor: actor,
 		verb: 'shared',
 		type: 'tip',
 		visibility: 'teacher',

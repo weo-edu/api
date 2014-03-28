@@ -26,18 +26,12 @@ module.exports = {
   },
   emit: function(req, res) {
     var evt = req.params.all();
-    var to = evt.to;
-    User.findOne(req.user.id)
-      .exec(function(err, user) {
-        if(err) throw err;
-        if(! user) return res.send(404);
-
-        evt.actor = Event.userToActor(user);
-        Event.createAndEmit(evt, function(err, createdEvent) {
-          if (err) return res.serverError(err);
-          res.json(201, createdEvent);
-        });
-      });
+    Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
+  },
+  queue: function(req, res) {
+    var evt = req.param.all();
+    Event.queue(evt);
+    Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
   },
   createSubscription: function(req, res) {
     var to = req.param('to');
@@ -65,7 +59,7 @@ module.exports = {
   },
   events: function(req, res) {
     Event.producedBy(req.user.id)
-      .sort('createdAt DESC')
+      .sort('published_at DESC')
       .exec(function(err, events) {
         if(err) throw err;
         res.json(events);
@@ -87,3 +81,4 @@ module.exports = {
       });
   }
 };
+

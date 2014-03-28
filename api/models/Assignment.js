@@ -160,31 +160,21 @@ module.exports = {
   },
 
   toEvent: function(assignment, cb) {
-    Teacher.findOne(assignment.teacher, function(err, user) {
-      if (err) return cb(err);
-      if (!user) return cb(new databaseError.NotFound('User'));
-      var e = {
-        to: assignment.to,
-        actor: {
-          id: user.id,
-          avatar: avatar(user.id),
-          name: user.name,
-          link: '/user/' + user.id
-        },
-        verb: 'assigned',
-        object: {
-          id: assignment.id,
-          link: assignment.link,
-          name: assignment.objective.type,
-          icon: assignment.objective.icon,
+    var e = {
+      to: assignment.to,
+      verb: 'assigned',
+      object: {
+        id: assignment.id,
+        link: assignment.link,
+        name: assignment.objective.type,
+        icon: assignment.objective.icon,
 
-        },
-        type: 'assignment',
-        payload: {
-          title: assignment.objective.title,
-        }
-      };
-      Event.createAndEmit(e, cb);
-    });
+      },
+      type: 'assignment',
+      payload: {
+        title: assignment.objective.title,
+      }
+    };
+    Event.createAndEmit(assignment.teacher, e, cb);
   }
 };

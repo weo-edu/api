@@ -30,6 +30,10 @@ module.exports = {
       controller: 'event',
       action: 'emit'
     },
+    'POST @/events/queue': {
+      controller: 'event',
+      action: 'queue'
+    },
     'GET @/events': {
       controller: 'event',
       action: 'events'
