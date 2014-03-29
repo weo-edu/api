@@ -22,14 +22,15 @@ module.exports = {
   _config: {},
   _routes: {
     'POST @/subscription': 'createSubscription',
-    'DELETE @/subscription': 'deleteSubscription'
+    'DELETE @/subscription': 'deleteSubscription',
+    'DELETE @/:id': 'delete'
   },
   emit: function(req, res) {
     var evt = req.params.all();
     Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
   },
   queue: function(req, res) {
-    var evt = req.param.all();
+    var evt = req.params.all();
     Event.queue(evt);
     Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
   },
@@ -57,9 +58,34 @@ module.exports = {
     }
     res.send(204);
   },
+  delete: function(req, res) {
+    var id = req.param('id');
+    Event.findOne(id).done(function(err, e) {
+      if (err) {
+        return res.serverError(err);
+      } else if (!e) {
+        return res.clientError('Event not found')
+          .missing('event', 'id')
+          .send(404);
+      } else if (req.user.id !== e.actor.id) {
+        // only allowed to delete events user has created
+        return res.send(403);
+      } else if (e.status === 'active') {
+        // cant delete active event
+        return res.send(403);
+      }
+      Event.destroy({id: id}).done(function(err) {
+        if (err) {
+          res.serverError(err);
+        } else {
+          res.send(204);
+        }
+      });
+    });
+  },
   events: function(req, res) {
     Event.producedBy(req.user.id)
-      .sort('published_at DESC')
+      .sort({published_at: -1, createdAt: -1})
       .exec(function(err, events) {
         if(err) throw err;
         res.json(events);
@@ -73,7 +99,7 @@ module.exports = {
         .send(400);
     }
     Event.receivedBy(to, req.user.role)
-      .sort('createdAt DESC')
+      .sort({published_at: -1, createdAt: -1})
       .exec(function(err, events) {
         if(err) throw err;
         if(! events) return res.json(404);

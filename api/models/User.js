@@ -111,7 +111,7 @@ module.exports = {
   },
   get: function(userIdOrUser, cb) {
     if (_.isObject(userIdOrUser)) {
-      cb(userIdOrUser);
+      cb(null, userIdOrUser);
     } else {
       User.findOne(userIdOrUser)
         .exec(function(err, user) {

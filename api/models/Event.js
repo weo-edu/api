@@ -1,5 +1,6 @@
 var subSchema = require('../services/subSchema');
 var date = require('../../lib/date');
+var moment = require('moment');
 
 /**
  * Event
@@ -52,13 +53,12 @@ module.exports = {
     },
     published_at: {
       type: 'date',
-      defaultsTo: function() {
-        return new Date();
-      }
+      required: true
     },
     status: {
       in: ['active', 'pending'],
-      defaultsTo: 'active'
+      defaultsTo: 'active',
+      required: true
     },
     payload: 'json'
   },
@@ -69,6 +69,7 @@ module.exports = {
     return Event.find({'actor.id': userId});
   },
   createAndEmit: function(userId, evt, cb) {
+    _.defaults(evt, {published_at: moment().toISOString()});
     User.get(userId, function(err, user) {
       if (err) return cb(err);
       evt.actor = Event.userToActor(user);
