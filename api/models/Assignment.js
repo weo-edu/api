@@ -81,7 +81,10 @@ module.exports = {
     next();
   }],
 
-  createFromObjective: function(objectiveId, options, cb) {
+  make: function(options, cb) {
+    var objectiveId = options.objective;
+    var queue = options.queue;
+    delete options.queue;
   	Seq()
   		.seq(function() {
   			if (_.isString(objectiveId))
@@ -117,7 +120,7 @@ module.exports = {
   		})
   		.seq(function(assignment) {
         if (moment(assignment.due_at).diff(moment()) < 0) {
-          Assignment.toEvent(assignment, function(err) {
+          Assignment.toEvent(assignment, {queue: queue}, function(err) {
             cb(err, assignment);
           });
         } else
@@ -159,7 +162,11 @@ module.exports = {
   	Assignment.update({to: groupId}, update, cb);
   },
 
-  toEvent: function(assignment, cb) {
+  toEvent: function(assignment, opts, cb) {
+    if (_.isUndefined(cb)) {
+      cb = opts;
+      opts = {};
+    }
     var e = {
       to: assignment.to,
       verb: 'assigned',
@@ -175,6 +182,11 @@ module.exports = {
         title: assignment.objective.title,
       }
     };
+    if (opts.queue) {
+      delete opts.queue;
+        Event.queue(e);
+    }
+    _.merge(e, opts);
     Event.createAndEmit(assignment.teacher, e, cb);
   }
 };
