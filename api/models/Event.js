@@ -105,6 +105,7 @@ module.exports = {
   },
   queue: function(evt) {
     evt.status = 'pending';
+    evt.visibility = 'teacher';
     evt.published_at = date.max();
   },
   userToActor: function(user) {
