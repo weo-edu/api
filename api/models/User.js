@@ -122,6 +122,6 @@ module.exports = {
     }
   },
   defaultName: function(user) {
-    return user.firstName + ' ' + user.lastName; 
+    return user.first_name + ' ' + user.last_name; 
   }
 };

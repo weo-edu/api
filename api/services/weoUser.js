@@ -14,6 +14,7 @@ User.findOne(weoId).exec(function(err, u) {
 			password: 'elliotTheMang',
 			type: 'admin'
 		}).done(function(err, u) {
+			console.log('err', err);
 			_.extend(user, u);
 		})
 	} else {
