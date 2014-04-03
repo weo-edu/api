@@ -10,7 +10,7 @@ User.findOne(weoId).exec(function(err, u) {
 			id: weoId,
 			first_name: 'Weo',
 			last_name: 'Tips',
-			username: 'weo-tip',
+			username: 'weotip',
 			password: 'elliotTheMang',
 			type: 'admin'
 		}).done(function(err, u) {
