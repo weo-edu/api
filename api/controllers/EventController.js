@@ -48,8 +48,8 @@ module.exports = {
   publish: function(req, res) {
     var id = req.param('id');
     Event.update({id: id}, {
-      status: 'active', 
-      visibility: undefined, 
+      status: 'active',
+      visibility: undefined,
       published_at: moment().toISOString()
     }, function(err, evts) {
       if (err) {
@@ -86,14 +86,13 @@ module.exports = {
         .missing('subscription', 'to')
         .send(400);
     } else {
-      if(req.socket) 
+      if(req.socket)
         Event.unsubscribe(req.socket, to);
       res.send(204);
     }
   },
   delete: function(req, res) {
     var id = req.param('id');
-    console.log('id', id);
     Event.findOne({id: id}).done(function(err, e) {
       if (err) {
         return res.serverError(err);
