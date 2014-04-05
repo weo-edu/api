@@ -14,6 +14,14 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+
+function toParamIsValid(to) {
+  // Ensure all to's are truthy
+  return _.isArray(to)
+    ? _.all(to, _.identity)
+    : !! to;
+}
+
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
@@ -36,27 +44,27 @@ module.exports = {
   },
   createSubscription: function(req, res) {
     var to = req.param('to');
-    if (!to) {
-      return res.clientError('Invalid to param')
+    if (! toParamIsValid(to)) {
+      res.clientError('Invalid to param')
         .missing('subscription', 'to')
         .send(400);
+    } else {
+      if (req.socket)
+        Event.subscribe(req.socket, to);
+      res.send(201);
     }
-    if (req.socket) {
-      Event.subscribe(req.socket, to);
-    }
-    res.send(201);
   },
   deleteSubscription: function(req, res) {
     var to = req.param('to');
-    if (!to) {
-      return res.clientError('Invalid to param')
+    if (! toParamIsValid(to)) {
+      res.clientError('Invalid to param')
         .missing('subscription', 'to')
         .send(400);
+    } else {
+      if(req.socket) 
+        Event.unsubscribe(req.socket, to);
+      res.send(204);
     }
-    if (req.socket) {
-      Event.unsubscribe(req.socket, to);
-    }
-    res.send(204);
   },
   delete: function(req, res) {
     var id = req.param('id');

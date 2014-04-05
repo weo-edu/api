@@ -21,7 +21,9 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    'GET /user/groups/:type?': 'groups',
+    'GET @': 'me',
+    'PATCH @': 'updateMe',
+    'GET @/groups/:type?': 'groups',
     'GET @/feed': {
       controller: 'event',
       action: 'feed'
@@ -55,5 +57,22 @@ module.exports = {
       if (err) throw err;
       res.json(_.invoke(groups, 'toJSON'));
     })
+  },
+  me: function(req, res) {
+    if(! req.user) return res.json(404);
+    User.findOne(req.user.id)
+      .exec(function(err,user) {
+        if(err) return res.serverError(err);
+        res.json(user);
+      });
+  },
+  updateMe: function(req, res) {
+    if(! req.user) return res.json(404);
+    // XXX We probably want to filter this some.  For instance,
+    // the client probably shouldn't be able to set their user type
+    User.update(req.user.id, req.body).exec(function(err, user) {
+      if(err) return res.serverError(err);
+      res.json(user);
+    });
   }
 };
