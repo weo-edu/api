@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 /**
  * EventController
  *
@@ -31,7 +33,8 @@ module.exports = {
   _routes: {
     'POST @/subscription': 'createSubscription',
     'DELETE @/subscription': 'deleteSubscription',
-    'DELETE @/:id': 'delete'
+    'DELETE @/:id': 'delete',
+    'PATCH @/:id/publish': 'publish'
   },
   emit: function(req, res) {
     var evt = req.params.all();
@@ -41,6 +44,28 @@ module.exports = {
     var evt = req.params.all();
     Event.queue(evt);
     Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
+  },
+  publish: function(req, res) {
+    var id = req.param('id');
+    Event.update({id: id}, {
+      status: 'active', 
+      visibility: undefined, 
+      published_at: moment().toISOString()
+    }, function(err, evts) {
+      if (err) {
+        return res.serverError(err);
+      }
+      var evt = evts[0];
+      _.each(evt.to, function(to) {
+        Event.publish(to, {
+          model: Event.identity,
+          verb: 'update',
+          data: evt,
+          id: to
+        });
+      });
+      res.json(200, evts[0]);
+    });
   },
   createSubscription: function(req, res) {
     var to = req.param('to');
@@ -68,7 +93,8 @@ module.exports = {
   },
   delete: function(req, res) {
     var id = req.param('id');
-    Event.findOne(id).done(function(err, e) {
+    console.log('id', id);
+    Event.findOne({id: id}).done(function(err, e) {
       if (err) {
         return res.serverError(err);
       } else if (!e) {
@@ -86,6 +112,14 @@ module.exports = {
         if (err) {
           res.serverError(err);
         } else {
+          _.each(e.to, function(to) {
+            Event.publish(to, {
+              model: Event.identity,
+              verb: 'delete',
+              data: e,
+              id: to
+            });
+          });
           res.send(204);
         }
       });
