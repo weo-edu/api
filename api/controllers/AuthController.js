@@ -66,14 +66,5 @@ module.exports = {
   logout: function(req, res) {
     // Stub, to maybe do something with later
     res.send(200);
-  },
-  user: function(req, res) {
-    if(! req.user)
-      return res.json(404);
-    User.findOne(req.user.id)
-      .exec(function(err, user) {
-        if(err) throw err;
-        res.json(user);
-      });
   }
 };
