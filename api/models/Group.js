@@ -11,7 +11,7 @@ module.exports = {
   attributes: {
     type: {
       type: 'string',
-      in: ['class', 'group'],
+      in: ['class', 'group', 'class:archived'],
       defaultsTo: 'class'
     },
     name: {

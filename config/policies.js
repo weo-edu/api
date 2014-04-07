@@ -31,7 +31,9 @@ module.exports.policies = {
   	create: true,
     events: ['isAuthenticated'],
     groups: ['isAuthenticated'],
-    feed: ['isAuthenticated']
+    feed: ['isAuthenticated'],
+    me: ['isAuthenticated'],
+    updateMe: ['isAuthenticated']
   },
   TeacherController: {
   	'*': ['isAuthenticated', 'isTeacher'],
@@ -64,6 +66,9 @@ module.exports.policies = {
     '*': ['isAuthenticated'],
     create: ['isAuthenticated', 'isTeacher'],
     lookup: true
+  },
+  PreferenceController: {
+    '*' : ['isAuthenticated']
   }
   /*
 	// Here's an example of adding some policies to a controller

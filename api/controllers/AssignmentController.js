@@ -20,7 +20,7 @@ module.exports = {
   create: function(req, res) {
   	var assignment = req.params.all();
     assignment.teacher = req.user.id;
-  	Assignment.createFromObjective(assignment.objective, assignment, function(err, assignment) {
+  	Assignment.make(assignment, function(err, assignment) {
   		if (err instanceof databaseError.NotFound) {
   			if (err && err.message === 'Objective') {
   				return res.clientError('Objective not found')
