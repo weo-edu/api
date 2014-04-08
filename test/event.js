@@ -1,13 +1,16 @@
 var Seq = require('seq')
   , User = require('./helpers/user')
   , Event = require('./helpers/event')
-  , Group = require('./helpers/group');
+  , Group = require('./helpers/group')
+  , Cookie = require('cookie');
 
 require('./helpers/boot');
 describe('Event controller', function() {
   var authToken
     , user
-    , group;
+    , group
+    , token
+    , cookie;
   before(function(done) {
     Seq()
       .seq(function() {
@@ -17,6 +20,9 @@ describe('Event controller', function() {
         User.login(user.username, user.password, this);
       })
       .seq(function(res) {
+        token = res.body.token;
+        cookie = Cookie.parse(res.headers['set-cookie'][0]);
+        cookie = Cookie.serialize('sails.sid', cookie['sails.sid']);
         authToken = 'Bearer ' + res.body.token;
         this();
       })
@@ -210,4 +216,104 @@ describe('Event controller', function() {
   });
 
 
+  describe('live event', function() {
+    var scTeacher = null
+      , scStudent = null
+      , teacherMessages = []
+      , studentMessages = [];
+
+    before(function(done) {
+      Seq()
+        .par(function() {
+          connectNewUser({}, this);
+        })
+        .par(function() {
+          connectNewUser({type: 'student'}, this);
+        })
+        .seq(function(tCon, sCon) {
+          scTeacher = tCon;
+          scTeacher.on('message', function(msg) {
+            teacherMessages.push(msg);
+          });
+          scStudent = sCon;
+          scStudent.on('message', function(msg) {
+            studentMessages.push(msg);
+          });
+          scTeacher.post('/event/subscription', {to: group.id});
+          scStudent.post('/event/subscription', {to: group.id});
+          this();
+        })
+        .seq(done);
+    });
+
+    
+    beforeEach(function() {
+      teacherMessages = [];
+      studentMessages = [];
+    });
+
+    it('teacher should receive its emitted events', function(done) {
+      Seq()
+        .seq(function() {
+          Event.post({}, group.id, authToken, this);
+        })
+        .seq(function() {
+          expect(teacherMessages).to.have.length(1);
+          expect(teacherMessages[0].id).to.equal(group.id);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('student should receive teacher events', function(done) {
+      Seq()
+        .seq(function() {
+          Event.post({}, group.id, authToken, this);
+        })
+        .seq(function() {
+          expect(studentMessages).to.have.length(1);
+          expect(studentMessages[0].id).to.equal(group.id);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('teacher should receive queued posts and students should not', function(done) {
+      Seq()
+        .seq(function() {
+          Event.queue({}, group.id, authToken, this);
+        })
+        .seq(function() {
+          expect(teacherMessages).to.have.length(1);
+          expect(teacherMessages[0].id).to.equal(group.id);
+          expect(studentMessages).to.have.length(0);
+          this();
+        })
+        .seq(done);
+    })
+  });
+
+
 });
+
+
+function connectNewUser(opts, cb) {
+  opts = opts || {};
+  var user, token, cookie;
+  Seq()
+    .seq(function() {
+      user = User.create(opts, this);
+    })
+    .seq(function() {
+      User.login(user.username, user.password, this);
+    })
+    .seq(function(res) {
+      token = res.body.token;
+      cookie = Cookie.parse(res.headers['set-cookie'][0]);
+      cookie = Cookie.serialize('sails.sid', cookie['sails.sid']);
+      var con = socketConnect(token, cookie)
+      con.on('connect', function() {
+        cb(null, con);
+      })
+    });
+}
