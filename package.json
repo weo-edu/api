@@ -59,6 +59,8 @@
     "chai-http": "~0.4.0",
     "chai-properties": "~1.1.0",
     "coverage-badge": "git://github.com/ashaffer/node-coverage-badge#patch-1",
-    "istanbul": "~0.2.6"
+    "istanbul": "~0.2.6",
+    "socket.io-client": "~0.9.16",
+    "cookie": "~0.1.1"
   }
 }

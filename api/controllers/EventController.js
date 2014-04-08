@@ -56,14 +56,7 @@ module.exports = {
         return res.serverError(err);
       }
       var evt = evts[0];
-      _.each(evt.to, function(to) {
-        Event.publish(to, {
-          model: Event.identity,
-          verb: 'update',
-          data: evt,
-          id: to
-        });
-      });
+      Event.emit(evt, 'update');
       res.json(200, evts[0]);
     });
   },
@@ -74,8 +67,12 @@ module.exports = {
         .missing('subscription', 'to')
         .send(400);
     } else {
-      if (req.socket)
+      if (req.socket) {
+        to = _.map([].concat(to), function(id) {
+          return {id: req.user.role + ':' + id};
+        })
         Event.subscribe(req.socket, to);
+      }
       res.send(201);
     }
   },
@@ -86,8 +83,12 @@ module.exports = {
         .missing('subscription', 'to')
         .send(400);
     } else {
-      if(req.socket)
+      if(req.socket) {
+        to = _.map([].concat(to), function(id) {
+          return req.user.role + ':' + id;
+        })
         Event.unsubscribe(req.socket, to);
+      }
       res.send(204);
     }
   },

@@ -76,16 +76,27 @@ module.exports = {
       Event.create(evt)
         .exec(function(err, createdEvent) {
           if(err) return cb(err);
-          _.each(createdEvent.to, function(to) {
-            Event.publish(to, {
-              model: Event.identity,
-              verb: 'add',
-              data: createdEvent,
-              id: to
-            });
-          });
+          Event.emit(createdEvent, 'add');
+          
           cb(null, createdEvent);
         });
+    });
+  },
+
+  emit: function(evt, verb) {
+    var roles = evt.visibility 
+      ? [evt.visibility]
+      : ['teacher', 'student'];
+    _.each(roles, function(role) {
+      _.each(evt.to, function(to) {
+        var roleTo = {id: role + ':' + to};
+        Event.publish(roleTo, {
+          model: Event.identity,
+          verb: verb,
+          data: evt,
+          id: to
+        });
+      });
     });
   },
 
