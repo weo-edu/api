@@ -41,6 +41,7 @@ module.exports = {
     'PUT @/:id/members/:user': 'addMember',
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
+    '@/:id/archive': 'archive',
     'POST @/create': 'create',
     '@/:to/assignments': {
       action: 'find',
@@ -94,6 +95,26 @@ module.exports = {
             res.serverError(err);
           });
       }
+    });
+  },
+  archive: function(req, res) {
+    var id = req.param('id');
+    var userId = req.user.id;
+
+    Group.findOne(id).done(function(err, group) {
+      if (err) return res.server(err);
+      if(! group) {
+        return res.clientError('Group not found')
+          .missing('group', 'code')
+          .send(404);
+      }
+      if (group.owners.indexOf(userId) === -1)
+        return res.send(403);
+      Group.update({id: id}, {type: 'class:archived'}).done(function(err, groups) {
+        if (err) return res.serverError(err);
+        var group = groups[0];
+        res.json(group);
+      });
     });
   },
   lookup: function(req, res) {

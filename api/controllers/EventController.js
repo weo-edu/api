@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 /**
  * EventController
  *
@@ -14,6 +16,14 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+
+function toParamIsValid(to) {
+  // Ensure all to's are truthy
+  return _.isArray(to)
+    ? _.all(to, _.identity)
+    : !! to;
+}
+
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
@@ -22,50 +32,101 @@ module.exports = {
   _config: {},
   _routes: {
     'POST @/subscription': 'createSubscription',
-    'DELETE @/subscription': 'deleteSubscription'
+    'DELETE @/subscription': 'deleteSubscription',
+    'DELETE @/:id': 'delete',
+    'PATCH @/:id/publish': 'publish'
   },
   emit: function(req, res) {
     var evt = req.params.all();
-    var to = evt.to;
-    User.findOne(req.user.id)
-      .exec(function(err, user) {
-        if(err) throw err;
-        if(! user) return res.send(404);
-
-        evt.actor = Event.userToActor(user);
-        Event.createAndEmit(evt, function(err, createdEvent) {
-          if (err) return res.serverError(err);
-          res.json(201, createdEvent);
+    Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
+  },
+  queue: function(req, res) {
+    var evt = req.params.all();
+    Event.queue(evt);
+    Event.createAndEmit(req.user.id, evt, Event.createAndEmitRes(res));
+  },
+  publish: function(req, res) {
+    var id = req.param('id');
+    Event.update({id: id}, {
+      status: 'active',
+      visibility: undefined,
+      published_at: moment().toISOString()
+    }, function(err, evts) {
+      if (err) {
+        return res.serverError(err);
+      }
+      var evt = evts[0];
+      _.each(evt.to, function(to) {
+        Event.publish(to, {
+          model: Event.identity,
+          verb: 'update',
+          data: evt,
+          id: to
         });
       });
+      res.json(200, evts[0]);
+    });
   },
   createSubscription: function(req, res) {
     var to = req.param('to');
-    if (!to) {
-      return res.clientError('Invalid to param')
+    if (! toParamIsValid(to)) {
+      res.clientError('Invalid to param')
         .missing('subscription', 'to')
         .send(400);
+    } else {
+      if (req.socket)
+        Event.subscribe(req.socket, to);
+      res.send(201);
     }
-    if (req.socket) {
-      Event.subscribe(req.socket, to);
-    }
-    res.send(201);
   },
   deleteSubscription: function(req, res) {
     var to = req.param('to');
-    if (!to) {
-      return res.clientError('Invalid to param')
+    if (! toParamIsValid(to)) {
+      res.clientError('Invalid to param')
         .missing('subscription', 'to')
         .send(400);
+    } else {
+      if(req.socket)
+        Event.unsubscribe(req.socket, to);
+      res.send(204);
     }
-    if (req.socket) {
-      Event.unsubscribe(req.socket, to);
-    }
-    res.send(204);
+  },
+  delete: function(req, res) {
+    var id = req.param('id');
+    Event.findOne({id: id}).done(function(err, e) {
+      if (err) {
+        return res.serverError(err);
+      } else if (!e) {
+        return res.clientError('Event not found')
+          .missing('event', 'id')
+          .send(404);
+      } else if (req.user.id !== e.actor.id) {
+        // only allowed to delete events user has created
+        return res.send(403);
+      } else if (e.status === 'active') {
+        // cant delete active event
+        return res.send(403);
+      }
+      Event.destroy({id: id}).done(function(err) {
+        if (err) {
+          res.serverError(err);
+        } else {
+          _.each(e.to, function(to) {
+            Event.publish(to, {
+              model: Event.identity,
+              verb: 'delete',
+              data: e,
+              id: to
+            });
+          });
+          res.send(204);
+        }
+      });
+    });
   },
   events: function(req, res) {
     Event.producedBy(req.user.id)
-      .sort('createdAt DESC')
+      .sort({published_at: -1, createdAt: -1})
       .exec(function(err, events) {
         if(err) throw err;
         res.json(events);
@@ -79,7 +140,7 @@ module.exports = {
         .send(400);
     }
     Event.receivedBy(to, req.user.role)
-      .sort('createdAt DESC')
+      .sort({published_at: -1, createdAt: -1})
       .exec(function(err, events) {
         if(err) throw err;
         if(! events) return res.json(404);
@@ -87,3 +148,4 @@ module.exports = {
       });
   }
 };
+

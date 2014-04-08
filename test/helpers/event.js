@@ -5,11 +5,21 @@ var verbs = ['completed', 'liked', 'joined', 'assigned', 'created']
   , types = ['comment', 'assignment'];
 
 var Event = module.exports = {
-  post: function(opts, user, authToken, cb) {
+  post: function(opts, groups, authToken, cb) {
     var evt = Event.generate(opts);
-    evt.to = user.groups;
+    evt.to = [].concat(groups);
     request
-      .post('/' + [user.type, 'events'].join('/'))
+      .post('/' + ['user', 'events'].join('/'))
+      .set('Authorization', authToken)
+      .send(evt)
+      .end(cb);
+    return evt;
+  },
+  queue: function(opts, groups, authToken, cb) {
+    var evt = Event.generate(opts);
+    evt.to = [].concat(groups);
+    request
+      .post('/' + ['user', 'events', 'queue'].join('/'))
       .set('Authorization', authToken)
       .send(evt)
       .end(cb);
@@ -50,5 +60,11 @@ var Event = module.exports = {
       name: name,
       link: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });
+  },
+  del: function(eventId, authToken, cb) {
+    request
+      .del('/event/' + eventId)
+      .set('Authorization', authToken)
+      .end(cb);
   }
 };

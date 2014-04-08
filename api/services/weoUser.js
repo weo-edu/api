@@ -10,10 +10,11 @@ User.findOne(weoId).exec(function(err, u) {
 			id: weoId,
 			first_name: 'Weo',
 			last_name: 'Tips',
-			username: 'weo-tip',
+			username: 'weotip',
 			password: 'elliotTheMang',
 			type: 'admin'
 		}).done(function(err, u) {
+			console.log('err', err);
 			_.extend(user, u);
 		})
 	} else {
@@ -25,11 +26,8 @@ module.exports = user;
 
 
 modelHook.on('group:create', function(group, next) {
-	var actor = Event.userToActor(user);
-	actor.name = 'Weo Tips';
-	Event.createAndEmit({
+	Event.createAndEmit(user, {
 		to: [group.id],
-		actor: actor,
 		verb: 'shared',
 		type: 'tip',
 		visibility: 'teacher',

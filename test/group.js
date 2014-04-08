@@ -293,4 +293,34 @@ describe('GroupHelper controller', function() {
         .seq(done);
     });
   });
+
+  //XXX archive tests
+  describe('should archive class', function() {
+    it('when valid id is given', function(done){
+      Seq()
+        .seq(function() {
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var group = res.body;
+          expect(group.type).to.equal('class');
+          request
+            .patch('/group/' + group.id + '/archive')
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var group = res.body;
+          expect(group.type).to.equal('class:archived');
+          this();
+        })
+        .seq(done);
+
+    });
+
+  });
 });

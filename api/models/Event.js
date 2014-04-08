@@ -1,3 +1,7 @@
+var subSchema = require('../services/subSchema');
+var date = require('../../lib/date');
+var moment = require('moment');
+
 /**
  * Event
  *
@@ -5,7 +9,7 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var subSchema = require('../services/subSchema.js');
+
 
 //XXX should events have an `at` param so that you can set future events
 
@@ -47,6 +51,15 @@ module.exports = {
     visibility: {
       type: 'string'
     },
+    published_at: {
+      type: 'date',
+      required: true
+    },
+    status: {
+      in: ['active', 'pending'],
+      defaultsTo: 'active',
+      required: true
+    },
     payload: 'json'
   },
   receivedBy: function(to, role) {
@@ -55,27 +68,51 @@ module.exports = {
   producedBy: function(userId) {
     return Event.find({'actor.id': userId});
   },
-  createAndEmit: function(evt, cb) {
-    Event.create(evt)
-      .exec(function(err, createdEvent) {
-        if(err) return cb(err);
-        _.each(createdEvent.to, function(to) {
-          Event.publish(to, {
-            model: Event.identity,
-            verb: 'add',
-            data: createdEvent,
-            id: to
+  createAndEmit: function(userId, evt, cb) {
+    _.defaults(evt, {published_at: moment().toISOString()});
+    User.get(userId, function(err, user) {
+      if (err) return cb(err);
+      evt.actor = Event.userToActor(user);
+      Event.create(evt)
+        .exec(function(err, createdEvent) {
+          if(err) return cb(err);
+          _.each(createdEvent.to, function(to) {
+            Event.publish(to, {
+              model: Event.identity,
+              verb: 'add',
+              data: createdEvent,
+              id: to
+            });
           });
+          cb(null, createdEvent);
         });
-        cb(null, createdEvent);
-      });
+    });
+  },
 
+  // XXX maybe this can be a general response
+  createAndEmitRes: function(res) {
+    return function(err, createdEvent) {
+      if (err instanceof databaseError.NotFound) {
+        return res.clientError('User not found')
+          .missing('user', 'id')
+          .send(404);
+      } else if (err) {
+        res.serverError(err);
+      } else {
+        res.json(201, createdEvent);
+      }
+    };
+  },
+  queue: function(evt) {
+    evt.status = 'pending';
+    evt.visibility = 'teacher';
+    evt.published_at = date.max();
   },
   userToActor: function(user) {
     return {
       id: user.id,
       avatar: avatar(user.id),
-      name: user.name,
+      name: user.name || User.defaultName(user),
       link: '/user/' + user.id
     }
   }

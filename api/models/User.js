@@ -43,7 +43,8 @@ module.exports = {
       required: true,
       in: ['student', 'teacher', 'parent', 'admin']
     },
-    groups: 'array'
+    groups: 'array',
+    preferences: 'object'
   },
   // Event-callbacks here must use array style
   // so that they can be _.merge'd with Teacher/Student
@@ -108,5 +109,30 @@ module.exports = {
       if (type) options.type = type;
       Group.find(options).done(cb);
     });
+  },
+  get: function(userIdOrUser, cb) {
+    if (_.isObject(userIdOrUser)) {
+      cb(null, userIdOrUser);
+    } else {
+      User.findOne(userIdOrUser)
+        .exec(function(err, user) {
+          if (err) return cb(err);
+          if (!user) return cb(new databaseError.NotFound('User'));
+          cb(null, user);
+        })
+    }
+  },
+  defaultName: function(user) {
+    return user.first_name + ' ' + user.last_name; 
+  },
+  preferences: function(userId, cb) {
+    User.findOne(userId, function(err, user) {
+      if(err) return cb(err);
+      cb(null, user.preferences);
+    });
+  },
+  setPreference: function(userId, name, value) {    var update = {};
+    update['preferences.' + name] = value;
+    return User.update(userId, update);
   }
 };
