@@ -28,7 +28,7 @@ module.exports.session = {
   //
   host: redis.host,
   port: redis.port,
-  ttl: 60*60*24*7,
+  ttl: 60*60*24*365,
   db: redis.database,
   pass: redis.password,
   prefix: 'sess:'
