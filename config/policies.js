@@ -12,6 +12,8 @@
  */
 var belongsToGroup = require('../api/policies/belongsToGroup');
 var ownsGroup = require('../api/policies/ownsGroup');
+var isTeacherOf = require('../api/policies/isTeacherOf');
+
 module.exports.policies = {
   // Default policy for all controllers and actions
   // (`true` allows public access)
@@ -33,7 +35,8 @@ module.exports.policies = {
     groups: ['isAuthenticated'],
     feed: ['isAuthenticated'],
     me: ['isAuthenticated'],
-    updateMe: ['isAuthenticated']
+    updateMe: ['isAuthenticated'],
+
   },
   TeacherController: {
   	'*': ['isAuthenticated', 'isTeacher'],
@@ -41,7 +44,8 @@ module.exports.policies = {
   },
   StudentController: {
   	'*': ['isAuthenticated'],
-  	create: true
+  	create: true,
+    setPassword: ['isAuthenticated', 'isTeacher', isTeacherOf('userId')]
   },
   S3Controller: {
   	upload: 'isAuthenticated'

@@ -25,7 +25,13 @@ module.exports = mergeModels(UserController, {
    * Overrides for the settings in `config/controllers.js`
    * (specific to StudentController)
    */
-  _config: {}
-
-
+  _config: {},
+  _routes: {
+    'PATCH @/:userId/password': 'setPassword',
+  },
+  setPassword: function(req, res) {
+    User.setPassword(req.param('userId'), req.param('password'), function(err, user) {
+      err ? res.serverError(err) : res.json(200, user);
+    });
+  }
 });
