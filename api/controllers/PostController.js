@@ -14,6 +14,7 @@ module.exports = {
   _routes: {
   	'GET @/:discussion': 'find',
   	'POST @/:discussion': 'create',
+    'PUT @/:id/votes': 'vote'
   },
 
   create: function(req, res) {
@@ -46,7 +47,7 @@ module.exports = {
   	var options = {
 				limit: req.param('limit') || undefined,
 				skip: req.param('skip') || req.param('offset') || undefined,
-				sort: {createdAt: 1},
+				sort: {votes: -1, createdAt: 1},
 				where: {discussion_id: discussionId, type: type},
 			};
 
@@ -58,6 +59,43 @@ module.exports = {
   			return model.toJSON();
   		}));
   	});
+  },
+
+  vote: function(req, res){
+    var id = req.param('id');
+    var vote = req.param('vote');
+    var userId = req.user.id;
+
+    var Model = sails.models[req.target.controller];
+    Model.findOne(id).done(err, function(post) {
+      var lastVote = post.votes[userId] || 0;
+      var lastTotal = post.votes_total;
+      var newTotal = lastTotal + (vote - lastVote);
+      var update = {id: id, votes_total: newTotal};
+      update['votes.' + userId] = vote;
+      Model.update(update).done(err, function(post) {
+        if (err)
+          return res.sendError(Err);
+        var votes = {};
+        votes[userId] = post.votes[userId];
+        var smallPost = {
+          id: post.id, 
+          votes_total: 
+          post.votes_total, 
+          votes: votes
+        };
+
+        if (req.socket) {
+          Discussion.publish(post.discussion_id, {
+            model: Discussion.identity,
+            verb: 'update',
+            data: smallPost,
+            id: discussionId
+          }, req.socket);
+        }
+        res.json(smallPost);
+      });
+    });
   }
   
 

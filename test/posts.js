@@ -220,4 +220,11 @@ describe('Post controller', function() {
 
 	});
 
+	describe('should vote', function() {
+		var discussionId = Post.discussionId();
+		before(function(done) {
+			
+		});
+	});
+
 });

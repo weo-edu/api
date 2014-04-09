@@ -48,6 +48,14 @@ module.exports = {
   		type: 'string',
   	},
 
+    votes_total: {
+      type: 'integer',
+      defaultsTo: 0
+    },
+
+    votes: {
+      type: 'object'
+    },
 
   	flagged: {
   		type: 'boolean'
