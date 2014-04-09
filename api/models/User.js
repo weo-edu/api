@@ -35,7 +35,6 @@ module.exports = {
     email: {
       type: 'email'
     },
-    tokens: 'array',
     salt: 'string',
     verifier: 'string',
     type: {
@@ -58,8 +57,7 @@ module.exports = {
   }],
   beforeCreate: [function(attrs, next) {
     delete attrs.password_confirmation;
-    attrs.password = passwordHash.generate(attrs.password,
-      sails.config.hash);
+    attrs.password = User.hashPassword(attrs.password);
     next();
   }],
   afterCreate: [function(attrs, next) {
@@ -119,11 +117,11 @@ module.exports = {
           if (err) return cb(err);
           if (!user) return cb(new databaseError.NotFound('User'));
           cb(null, user);
-        })
+        });
     }
   },
   defaultName: function(user) {
-    return user.first_name + ' ' + user.last_name; 
+    return user.first_name + ' ' + user.last_name;
   },
   preferences: function(userId, cb) {
     User.findOne(userId, function(err, user) {
@@ -134,5 +132,11 @@ module.exports = {
   setPreference: function(userId, name, value) {    var update = {};
     update['preferences.' + name] = value;
     return User.update(userId, update);
+  },
+  hashPassword: function(password) {
+    return passwordHash.generate(password, sails.config.hash);
+  },
+  setPassword: function(userId, newPassword, cb) {
+    User.update(userId, {password: User.hashPassword(newPassword)}, cb);
   }
 };

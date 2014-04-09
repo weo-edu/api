@@ -1,5 +1,5 @@
 var Seq = require('seq')
-  , User = require('./helpers/user')
+  , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group');
 
 
@@ -10,7 +10,7 @@ describe('User controller', function() {
     it('should validate new user data', function(done) {
       Seq()
         .seq(function() {
-          var user = User.generate({username: 'a', type: 'notAValidType'});
+          var user = UserHelper.generate({username: 'a', type: 'notAValidType'});
           request
             .post('/user')
             .send(user)
@@ -29,7 +29,7 @@ describe('User controller', function() {
     it('should create a new student and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = User.generate({type: 'student'});
+          this.vars.user = UserHelper.generate({type: 'student'});
           request
             .post('/student')
             .send(this.vars.user)
@@ -48,7 +48,7 @@ describe('User controller', function() {
         })
         .seq(function() {
           var user = this.vars.user;
-          User.login(user.username, user.password, this);
+          UserHelper.login(user.username, user.password, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -60,7 +60,7 @@ describe('User controller', function() {
     it('should create a new teacher and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = User.create({type: 'teacher'}, this);
+          this.vars.user = UserHelper.create({type: 'teacher'}, this);
         })
         .seq(function(res) {
           var user = this.vars.user;
@@ -75,7 +75,7 @@ describe('User controller', function() {
         })
         .seq(function() {
           var user = this.vars.user;
-          User.login(user.username, user.password, this);
+          UserHelper.login(user.username, user.password, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -89,7 +89,7 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/teacher')
-            .send(_.omit(User.generate(), 'type'))
+            .send(_.omit(UserHelper.generate(), 'type'))
             .end(this);
         })
         .seq(function(res) {
@@ -105,7 +105,7 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/student')
-            .send(_.omit(User.generate({type: 'student'}), 'type'))
+            .send(_.omit(UserHelper.generate({type: 'student'}), 'type'))
             .end(this);
         })
         .seq(function(res) {
@@ -121,7 +121,7 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/teacher')
-            .send(User.generate())
+            .send(UserHelper.generate())
             .end(this);
         })
         .seq(function(res) {
@@ -138,7 +138,7 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/teacher')
-            .send(User.generate({type: 'student', email: 'test@test.com'}))
+            .send(UserHelper.generate({type: 'student', email: 'test@test.com'}))
             .end(this);
         })
         .seq(function(res) {
@@ -149,7 +149,7 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/student')
-            .send(User.generate({type: 'teacher', email: 'test@test.com'}))
+            .send(UserHelper.generate({type: 'teacher', email: 'test@test.com'}))
             .end(this);
         })
         .seq(function(res) {
@@ -163,11 +163,11 @@ describe('User controller', function() {
     it('should not allow duplicate username', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user1 = User.create({}, this);
+          this.vars.user1 = UserHelper.create({}, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          User.create({username: this.vars.user1.username}, this);
+          UserHelper.create({username: this.vars.user1.username}, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(400);
@@ -186,10 +186,10 @@ describe('User controller', function() {
     before(function(done) {
       Seq()
         .seq(function() {
-          user = User.create({}, this);
+          user = UserHelper.create({}, this);
         })
         .seq(function(res) {
-          User.login(user.username, user.password, this);
+          UserHelper.login(user.username, user.password, this);
         })
         .seq(function(res) {
           authToken = 'Bearer ' + res.body.token;
@@ -231,6 +231,116 @@ describe('User controller', function() {
           expect(res).to.have.status(200);
           expect(res.body).to.have.length(1);
           expect(res.body[0]).to.deep.equal(group);
+          this();
+        })
+        .seq(done);
+    });
+  });
+
+  describe('password reset', function() {
+    var student, teacher;
+    beforeEach(function(done) {
+      Seq()
+        .par(function() {
+          // Create teacher
+          UserHelper.createAndLogin({type: 'teacher'}, this);
+        })
+        .par(function(_teacher) {
+          // Create student
+          teacher = _teacher;
+          UserHelper.createAndLogin({type: 'student'}, this);
+        })
+        .seq(function(_teacher, _student) {
+          // Create a group
+          student = _student;
+          teacher = _teacher;
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', teacher.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          // Join the teacher's group
+          expect(res).to.have.status(201);
+          var group = res.body;
+          request
+            .put('/group/join/' + group.code)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function() { done(); });
+    });
+
+    it('should let teachers reset students passwords', function(done) {
+      Seq()
+        .seq(function() {
+          // Set a new password for student, as teacher
+          request
+            .patch('/student/' + student.id + '/password')
+            .send({newPassword: 'new password'})
+            .set('Authorization', teacher.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          // Try to login with our new password
+          expect(res).to.have.status(200);
+          UserHelper.login(student.username, 'new password', this);
+        })
+        .seq(function(res) {
+          // Make sure the old password doesn't work
+          expect(res).to.have.status(200);
+          UserHelper.login(student.username, student.password, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(401);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not let students set each others passwords', function(done) {
+      Seq()
+        .seq(function() {
+          // Create another student
+          UserHelper.createAndLogin({type: 'student'}, this);
+        })
+        .seq(function(student2) {
+          // Make sure student's cannot set each others passwords
+          request
+            .patch('/student/' + student.id + '/password')
+            .send({newPassword: 'other password'})
+            .set('Authorization', student2.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          // Expect failure
+          expect(res).to.have.status(403);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not let other teachers who do not teach a student set their password', function(done) {
+      Seq()
+        .seq(function() {
+          // Create some other teacher who doesn't teach
+          // the student we created in the beforeEach
+          UserHelper.createAndLogin({type: 'teacher'}, this);
+        })
+        .seq(function(otherTeacher) {
+          // Attempt to set the student's password as some
+          // other teacher who does not own a group that
+          // the student belongs to
+          request
+            .patch('/student/' + student.id + '/password')
+            .send({newPassword: 'other password'})
+            .set('Authorization', otherTeacher.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          // Expect failure
+          expect(res).to.have.status(403);
           this();
         })
         .seq(done);

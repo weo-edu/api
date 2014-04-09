@@ -154,7 +154,6 @@ module.exports = {
     var groupIds = req.param('groups');
     Student.findAssignable(groupIds, function(err, students) {
       if(err) throw err;
-      console.log('students', students);
       res.json(students);
     });
   },

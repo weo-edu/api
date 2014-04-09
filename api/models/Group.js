@@ -50,5 +50,8 @@ module.exports = {
         cb(err, group);
       });
     });
+  },
+  ownedBy: function(userId, cb) {
+    return Group.find({owners: userId}, cb);
   }
 };
