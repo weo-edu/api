@@ -152,9 +152,9 @@ module.exports = {
   },
   studentsInGroups: function(req, res) {
     var groupIds = req.param('groups');
-    Student.findAssignable(groupIds, function(err, groups) {
+    Student.findAssignable(groupIds, function(err, students) {
       if(err) throw err;
-      res.json(groups);
+      res.json(students);
     });
   },
   createSubscription: function(req, res) {

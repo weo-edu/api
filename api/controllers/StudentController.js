@@ -26,7 +26,7 @@ module.exports = mergeModels(UserController, {
     'PATCH @/:userId/password': 'setPassword',
   },
   setPassword: function(req, res) {
-    User.setPassword(req.param('userId'), req.param('password'), function(err, users) {
+    User.setPassword(req.param('userId'), req.param('newPassword'), function(err, users) {
       err ? res.serverError(err) : res.json(200, users[0]);
     });
   }

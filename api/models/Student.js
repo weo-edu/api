@@ -50,16 +50,7 @@ var model = module.exports = mergeModels(UserSchema, {
   findAssignable: function(groupIds, cb) {
     User.find({groups: groupIds, type: 'student'}).done(function(err, users) {
       if (err) return cb(err);
-      var students = _.filter(users, function(user) {
-        return user.type === 'student';
-      })
-      var groups = _.map(students, function(user) {
-        var group = {};
-        group.name = user.name;
-        group.id = user.id;
-        return group;
-      });
-      cb(null, groups);
+      cb(null, users);
     });
   }
 });
