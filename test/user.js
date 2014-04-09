@@ -278,7 +278,7 @@ describe('User controller', function() {
           // Set a new password for student, as teacher
           request
             .patch('/student/' + student.id + '/password')
-            .send({password: 'new password'})
+            .send({newPassword: 'new password'})
             .set('Authorization', teacher.token)
             .end(this);
         })
@@ -309,7 +309,7 @@ describe('User controller', function() {
           // Make sure student's cannot set each others passwords
           request
             .patch('/student/' + student.id + '/password')
-            .send({password: 'other password'})
+            .send({newPassword: 'other password'})
             .set('Authorization', student2.token)
             .end(this);
         })
@@ -334,7 +334,7 @@ describe('User controller', function() {
           // the student belongs to
           request
             .patch('/student/' + student.id + '/password')
-            .send({password: 'other password'})
+            .send({newPassword: 'other password'})
             .set('Authorization', otherTeacher.token)
             .end(this);
         })
