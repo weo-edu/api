@@ -112,14 +112,7 @@ module.exports = {
         if (err) {
           res.serverError(err);
         } else {
-          _.each(e.to, function(to) {
-            Event.publish(to, {
-              model: Event.identity,
-              verb: 'delete',
-              data: e,
-              id: to
-            });
-          });
+          Event.emit(e, 'delete');
           res.send(204);
         }
       });
