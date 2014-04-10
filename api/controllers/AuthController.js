@@ -48,6 +48,7 @@ module.exports = {
             , moment.duration(7, 'days').asSeconds()
             , function(err, token) {
               if(err) throw err;
+              res.cookie('authToken', token);
               res.json({
                 id: user.id,
                 username: user.username,
@@ -64,7 +65,10 @@ module.exports = {
     });
   },
   logout: function(req, res) {
-    // Stub, to maybe do something with later
-    res.send(200);
+    redis.del(res.cookie('authToken'), function(err) {
+      if(err) throw err;
+      res.cookie('authToken', '');
+      res.send(200);
+    });
   }
 };

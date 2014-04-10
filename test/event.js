@@ -246,7 +246,7 @@ describe('Event controller', function() {
         .seq(done);
     });
 
-    
+
     beforeEach(function() {
       teacherMessages = [];
       studentMessages = [];
@@ -309,7 +309,7 @@ function connectNewUser(opts, cb) {
     })
     .seq(function(res) {
       token = res.body.token;
-      cookie = Cookie.parse(res.headers['set-cookie'][0]);
+      cookie = Cookie.parse(res.headers['set-cookie'][1]);
       cookie = Cookie.serialize('sails.sid', cookie['sails.sid']);
       var con = socketConnect(token, cookie)
       con.on('connect', function() {
