@@ -306,10 +306,7 @@ function connectNewUser(opts, cb) {
       User.login(user.username, user.password, this);
     })
     .seq(function(res) {
-      token = res.body.token;
-      cookie = Cookie.parse(res.headers['set-cookie'][1]);
-      cookie = Cookie.serialize('sails.sid', cookie['sails.sid']);
-      var con = socketConnect(token, cookie)
+      var con = socketConnect(res.headers['set-cookie'].join(';'))
       con.on('connect', function() {
         cb(null, con);
       })

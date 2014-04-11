@@ -36,7 +36,8 @@
     "knox": "~0.8.9",
     "parse-redis-url": "0.0.1",
     "debug-trace": "^0.2.2",
-    "express-inject-latency": "0.0.3"
+    "express-inject-latency": "0.0.3",
+    "qs": "~0.6.6"
   },
   "scripts": {
     "start": "node app.js",
