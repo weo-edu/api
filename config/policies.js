@@ -22,21 +22,17 @@ module.exports.policies = {
   	'*': ['isAuthenticated'],
     feed: ['isAuthenticated', belongsToGroup('to')]
   },
-  AuthController: {
-  	user: 'isAuthenticated'
-  },
   // For now the user controller is pure virtual
   // which means that none of its routes should
   // be accessible
   UserController: {
   	'*': false,
   	create: true,
+    me: true,
     events: ['isAuthenticated'],
     groups: ['isAuthenticated'],
     feed: ['isAuthenticated'],
-    me: ['isAuthenticated'],
-    updateMe: ['isAuthenticated'],
-
+    updateMe: ['isAuthenticated']
   },
   TeacherController: {
   	'*': ['isAuthenticated', 'isTeacher'],

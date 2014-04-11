@@ -14,6 +14,8 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+var Seq = require('seq');
+
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
@@ -56,14 +58,33 @@ module.exports = {
       }
       if (err) throw err;
       res.json(_.invoke(groups, 'toJSON'));
-    })
+    });
   },
   me: function(req, res) {
-    if(! req.user) return res.json(404);
-    User.findOne(req.user.id)
-      .exec(function(err,user) {
-        if(err) return res.serverError(err);
+    // XXX We shouldn't be duplicating this functionality from passport
+    // here.  But policies insist on responding with an invalid status
+    // code, which in this case we don't want.
+    var token = '';
+    if(req.headers.authorization)
+      token = req.headers.authorization.slice('Bearer '.length);
+    Seq()
+      .seq(function() {
+        // If no token, return empty data
+        if(! token) return this(null, null);
+        Auth.lookupToken(token, this);
+      })
+      .seq(function(data) {
+        // if no data, then we want to return an empty
+        // user object
+        if(! data) return this(null, {});
+
+        User.findOne(data.id, this);
+      })
+      .seq(function(user) {
         res.json(user);
+      })
+      .catch(function(err) {
+        res.serverError(err);
       });
   },
   updateMe: function(req, res) {

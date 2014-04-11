@@ -15,6 +15,6 @@ module.exports.express = {
     app.use(passport.initialize());
     app.use(weoErrorCodes());
     // if(process.env.NODE_ENV === 'development')
-    //   app.use(injectLatency({mean: 200}));
+    //   app.use(injectLatency({mean: 1000}));
   }
 };

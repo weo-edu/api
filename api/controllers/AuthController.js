@@ -27,8 +27,7 @@ module.exports = {
   _config: {},
   _routes: {
     '@/login': 'login',
-    '@/logout': 'logout',
-    '@/user': 'user'
+    '@/logout': 'logout'
   },
   login: function(req, res) {
     var username = req.param('username')

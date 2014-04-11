@@ -292,8 +292,6 @@ describe('Event controller', function() {
         .seq(done);
     })
   });
-
-
 });
 
 

@@ -35,10 +35,10 @@ module.exports.bootstrap = function (cb) {
   });
 
   sails.on('router:route', function(data) {
-  	var token = data.req.socket && data.req.socket.handshake && data.req.socket.handshake.query.token;
-  	if (token) {
-  		data.req.headers.authorization = 'Bearer ' + token;
-  	}
+    var token = data.req.socket && data.req.socket.handshake && data.req.socket.handshake.cookie.authToken;
+    if(token) {
+      data.req.headers.authorization = 'Bearer ' + token;
+    }
   });
 
   var passportInitialize = passport.initialize();
