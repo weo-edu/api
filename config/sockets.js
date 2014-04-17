@@ -7,7 +7,7 @@
  * For more information on using Sails with Sockets, check out:
  * http://sailsjs.org/#documentation
  */
-
+var redis = require('./redis').redis;
 module.exports.sockets = {
 
   // This custom onConnect function will be run each time AFTER a new socket connects
@@ -47,8 +47,13 @@ module.exports.sockets = {
 
   // Use this option to set the datastore socket.io will use to manage rooms/sockets/subscriptions:
   // default: memory
-  adapter: 'memory',
-
+  adapter: 'redis',
+  host: redis.host,
+  port: redis.port,
+  ttl: 60*60*24*365,
+  db: redis.database,
+  pass: redis.password,
+  prefix: 'sess:',
 
   // Node.js (and consequently Sails.js) apps scale horizontally.
   // It's a powerful, efficient approach, but it involves a tiny bit of planning.
