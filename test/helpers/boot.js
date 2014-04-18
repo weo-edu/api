@@ -24,8 +24,8 @@ before(function(done) {
   sails.lift();
   sails.on('ready', function() {
     global.request = supertest(sails.express.app);
-    global.socketConnect = function(authToken, cookie) {
-      var qs = querystring.stringify({token: authToken, cookie: cookie});
+    global.socketConnect = function(cookie) {
+      var qs = querystring.stringify({cookie: cookie});
       var s = socket.connect('http://localhost:' + process.env.PORT + '?' + qs, {"force new connection": true});
       socketMixin(s);
       return s;

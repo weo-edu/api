@@ -1,5 +1,6 @@
-var passport = require('passport')
-  , weoErrorCodes = require('weo-error-codes');
+var passport = require('passport');
+var weoErrorCodes = require('weo-error-codes');
+var injectLatency = require('express-inject-latency');
 
 module.exports.express = {
   customMiddleware: function(app) {
@@ -13,5 +14,7 @@ module.exports.express = {
 
     app.use(passport.initialize());
     app.use(weoErrorCodes());
+    // if(process.env.NODE_ENV === 'development')
+    //   app.use(injectLatency({mean: 1000}));
   }
 };

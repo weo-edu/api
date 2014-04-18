@@ -22,19 +22,17 @@ module.exports.policies = {
   	'*': ['isAuthenticated'],
     to: ['isAuthenticated'] // XXX add id based access controls
   },
-  AuthController: {
-  	user: 'isAuthenticated'
-  },
   // For now the user controller is pure virtual
   // which means that none of its routes should
   // be accessible
   UserController: {
   	'*': false,
   	create: true,
+    me: true,
+    events: ['isAuthenticated'],
     groups: ['isAuthenticated'],
-    me: ['isAuthenticated'],
-    updateMe: ['isAuthenticated'],
-
+    feed: ['isAuthenticated'],
+    updateMe: ['isAuthenticated']
   },
   TeacherController: {
   	'*': ['isAuthenticated', 'isTeacher'],

@@ -39,5 +39,5 @@ module.exports = {
         if(err) return res.serverError(err);
         res.send(204)
       });
-  }  
+  }
 };

@@ -115,14 +115,7 @@ module.exports = {
         if (err) {
           res.serverError(err);
         } else {
-          _.each(share.to, function(to) {
-            Share.publish(to, {
-              model: Share.identity,
-              verb: 'delete',
-              data: share,
-              id: to
-            });
-          });
+          Event.emit(e, 'delete');
           res.send(204);
         }
       });
