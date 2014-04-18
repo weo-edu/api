@@ -24,21 +24,9 @@ module.exports = {
     'GET @': 'me',
     'PATCH @': 'updateMe',
     'GET @/groups/:type?': 'groups',
-    'GET @/feed': {
-      controller: 'event',
-      action: 'feed'
-    },
-    'POST @/events': {
-      controller: 'event',
-      action: 'emit'
-    },
-    'POST @/events/queue': {
-      controller: 'event',
-      action: 'queue'
-    },
-    'GET @/events': {
-      controller: 'event',
-      action: 'events'
+    'GET @/shares': {
+      controller: 'share',
+      action: 'to'
     },
     'PATCH @/avatar': {
       controller: 'avatar',

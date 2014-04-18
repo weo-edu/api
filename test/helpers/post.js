@@ -8,26 +8,24 @@ var Post = module.exports = {
   generate: function(opts) {
     opts = opts || {};
     _.defaults(opts, {
-      user: '' + Math.random(),
-      title: Faker.Lorem.words(),
       body: Faker.Lorem.paragraph(),
-      user_name: Faker.Name.findName()
     });
-
     return opts;
   },
 
-  discussionId: function() {
+  randomTo: function() {
     return '' + Math.random();
   },
 
-  create: function(type, opts, cb) {
+  create: function(token, type, opts, cb) {
     var post = this.generate(opts);
-    var discussionId = opts.discussion_id || this.discussionId();
-    delete opts.discussion_id;
+    post.type = type;
+    var share = {to: opts.to || this.randomTo()};
+    share.object = post;
     request
-      .post('/' + type + '/' + discussionId)
-      .send(post)
+      .post('/post')
+      .send(share)
+      .set('Authorization', token)
       .end(cb);
   }
 };
