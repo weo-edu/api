@@ -5,10 +5,10 @@ var Seq = require('seq');
 function teacherDefaults() {
   return {
     type: 'teacher',
-    first_name: Faker.Name.firstName(),
-    last_name: Faker.Name.lastName(),
+    first_name: sanitize(Faker.Name.firstName()),
+    last_name: sanitize(Faker.Name.lastName()),
     groups: ['fakeGroupId'],
-    username: Faker.Internet.email(),
+    username: sanitize(Faker.Internet.email()),
     password: 'testpassword',
     password_confirmation: 'testpassword',
     title: 'Mr.'
@@ -17,9 +17,13 @@ function teacherDefaults() {
 
 function studentDefaults() {
   var defaults = teacherDefaults();
-  defaults.username = Faker.Internet.userName();
+  defaults.username = sanitize(Faker.Internet.userName());
   delete defaults.title;
   return defaults;
+}
+
+function sanitize(str) {
+  return str.replace(/[^\s0-9a-zA-Z\@\.]/g, 'a');
 }
 
 var User = module.exports = {

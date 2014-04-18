@@ -10,10 +10,9 @@
 
 // Clean up stack traces by removing node-core methods
 //require('clarify');
-
-var passport = require('passport'),
-		http = require('http'),
-    methods = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
+var passport = require('passport');
+var http = require('http');
+var methods = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
 
 module.exports.bootstrap = function (cb) {
   browserifyModels();
@@ -34,18 +33,39 @@ module.exports.bootstrap = function (cb) {
     }
   });
 
-  sails.on('router:route', function(data) {
-    var token = data.req.socket && data.req.socket.handshake && data.req.socket.handshake.cookie.authToken;
-    if(token) {
-      data.req.headers.authorization = 'Bearer ' + token;
+  // Retrieve an access_token from a request.  It can be in the
+  // authorization header, the query params, or the request body
+  function getToken(req) {
+    var token;
+    if(req.headers && req.headers.authorization) {
+      var parts = req.headers.authorization.split(' ');
+      if(parts[0] === 'Bearer')
+        return parts[1];
     }
+
+    if(req.body && req.body.access_token)
+      return req.body.access_token;
+    if(req.query && req.query.access_token)
+      return req.query.access_token;
+  }
+
+  sails.on('router:route', function(data) {
+    if(data.req.socket && data.req.socket.handshake) {
+      // For socket requests, get the token from the initial http
+      // handshake req
+      data.req.query.access_token = getToken(data.req.socket.handshake);
+    }
+
+    // Put the token on the request in a uniformly accessible way
+    // so that we can use it in controllers
+    data.req.access_token = getToken(data.req);
   });
 
+  // Setup passport middleware and methods on socket requestss
   var passportInitialize = passport.initialize();
   sails.on('router:route', function(data) {
-  	var req = data.req;
-  	for (var i = 0; i < methods.length; i++) {
-      req[methods[i]] = http.IncomingMessage.prototype[methods[i]];
+    for (var i = 0; i < methods.length; i++) {
+      data.req[methods[i]] = http.IncomingMessage.prototype[methods[i]];
     }
     passportInitialize(data.req, data.res, function(){});
   });

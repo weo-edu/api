@@ -9,7 +9,6 @@
  * For more information on configuring the session, check out:
  * http://sailsjs.org/#documentation
  */
-var redis = require('./redis').redis;
 module.exports.session = {
 
   // Session secret is automatically generated when your new app is created
@@ -20,20 +19,11 @@ module.exports.session = {
 
   // In production, uncomment the following lines to set up a shared redis session store
   // that can be shared across multiple Sails.js servers
-  adapter: 'redis',
   //
   // The following values are optional, if no options are set a redis instance running
   // on localhost is expected.
   // Read more about options at: https://github.com/visionmedia/connect-redis
   //
-  host: redis.host,
-  port: redis.port,
-  ttl: 60*60*24*365,
-  db: redis.database,
-  pass: redis.password,
-  prefix: 'sess:'
-
-
   // Uncomment the following lines to use your Mongo adapter as a session store
   // adapter: 'mongo',
   //

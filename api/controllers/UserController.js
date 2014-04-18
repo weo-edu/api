@@ -61,12 +61,10 @@ module.exports = {
     });
   },
   me: function(req, res) {
-    // XXX We shouldn't be duplicating this functionality from passport
-    // here.  But policies insist on responding with an invalid status
-    // code, which in this case we don't want.
-    var token = '';
-    if(req.headers.authorization)
-      token = req.headers.authorization.slice('Bearer '.length);
+    var token = req.access_token;
+    if(! token)
+      return res.end();
+
     Seq()
       .seq(function() {
         // If no token, return empty data

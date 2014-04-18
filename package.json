@@ -11,7 +11,6 @@
     "optimist": "0.3.4",
     "browserify": "~3.4.0",
     "hashids": "~0.3.3",
-    "passport": "~0.1.18",
     "passport-local": "~0.1.6",
     "passport-http-bearer": "~1.0.1",
     "passport-http": "~0.2.2",
@@ -36,7 +35,8 @@
     "knox": "~0.8.9",
     "parse-redis-url": "0.0.1",
     "debug-trace": "^0.2.2",
-    "express-inject-latency": "0.0.3"
+    "express-inject-latency": "0.0.3",
+    "passport": "~0.2.0"
   },
   "scripts": {
     "start": "node app.js",

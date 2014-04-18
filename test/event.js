@@ -306,7 +306,8 @@ function connectNewUser(opts, cb) {
       User.login(user.username, user.password, this);
     })
     .seq(function(res) {
-      var con = socketConnect(res.headers['set-cookie'].join(';'))
+      token = res.body.token;
+      var con = socketConnect(token, res.headers['set-cookie'].join(';'))
       con.on('connect', function() {
         cb(null, con);
       })

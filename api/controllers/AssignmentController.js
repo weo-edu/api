@@ -10,9 +10,9 @@ var Seq = require('seq');
 module.exports = {
 
   _routes: {
-    'GET @': 'find',
-  	'POST @': 'create',
     'GET @/active': 'active',
+    'GET @/:id': 'find',
+    'POST @': 'create',
   	'@/:assignment': 'find',
   	'PATCH @/:assignment/score': 'score'
   },
@@ -55,19 +55,17 @@ module.exports = {
   },
 
   find: function(req, res) {
-  	var toIds = req.param('to')
-  		, assignmentId = req.param('assignment');
-
+    var id = req.param('id');
+    var to = req.param('to');
     var studentId = req.user.role === 'student' && req.user.id;
-
-  	var options = parseParams(req, ['student', 'to', 'assignment']);
-  	if (toIds) options.to = toIds;
-  	if(assignmentId) options.id = assignmentId;
   	Seq()
   		.seq(function() {
-  			Assignment.findAndTransform(studentId, options, this);
+        var selector = {};
+        if(id) selector.id = id;
+        if(to) selector.to = to;
+  			Assignment.findAndTransform(studentId, selector, this);
   		})
-  		.seq(findNormalizeResponse(res, assignmentId))
+  		.seq(findNormalizeResponse(res, id))
   		.catch(function(err) {
   			throw err;
   		});

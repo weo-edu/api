@@ -15,9 +15,7 @@
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
 var passwordHash = require('password-hash')
-  , moment = require('moment')
-  , _ = require('lodash')
-  , Seq = require('seq');
+  , moment = require('moment');
 
 module.exports = {
   /**
@@ -43,11 +41,10 @@ module.exports = {
       }
 
       if(passwordHash.verify(password, user.password)) {
-        Auth.createToken({id: user.id, username: user.username, role: user.type}
-            , moment.duration(7, 'days').asSeconds()
+        var data = {id: user.id, username: user.username, role: user.type};
+        Auth.createToken(data, moment.duration(365, 'days').asSeconds()
             , function(err, token) {
               if(err) throw err;
-              res.cookie('authToken', token);
               res.json({
                 id: user.id,
                 username: user.username,
@@ -55,7 +52,6 @@ module.exports = {
                 role: user.type
               });
             });
-
       } else {
         res.clientError('Incorrect password')
           .invalid('auth', 'password')
@@ -64,10 +60,9 @@ module.exports = {
     });
   },
   logout: function(req, res) {
-    redis.del(res.cookie('authToken'), function(err) {
+    redis.del(req.access_token, function(err) {
       if(err) throw err;
-      res.cookie('authToken', '');
-      res.send(200);
+      res.end();
     });
   }
 };
