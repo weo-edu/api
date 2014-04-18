@@ -18,9 +18,9 @@ module.exports.policies = {
   // Default policy for all controllers and actions
   // (`true` allows public access)
   '*': true,
-  EventController: {
+  ShareController: {
   	'*': ['isAuthenticated'],
-    feed: ['isAuthenticated', belongsToGroup('to')]
+    to: ['isAuthenticated'] // XXX add id based access controls
   },
   // For now the user controller is pure virtual
   // which means that none of its routes should
@@ -48,9 +48,9 @@ module.exports.policies = {
   },
   AssignmentController: {
     '*': ['isAuthenticated'],
-    create: ['isAuthenticated', 'isTeacher', ownsGroup('to')],
+    create: ['isAuthenticated', 'isTeacher'], //XXX add ownsGroup("event.to") policy
     score: ['isAuthenticated'],
-    find: ['isAuthenticated']
+    get: ['isAuthenticated']
   },
   AvatarController: {
     change: 'isAuthenticated'
@@ -69,6 +69,9 @@ module.exports.policies = {
   },
   PreferenceController: {
     '*' : ['isAuthenticated']
+  },
+  PostController: {
+    create: ['isAuthenticated']
   }
   /*
 	// Here's an example of adding some policies to a controller

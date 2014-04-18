@@ -43,10 +43,6 @@ module.exports = {
     '@/:id': 'get',
     '@/:id/archive': 'archive',
     'POST @/create': 'create',
-    '@/:to/assignments': {
-      action: 'find',
-      controller: 'assignment'
-    },
     'POST @/members/subscription': 'createSubscription',
     'DELTE @/members/subscription': 'deleteSubscription'
 

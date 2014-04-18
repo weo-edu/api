@@ -9,7 +9,9 @@ module.exports = {
 
   _routes: {
   	'POST @': 'create',
-  	'PATCH /response/:id': 'update'
+  	'PATCH /response/:id': 'update',
+    'POST @/:collection/subscription': 'createSubscription',
+    'DELETE @/:collection/subscription': 'deleteSubscription',
   },
 
   create: function(req, res) {
@@ -45,7 +47,15 @@ module.exports = {
   		});
   		res.json(200, response.toJSON());
   	});
+  },
+  createSubscription: function(req, res) {
+    var collection = req.param('collection');
+    Response.subscribe(req.socket, collection);
+    res.send(201);
+  },
+  deleteSubscription: function(req, res) {
+    var collection = req.param('collection');
+    Response.unsubscribe(req.socket, collection);
+    res.send(204);
   }
-  
-
 };

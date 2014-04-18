@@ -5,27 +5,26 @@ var Faker = require('Faker')
   , UserHelper = require('./user');
 
 
-var Objective = {
-  generate: function(){
-    return {
-      title: Faker.Lorem.words(),
-      body: Faker.Lorem.paragraph(),
-    }
-  }
-};
-
 var Assignment = module.exports = {
   generate: function(opts) {
     opts = opts || {};
     _.defaults(opts, {
-      objective: Objective.generate(),
-      due_at: moment().add('days', 1),
+      body: Faker.Lorem.paragraph(),
       max_score: 10,
       reward: 10
     });
-
-    opts.to = [].concat(opts.to);
-
     return opts;
+  },
+
+  create: function(token, type, opts, cb) {
+    var assignment = this.generate(opts);
+    assignment.type = type;
+    var share = {to: opts.to || this.randomTo()};
+    share.object = assignment;
+    request
+      .post('/assignment')
+      .send(share)
+      .set('Authorization', token)
+      .end(cb);
   }
 };

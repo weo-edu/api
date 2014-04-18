@@ -26,12 +26,12 @@ module.exports = user;
 
 
 modelHook.on('group:create', function(group, next) {
-	Event.createAndEmit(user, {
+	Share.createAndEmit(user, {
 		to: [group.id],
 		verb: 'shared',
 		type: 'tip',
 		visibility: 'teacher',
-		payload: {
+		object: {
 			code: group.code,
 			name: group.name,
 			type: 'code'
