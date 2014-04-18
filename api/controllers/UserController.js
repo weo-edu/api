@@ -14,6 +14,8 @@
  *
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+var Seq = require('seq');
+
 module.exports = {
   /**
    * Overrides for the settings in `config/controllers.js`
@@ -21,15 +23,18 @@ module.exports = {
    */
   _config: {},
   _routes: {
-    'GET /user/groups': 'groups',
-    'GET @/feed': 'feed',
-    'POST @/events': {
-      controller: 'event',
-      action: 'emit'
+    'GET @': 'me',
+    'PATCH @': 'updateMe',
+    'GET @/groups/:type?': 'groups',
+    'GET @/shares': {
+      controller: 'share',
+      action: 'to'
     },
-    'GET @/events': 'events'
+    'PATCH @/avatar': {
+      controller: 'avatar',
+      action: 'change'
+    }
   },
-
   groups: function(req, res) {
     User.groups(req.user.id, req.param('type'), function(err, groups) {
       if (err instanceof databaseError.NotFound) {
@@ -40,33 +45,41 @@ module.exports = {
         }
       }
       if (err) throw err;
-      console.log('groups', groups);
-      res.json(_.map(groups, function(group) {return group.toJSON()}));
-    })
+      res.json(_.invoke(groups, 'toJSON'));
+    });
   },
-  events: function(req, res) {
-    console.log('producedBy', req.user.id);
-    Event.producedBy(req.user.id)
-      .sort('createdAt DESC')
-      .exec(function(err, events) {
-        if(err) throw err;
-        res.json(events);
-      });
-  },
-  feed: function(req, res) {
-    User.findOne(req.user.id)
-      .exec(function(err, user) {
-        if(err) throw err;
-        if(! user) return res.send(404);
+  me: function(req, res) {
+    var token = req.access_token;
+    if(! token)
+      return res.end();
 
-        Event.receivedBy(user.groups)
-          .sort('createdAt DESC')
-          .exec(function(err, events) {
-            if(err) throw err;
-            if(! events) return res.json(404);
-            res.json(events);
-          });
+    Seq()
+      .seq(function() {
+        // If no token, return empty data
+        if(! token) return this(null, null);
+        Auth.lookupToken(token, this);
+      })
+      .seq(function(data) {
+        // if no data, then we want to return an empty
+        // user object
+        if(! data) return this(null, {});
+
+        User.findOne(data.id, this);
+      })
+      .seq(function(user) {
+        res.json(user);
+      })
+      .catch(function(err) {
+        res.serverError(err);
       });
+  },
+  updateMe: function(req, res) {
+    if(! req.user) return res.json(404);
+    // XXX We probably want to filter this some.  For instance,
+    // the client probably shouldn't be able to set their user type
+    User.update(req.user.id, req.body).exec(function(err, user) {
+      if(err) return res.serverError(err);
+      res.json(user);
+    });
   }
-
 };

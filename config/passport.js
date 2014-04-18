@@ -1,5 +1,5 @@
-var passport = require('passport')
-  , BearerStrategy = require('passport-http-bearer').Strategy;
+var passport = require('passport');
+var BearerStrategy = require('passport-http-bearer').Strategy;
 
 passport.use(new BearerStrategy({},
   function(token, done) {

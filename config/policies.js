@@ -10,15 +10,17 @@
  * For more information on policies, check out:
  * http://sailsjs.org/#documentation
  */
+var belongsToGroup = require('../api/policies/belongsToGroup');
+var ownsGroup = require('../api/policies/ownsGroup');
+var isTeacherOf = require('../api/policies/isTeacherOf');
+
 module.exports.policies = {
   // Default policy for all controllers and actions
   // (`true` allows public access)
   '*': true,
-  EventController: {
-  	'*': ['isAuthenticated']
-  },
-  AuthController: {
-  	user: 'isAuthenticated'
+  ShareController: {
+  	'*': ['isAuthenticated'],
+    to: ['isAuthenticated'] // XXX add id based access controls
   },
   // For now the user controller is pure virtual
   // which means that none of its routes should
@@ -26,8 +28,11 @@ module.exports.policies = {
   UserController: {
   	'*': false,
   	create: true,
+    me: true,
     events: ['isAuthenticated'],
-    feed: ['isAuthenticated']
+    groups: ['isAuthenticated'],
+    feed: ['isAuthenticated'],
+    updateMe: ['isAuthenticated']
   },
   TeacherController: {
   	'*': ['isAuthenticated', 'isTeacher'],
@@ -35,7 +40,38 @@ module.exports.policies = {
   },
   StudentController: {
   	'*': ['isAuthenticated'],
-  	create: true
+  	create: true,
+    setPassword: ['isAuthenticated', 'isTeacher', isTeacherOf('userId')]
+  },
+  S3Controller: {
+  	upload: 'isAuthenticated'
+  },
+  AssignmentController: {
+    '*': ['isAuthenticated'],
+    create: ['isAuthenticated', 'isTeacher'], //XXX add ownsGroup("event.to") policy
+    score: ['isAuthenticated'],
+    get: ['isAuthenticated']
+  },
+  AvatarController: {
+    change: 'isAuthenticated'
+  },
+  DiscussionController: {
+    '*': ['isAuthenticated']
+  },
+  FormController: {
+    '*': ['isAuthenticated'],
+    create: ['isAuthenticated', 'isTeacher']
+  },
+  GroupController: {
+    '*': ['isAuthenticated'],
+    create: ['isAuthenticated', 'isTeacher'],
+    lookup: true
+  },
+  PreferenceController: {
+    '*' : ['isAuthenticated']
+  },
+  PostController: {
+    create: ['isAuthenticated']
   }
   /*
 	// Here's an example of adding some policies to a controller

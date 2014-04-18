@@ -57,7 +57,7 @@ module.exports = {
     'GET @/skills/:q?': 'skills',
     'GET @/tags/:q?': 'tags'
   },
-  skills: search('skill'),
-  tags: search('tag')
+  // skills: search('skill'),
+  // tags: search('tag')
 
 };

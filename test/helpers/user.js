@@ -1,21 +1,41 @@
-var Faker = require('Faker')
-  , chai = require('chai');
+var Faker = require('Faker');
+var chai = require('chai');
+var Seq = require('seq');
+
+function teacherDefaults() {
+  return {
+    type: 'teacher',
+    first_name: sanitize(Faker.Name.firstName()),
+    last_name: sanitize(Faker.Name.lastName()),
+    groups: ['fakeGroupId'],
+    username: sanitize(Faker.Internet.email()),
+    password: 'testpassword',
+    password_confirmation: 'testpassword',
+    title: 'Mr.'
+  };
+}
+
+function studentDefaults() {
+  var defaults = teacherDefaults();
+  defaults.username = sanitize(Faker.Internet.userName());
+  delete defaults.title;
+  return defaults;
+}
+
+function sanitize(str) {
+  return str.replace(/[^\s0-9a-zA-Z\@\.]/g, 'a');
+}
 
 var User = module.exports = {
   generate: function(opts) {
     opts = opts || {};
-    _.defaults(opts, {
-      type: 'teacher',
-      first_name: Faker.Name.firstName(),
-      last_name: Faker.Name.lastName(),
-      groups: ['fakeGroupId'],
-      username: Faker.Internet.email(),
-      password: 'testpassword',
-      password_confirmation: opts.password || 'testpassword'
-    });
-    if(opts.type === 'teacher') {
-      opts.title = 'Mr.';
+    var defaults = null;
+    if (opts.type === 'student') {
+      defaults = studentDefaults();
+    } else {
+      defaults = teacherDefaults();
     }
+    _.defaults(opts, defaults);
     return opts;
   },
   create: function(opts, cb) {
@@ -26,7 +46,7 @@ var User = module.exports = {
 
     opts = User.generate(opts);
     request
-      .post('/user')
+      .post('/' + opts.type)
       .send(opts)
       .end(function(err, res) {
         // XXX Kind of hacky, but without it
@@ -42,5 +62,26 @@ var User = module.exports = {
       .post('/auth/login')
       .send({username: username, password: password})
       .end(cb);
+  },
+  createAndLogin: function(opts, cb) {
+    var user;
+    if('function' === typeof opts) {
+      cb = opts;
+      opts = {};
+    }
+
+    Seq()
+      .seq(function() {
+        user = User.create(opts, this);
+      })
+      .seq(function(res) {
+        if(res.statusCode !== 201) return cb('User creation failed', res);
+        User.login(user.username, user.password, this);
+      })
+      .seq(function(res) {
+        if(res.statusCode !== 200) return cb('User login failed', res);
+        user.token = 'Bearer ' + res.body.token;
+        cb(null, user);
+      });
   }
 };

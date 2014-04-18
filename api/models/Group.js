@@ -11,7 +11,7 @@ module.exports = {
   attributes: {
     type: {
       type: 'string',
-      in: ['class', 'group', 'individual'],
+      in: ['class', 'group', 'class:archived'],
       defaultsTo: 'class'
     },
     name: {
@@ -23,37 +23,35 @@ module.exports = {
       unique: true,
       required: true
     },
-
-    //XXX implement and require
     owners: {
-      type: 'array'
+      type: 'array',
+      required: true
     }
   },
   beforeValidation: [function(attrs, next) {
-    if (attrs.id) return next();
-    hashids('Group', {offset: hashids.sixDigitOffset}, 
+    if (attrs.code) return next();
+    hashids('Group', {offset: hashids.sixDigitOffset},
     function(err, code) {
       if(err) throw err;
       attrs.code = code;
       next();
     });
   }],
-  students: function(groupIds, cb) {
-    User.find({groups: groupIds}).done(function(err, users) {
-      if (err) return cb(err);
-      var students = _.filter(users, function(user) {
-        return user.type === 'student';
-      })
-      var groups = _.map(students, function(user) {
-        var group = {};
-        group.name = [user.first_name, user.last_name].join(' ');
-        group.id = user.group;
-        group.type = 'individual';
-        return group;
+  addUser: function(selector, userId, cb) {
+    return Group.findOne(selector).done(function(err, group) {
+      if(! err && ! group)
+        err = new databaseError.NotFound('Group');
+      if(err)
+        return cb(err, null);
+      User.addToGroup(userId, group.id, function(err, user) {
+        if(! err && ! user)
+          err = new databaseError.NotFound('User');
+        // Return the group, since this is a group model method
+        cb(err, group);
       });
-      console.log('groups', groups);
-      cb(null, groups);
     });
-
+  },
+  ownedBy: function(userId, cb) {
+    return Group.find({owners: userId}, cb);
   }
 };

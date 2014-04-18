@@ -35,15 +35,15 @@ module.exports = {
     email: {
       type: 'email'
     },
-    tokens: 'array',
     salt: 'string',
     verifier: 'string',
     type: {
       type: 'string',
       required: true,
-      in: ['student', 'teacher', 'parent']
+      in: ['student', 'teacher', 'parent', 'admin']
     },
-    groups: 'array'
+    groups: 'array',
+    preferences: 'object'
   },
   // Event-callbacks here must use array style
   // so that they can be _.merge'd with Teacher/Student
@@ -57,47 +57,44 @@ module.exports = {
   }],
   beforeCreate: [function(attrs, next) {
     delete attrs.password_confirmation;
-    attrs.password = passwordHash.generate(attrs.password,
-      sails.config.hash);
+    attrs.password = User.hashPassword(attrs.password);
     next();
   }],
   afterCreate: [function(attrs, next) {
     delete attrs.password;
-    next();
+    modelHook.emit('user:create', attrs, next);
   }, function(attrs, next) {
-    var type = 'individual';
-    //XXX delete user on error
-    Seq()
-      .seq(function() {
-        Group.create({type: type, name: attrs.username}, this);
-      })
-      .seq(function(group) {
-        User.addToGroup(attrs.id, group.id, type, this);
-      })
-      .seq(function(user) {
-        attrs.groups = user.groups;
-        next();
-      })
-      .catch(next);
+    var groups = attrs.groups;
+    if (groups && groups.length) {
+      Seq(groups)
+        .parEach(function(group) {
+          modelHook.emit('group:addMember', {groupId: group, user: attrs}, this);
+        })
+        .seq(function() {
+          next();
+        })
+        .catch(function(err) {
+          next(err);
+        });
+    } else {
+      next();
+    }
   }],
-  addToGroup: function(userId, groupId, groupType, cb) {
-    if (_.isFunction(groupType)) {
-      cb = groupType;
-      groupType = undefined;
-    }
-    var update = {$addToSet: {groups: groupId}};
-    if (groupType && groupType === 'individual') {
-      update.group = groupId;
-    }
-    User.update({id: userId}, update).done(function(err, users) {
-      if (err) return cb(err);
-      if (users.length) {
-        var user = users[0];
-        cb(null, user);
-      } else {
-        cb(new databaseError.NotFound('Assignment'));
+  addToGroup: function(userId, groupId, cb) {
+    User.update(userId, {
+      $addToSet: {
+        groups: groupId
       }
-      
+    }).done(function(err, users) {
+      if(! err && ! users.length)
+        err = new databaseError.NotFound('Assignment');
+      if(! err) {
+        modelHook.emit('group:addMember', {groupId: groupId, user: users[0]}, function(err) {
+          if (err) console.error('Error in group:addMember hook:' + err.message);
+          cb(err, users[0]);
+        });
+      } else
+        cb(err);
     });
   },
   groups: function(userId, type, cb) {
@@ -106,9 +103,40 @@ module.exports = {
       if (!user) {
         return cb(new databaseError.NotFound('User'));
       }
-      var options = {id: user.groups};
+      var options = {id: [].concat(user.groups)};
       if (type) options.type = type;
       Group.find(options).done(cb);
     });
+  },
+  get: function(userIdOrUser, cb) {
+    if (_.isObject(userIdOrUser)) {
+      cb(null, userIdOrUser);
+    } else {
+      User.findOne(userIdOrUser)
+        .exec(function(err, user) {
+          if (err) return cb(err);
+          if (!user) return cb(new databaseError.NotFound('User'));
+          cb(null, user);
+        });
+    }
+  },
+  defaultName: function(user) {
+    return user.first_name + ' ' + user.last_name;
+  },
+  preferences: function(userId, cb) {
+    User.findOne(userId, function(err, user) {
+      if(err) return cb(err);
+      cb(null, user.preferences);
+    });
+  },
+  setPreference: function(userId, name, value) {    var update = {};
+    update['preferences.' + name] = value;
+    return User.update(userId, update);
+  },
+  hashPassword: function(password) {
+    return passwordHash.generate(password, sails.config.hash);
+  },
+  setPassword: function(userId, newPassword, cb) {
+    User.update(userId, {password: User.hashPassword(newPassword)}, cb);
   }
 };

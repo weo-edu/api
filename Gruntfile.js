@@ -475,7 +475,6 @@ module.exports = function (grunt) {
     var baseurl = grunt.option('baseurl');
     var gruntSignalRoute = grunt.option('signalpath');
     var url = baseurl + gruntSignalRoute + '?action=' + action + '&filepath=' + filepath;
-    console.log('url', url);
     require('http').get(url)
     .on('error', function(e) {
       console.error(filepath + ' has ' + action + ', but could not signal the Sails.js server: ' + e.message);

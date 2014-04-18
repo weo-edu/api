@@ -1,6 +1,8 @@
 var Seq = require('seq')
 	, _ = require('lodash')
-	, modelHook = require('../../lib/modelHook');
+	, modelHook = require('../../lib/modelHook')
+  , moment = require('moment')
+
 
 function studentInit() {
 	return {progress: 0, score: 0, reward_claimed: false};
@@ -9,7 +11,7 @@ function studentInit() {
 modelHook.on('group:addMember', function(data, next) {
 	if (data.user.type === 'student')
 		Assignment.addStudent(data.groupId, data.user.id, next);
-	else 
+	else
 		next();
 });
 
@@ -25,113 +27,77 @@ modelHook.on('group:addMember', function(data, next) {
 module.exports = {
 
   attributes: {
-  	
-  	objective: {
-  		type: 'json',
-  		required: true
-  	},
 
-  	due_at: {
-  		type: 'datetime',
-  		required: true
-  	},
+    type: {
+      type: 'string',
+      required: true,
+      in: ['generic', 'poll', 'quiz']
+    },
 
-    groups: {
-      type: 'array',
+    body: {
+      type: 'string',
       required: true
     },
 
     max_score: {
       type: 'float',
-      required: true
     },
 
     reward: {
       type: 'integer'
     },
 
-  	graded_at: {
-  		type: 'datetime'
-  	},
-
-  	teacher: {
-  		type: 'string',
-  		required: true
-  	},
-
   	/**
-  	 * Map of students who received assignment
-  	 * @progress {float} progress out of 1
-  	 * @score {float} score on assignment
-  	 * @reward_claimed {boolean} whether reward was claimed
+  	 * payoad.students 
+     * Map of  students who received assignment
+  	 * @param {float} progress progress out of 1
+  	 * @param {float} score score on assignment
+  	 * @param {boolean} reward_claimed whether reward was claimed
+     * @param {datetime} submitted_at date assignment was submitted
+     * @param {datetime} graded_at date assignment was graded
   	 */
-  	students: {
-  		type: 'json'
-  	}
-    
+
+    payload: {
+      type: 'json'
+    }
+
   },
 
-  createFromObjective: function(objectiveId, options, cb) {
+  construct: function(creator, share, assignment, cb) {
   	Seq()
   		.seq(function() {
-  			if (_.isString(objectiveId))
-  				Objective.findOne(objectiveId).done(this);
-  			else
-  				Objective.create(objectiveId).done(this);
-  		})
-  		.seq(function(objective) {
-  			if (!objective) return this(new databaseError.NotFound('Objective'));
-  			options.objective = objective;
-
         // XXX have to clone because sails turns into a regex, ugh
-  			Student.find({groups: _.clone(options.groups), type: 'student'}).done(this);
+  			Student.find({groups: _.clone(share.to), type: 'student'}).done(this);
   		})
   		.seq(function(students) {
-  			options.students = {};
+        assignment.payload = assignment.payload || {};
+  			assignment.payload.students = {};
   			_.each(students, function(student) {
-  				options.students[student.id] = studentInit();
+  				assignment.payload.students[student.id] = studentInit();
   			});
-  			Assignment.create(options).done(this);
+        //console.log('Assignment', Assignment);
+        validate(Assignment, assignment, this);
   		})
   		.seq(function(assignment) {
-  			cb(null, assignment)
+        Assignment.mixinShare(share, assignment);
+        Share.createAndEmit(creator, share, cb);
   		})
   		.catch(function(err) {
   			cb(err);
   		});
   },
 
-  transformAssignment: function(assignment, studentId) {
-		if(studentId) {
-			var student = assignment.students[studentId];
-			delete assignment.students;
-			_.extend(assignment, _.pick(student, 'score', 'progress', 'reward_claimed'));
-		}
-		return assignment;
+  mixinShare: function(share, assignment) {
+    share.type = 'assignment';
+    share.verb = 'assigned';
+    share.object = assignment;
   },
 
-  findAndTransform: function(studentId, options, cb) {
-  	Seq()
-  		.seq(function() {
-  			Assignment.find(options).exec(this);
-  		})
-  		.seq(function(assignments) {
-  			assignments = _.map(assignments, function(assignment) {
-  				return Assignment.transformAssignment(assignment, studentId);
-  			});
-  			cb(null, assignments);
-  		})
-  		.catch(cb);
-  },
 
   addStudent: function(groupId, userId, cb) {
   	var update = {};
-  	update.students = {};
-  	update.students[userId] = studentInit();
+  	update['object.payload.students.' + userId] = studentInit();
   	// XXX only add students to assignments that aren't due yet
-  	Assignment.update({groups: groupId}, update, cb);
+  	Share.update({to: groupId, type: 'assignment'}, update, cb);
   }
-
 };
-
-

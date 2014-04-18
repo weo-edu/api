@@ -1,18 +1,17 @@
 var Seq = require('seq')
   , modelHook = require('../../lib/modelHook');
 
-function parseId(id) {
-  var selector = {};
-  var key = null;
-  if (id.length === 24) {
-    selector._id = id;
-    key = 'id';
-  } else {
-    selector.code = new RegExp('^' + id + '$');
-    key = 'code';
-  }
-  return {selector: selector, key: key};
-}
+modelHook.on('group:addMember', function(data, next) {
+  var group = data.groupId;
+  var user = data.user;
+  Group.publish(group, {
+    model: Group.identity,
+    verb: 'add',
+    data: user,
+    id: group
+  });
+  next();
+});
 
 /**
  * GroupController
@@ -37,81 +36,146 @@ module.exports = {
    */
   _config: {},
   _routes: {
+    'PUT @/join/:code': 'join',
+    'GET @/lookup/:code': 'lookup',
     'PUT @/:id/members/:user': 'addMember',
     '@/students': 'studentsInGroups',
     '@/:id': 'get',
-    '@/:group/assignments': {
-      action: 'findAssignments',
-      controller: 'assignment'
-    },
-    '@/:group/assignments/student/:student': {
-      action: 'findAssignments',
-      controller: 'assignment'
-    }
-    
+    '@/:id/archive': 'archive',
+    'POST @/create': 'create',
+    'POST @/members/subscription': 'createSubscription',
+    'DELTE @/members/subscription': 'deleteSubscription'
+
   },
   get: function(req, res) {
-    var id = req.param('id');
-    var parsedId = parseId(id);
-    Group.findOne(parsedId.selector)
+    Group.findOne(req.param('id'))
       .exec(function(err, group) {
-        if (err) throw err;
+        if (err) return res.serverErorr(err);
         if (!group) {
           return res.clientError('Group not found')
-            .missing('group', parsedId.key)
+            .missing('group', 'id')
             .send(404);
         }
 
         res.json(group);
       });
   },
-  studentsInGroups: function(req, res) {
-    var groupIds = req.param('groups');
-    Group.students(groupIds, function(err, groups) {
-      if(err) throw err;
-      res.json(groups);
+  create: function(req, res) {
+    var name = req.param('name');
+    var type = req.param('type') || 'class';
+    var user = req.user.id;
+
+    User.groups(user, type, function(err, groups) {
+      var find = _.where(groups, {name: name});
+      if (find.length) {
+        res.clientError('Group name taken')
+          .alreadyExists('group', 'name')
+          .send(409);
+      } else {
+         Seq()
+          .seq(function() {
+            Group.create({
+              name: name,
+              owners: [req.user.id]
+            }).done(this);
+          })
+          .seq(function(group) {
+            this.vars.group = group;
+            User.addToGroup(req.user.id, group.id, this);
+          })
+          .seq(function() {
+            modelHook.emit('group:create', this.vars.group);
+            res.json(201, this.vars.group);
+          })
+          .catch(function(err) {
+            res.serverError(err);
+          });
+      }
     });
   },
-  createNew: function(req, res) {
-    var name = req.param('name')
-      , userId = req.param('teacher');
+  archive: function(req, res) {
+    var id = req.param('id');
+    var userId = req.user.id;
 
-    Seq()
-      .seq(function() {
-        Group.create({name: name}).done(this);
-      })
-      .seq(function(group) {
-        this.vars.group = group;
-        User.addToGroup(userId, group.id, this)
-      })
-      .seq(function() {
-        res.json(201, this.vars.group);
-      })
-      .catch(function(err) {
-        throw err;
-      });
-  },
-  addMember: function(req, res) {
-
-    var userId = req.param('user')
-      , groupId = req.param('id')
-      , parsedId = parseId(groupId);
-
-    Group.findOne(parsedId.selector).done(function(err, group) {
-      if (err) throw err;
-      if (!group) {
+    Group.findOne(id).done(function(err, group) {
+      if (err) return res.server(err);
+      if(! group) {
         return res.clientError('Group not found')
           .missing('group', 'code')
           .send(404);
       }
-      User.addToGroup(userId, group.id, function(err, user) {
-        if (err) throw err;
-        modelHook.emit('group:addMember', {groupId: group.id, user: user}, function(err) {
-          if (err) console.error('Error in group:addMember hook:' + err.message);
-          res.send(204);
-        });
+      if (group.owners.indexOf(userId) === -1)
+        return res.send(403);
+      Group.update({id: id}, {type: 'class:archived'}).done(function(err, groups) {
+        if (err) return res.serverError(err);
+        var group = groups[0];
+        res.json(group);
       });
     });
-
+  },
+  lookup: function(req, res) {
+    var code = req.param('code');
+    Group.findOne({code: caseSensitive(code)}).done(function(err, group) {
+      if(err) return res.serverError(err);
+      if(! group) {
+        return res.clientError('Group not found')
+          .missing('group', 'code')
+          .send(404);
+      }
+      res.send(204);
+    });
+  },
+  join: function(req, res) {
+    var code = req.param('code');
+    Group.addUser({code: caseSensitive(code)}, req.user.id, function(err, group) {
+      if(err instanceof databaseError.NotFound) {
+        return res.clientError(err.message + ' not found')
+          .missing(err.message.toLowerCase(), err.message === 'Group' ? 'code' : 'id')
+          .send(404);
+      }
+      res.json(group);
+    });
+  },
+  addMember: function(req, res) {
+    Group.addUser(req.param('id'), req.param('user'), function(err, group) {
+      if(err instanceof databaseError.NotFound) {
+        return res.clientError(err.message + ' not found')
+          .missing(err.message.toLowerCase(), 'id')
+          .send(404);
+      }
+      res.json(group);
+    });
+  },
+  studentsInGroups: function(req, res) {
+    var groupIds = req.param('groups');
+    Student.findAssignable(groupIds, function(err, students) {
+      if(err) throw err;
+      res.json(students);
+    });
+  },
+  createSubscription: function(req, res) {
+    var to = req.param('to');
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('subscription', 'to')
+        .send(400);
+    }
+    if (req.socket) {
+      Group.subscribe(req.socket, to);
+    }
+    res.send(201);
+  },
+  deleteSubscription: function(req, res) {
+    var to = req.param('to');
+    if (!to) {
+      return res.clientError('Invalid to param')
+        .missing('subscription', 'to')
+        .send(400);
+    }
+    if (req.socket) {
+      Group.unsubscribe(req.socket, to);
+    }
+    res.send(204);
   }
+
 };

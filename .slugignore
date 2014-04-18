@@ -1,0 +1,7 @@
+node_modules/canvas
+node_modules/supertest
+node_modules/chai-*
+node_modules/coverage-percentage
+node_modules/coverage-badge
+node_modules/istanbul
+node_modules/mocha

@@ -6,11 +6,9 @@
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
  var Seq = require('seq')
-   , crypto = require('crypto')
-   , redis = require('redis').createClient();
+   , crypto = require('crypto');
 
  module.exports = {
-  adapter: 'sails-redis',
   attributes: {
 
   	/* e.g.
@@ -30,7 +28,7 @@
         crypto.randomBytes(16, this);
       })
       .seq(function(buf) {
-        this.vars.token = buf.toString('base64');
+        this.vars.token = buf.toString('base64').slice(0, -2);
         redis.set(this.vars.token, JSON.stringify(data), this);
       })
       .seq(function() {

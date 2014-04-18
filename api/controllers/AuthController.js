@@ -15,9 +15,7 @@
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
 var passwordHash = require('password-hash')
-  , moment = require('moment')
-  , _ = require('lodash')
-  , Seq = require('seq');
+  , moment = require('moment');
 
 module.exports = {
   /**
@@ -27,8 +25,7 @@ module.exports = {
   _config: {},
   _routes: {
     '@/login': 'login',
-    '@/logout': 'logout',
-    '@/user': 'user'
+    '@/logout': 'logout'
   },
   login: function(req, res) {
     var username = req.param('username')
@@ -44,8 +41,8 @@ module.exports = {
       }
 
       if(passwordHash.verify(password, user.password)) {
-        Auth.createToken({id: user.id, username: user.username, role: user.type}
-            , moment.duration(7, 'days').asSeconds()
+        var data = {id: user.id, username: user.username, role: user.type};
+        Auth.createToken(data, moment.duration(365, 'days').asSeconds()
             , function(err, token) {
               if(err) throw err;
               res.json({
@@ -63,16 +60,9 @@ module.exports = {
     });
   },
   logout: function(req, res) {
-    // Stub, to maybe do something with later
-    res.send(200);
-  },
-  user: function(req, res) {
-    if(! req.user)
-      return res.json(404);
-    User.findOne(req.user.id)
-      .exec(function(err, user) {
-        if(err) throw err;
-        res.json(user);
-      });
+    redis.del(req.access_token, function(err) {
+      if(err) throw err;
+      res.end();
+    });
   }
 };

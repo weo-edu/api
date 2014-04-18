@@ -1,124 +1,194 @@
-var Seq = require('seq')
-  , UserHelper = require('./helpers/user')
-  , Faker = require('Faker')
-  , _ = require('lodash');
-
+var Seq = require('seq');
+var UserHelper = require('./helpers/user');
+var GroupHelper = require('./helpers/group');
+var _ = require('lodash');
 
 require('./helpers/boot');
 
-describe('Group controller', function() {
+describe('GroupHelper controller', function() {
+  var user;
+  before(function(done) {
+    Seq()
+      .seq(function() {
+        UserHelper.createAndLogin(this);
+      })
+      .seq(function(teacher) {
+        user = teacher;
+        this();
+      })
+      .seq(done);
+  });
+
   describe('create', function(){
   	it('should create new group and add user to group', function(done) {
+      var group;
       Seq()
-  			.seq(function() {
-  				this.vars.user = UserHelper.create({}, this);
-  			})
-        .seq(function(res) {
-          var user = this.vars.user;
-          UserHelper.login(user.username, user.password, this);
-        })
-        .seq(function(res) {
-          this.vars.user.id = res.body.id;
-          expect(res).to.have.status(200);
-          this.vars.authToken = 'Bearer ' + res.body.token;
+        .seq(function() {
           request
-            .post('/teacher/' + this.vars.user.id + '/group')
-            .send({name: Faker.Lorem.words()})
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          this.vars.group = res.body;
-          var user = this.vars.user;
+          group = res.body;
           request
           	.get('/' + [user.type, user.id].join('/'))
-            .set('Authorization', this.vars.authToken)
-          	.end(this)
+            .set('Authorization', user.token)
+          	.end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-        	expect(res.body.groups).to.contain(this.vars.group.id);
+        	expect(res.body.groups).to.contain(group.id);
         	this();
         })
         .seq(done);
   	});
 
+    it('should not allow a student to create a group', function(done) {
+      var student;
+      Seq()
+        .seq(function() {
+          UserHelper.createAndLogin({type: 'student'}, this);
+        })
+        .seq(function(student) {
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res.statusCode).to.equal(403);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should respond with error if name taken', function(done) {
+      var group = GroupHelper.generate();
+      Seq()
+        .seq(function() {
+          request
+            .post('/group')
+            .send(group)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          request
+            .post('/group')
+            .send(GroupHelper.generate({name: group.name}))
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res){
+          expect(res).to.have.status(409);
+          this();
+        })
+        .seq(done);
+    });
   });
 
   describe('get', function() {
   	it('should get an object by id', function(done) {
+      var group;
   		Seq()
   			.seq(function() {
-  				Group.create({name: Faker.Lorem.words()}).done(this)
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
+            .end(this);
   			})
-  			.seq(function(group) {
-  				this.vars.group = group.toJSON();
+  			.seq(function(res) {
+  				group = res.body;
   				request
   					.get('/group/' + group.id)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(this.vars.group, 'createdAt', 'updatedAt'));
+  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(group, 'createdAt', 'updatedAt'));
   				this();
   			})
   			.seq(done);
   	});
 
-  	it('should get an object by code', function(done) {
+  	it('should get a group by id', function(done) {
+      var group;
   		Seq()
   			.seq(function() {
-  				Group.create({name: Faker.Lorem.words()}).done(this)
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
+            .end(this);
   			})
-  			.seq(function(group) {
-  				this.vars.group = group.toJSON();
+  			.seq(function(res) {
+          group = res.body;
   				request
-  					.get('/group/' + group.code)
+  					.get('/group/' + group.id)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(this.vars.group, 'createdAt', 'updatedAt'));
+  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(group, 'createdAt', 'updatedAt'));
   				this();
   			})
   			.seq(done);
   	});
   });
 
-  describe('addMember', function() {
+  describe('addMember method', function() {
   	it('should add member to existing group', function(done) {
+      var member;
   		Seq()
   			.seq(function() {
-  				UserHelper.create({}, this);
+  				UserHelper.create(this);
   			})
   			.seq(function(res) {
-  				this.vars.user = res.body;
-  				Group.create({name: Faker.Lorem.words()}).done(this)
+          member = res.body;
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
+            .end(this);
   			})
-  			.seq(function(group) {
-  				this.vars.group = group.toJSON();
+  			.seq(function(res) {
+          group = res.body;
   				request
-  					.put('/group/' + group.code + '/members/' + this.vars.user.id)
+  					.put('/group/' + group.id + '/members/' + member.id)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(res).to.have.status(204);
-  				User.findOne(this.vars.user.id).done(this);
+  				expect(res).to.have.status(200);
+          request
+            .get('/teacher/' + user.id)
+            .set('Authorization', user.token)
+            .end(this);
   			})
-  			.seq(function(user) {
-  				expect(user.groups).to.contain(this.vars.group.id);
+  			.seq(function(res) {
+  				expect(res.body.groups).to.contain(group.id);
   				this();
   			})
   			.seq(done);
   	});
 
   	it('should handle non existent group', function(done) {
+      var newUser;
   		Seq()
   			.seq(function() {
   				UserHelper.create({}, this);
   			})
   			.seq(function(res) {
-  				this.vars.user = res.body;
+  				newUser = res.body;
   				request
-  					.put('/group/doesntexist/members/' + this.vars.user.id)
+  					.put('/group/doesntexist/members/' + newUser.id)
+            .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
@@ -126,13 +196,131 @@ describe('Group controller', function() {
   				expect(res.body.message).to.equal('Group not found');
   				expect(res.body.errors).to.include.something.that.eql({
   					resource: 'group',
-  					field: 'code',
+  					field: 'id',
   					code: 'missing'
   				});
   				this();
   			})
   			.seq(done);
   	});
-  })
+  });
 
+  describe('join method', function() {
+    var student, group;
+    beforeEach(function(done) {
+      Seq()
+        .seq(function() {
+          UserHelper.createAndLogin({type: 'student'}, this);
+        })
+        .seq(function(newUser) {
+          student = newUser;
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          group = res.body;
+          this();
+        })
+        .seq(done);
+    });
+
+    it('join existing group', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .put('/group/join/' + group.code)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          request
+            .get('/student/' + student.id)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res.body.groups).to.contain(group.id);
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should be case sensitive', function(done) {
+      Seq()
+        .seq(function() {
+          Group.create(GroupHelper.generate({
+            code: 'test code',
+            owners: [user.id]
+          }))
+          .done(this);
+        })
+        .seq(function(group) {
+          this.vars.group = group;
+          request
+            .put('/group/join/' + this.vars.group.code.toUpperCase())
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(404);
+          Group.destroy(this.vars.group.id).done(this);
+        })
+        .seq(function() { done(); })
+    });
+
+    it('should handle non existent group', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .put('/group/join/doesntexist')
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(404);
+          expect(res.body.message).to.equal('Group not found');
+          expect(res.body.errors).to.include.something.that.eql({
+            resource: 'group',
+            field: 'code',
+            code: 'missing'
+          });
+          this();
+        })
+        .seq(done);
+    });
+  });
+
+  //XXX archive tests
+  describe('should archive class', function() {
+    it('when valid id is given', function(done){
+      Seq()
+        .seq(function() {
+          request
+            .post('/group')
+            .send(GroupHelper.generate())
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var group = res.body;
+          expect(group.type).to.equal('class');
+          request
+            .patch('/group/' + group.id + '/archive')
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var group = res.body;
+          expect(group.type).to.equal('class:archived');
+          this();
+        })
+        .seq(done);
+
+    });
+
+  });
 });

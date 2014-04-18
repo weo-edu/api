@@ -5,18 +5,20 @@
  * @description :: A short summary of how this model works and what it represents.
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
-var mergeModels = require('../../lib/mergeModels.js')
-  , User = require('./User.js')
+var mergeModels = require('../../lib/mergeModels')
+  , UserSchema = require('./User')
   , _ = require('lodash');
 
-module.exports = mergeModels(User, {
+var model = module.exports = mergeModels(UserSchema, {
   types: {
     password_confirmation: function(password_confirmation) {
       return password_confirmation === this.password;
     },
     password: function(password) {
       return password === this.password_confirmation;
-    }
+    },
+    virtual: function() { return true; },
+    fn: function() { return true; }
   },
   attributes: {
   	type: {
@@ -32,17 +34,26 @@ module.exports = mergeModels(User, {
       password: true
     },
     groups: {
-      type: 'array',
-      minLength: 1,
-      required: true
+      type: 'array'
+    },
+    username: {
+      alphanumeric: true
+    },
+    name: {
+      type: 'virtual',
+      fn: function() {
+        return this.first_name + ' ' + this.last_name;
+      }
     }
   },
-  // Event-callbacks here must use array style
-  // so that they can be _.merge'd with User
-  beforeCreate: [
-    function(attrs, next) {
-      delete attrs.password_confirmation;
-      next();
-    }
-  ]
+
+  findAssignable: function(groupIds, cb) {
+    User.find({groups: groupIds, type: 'student'}).done(function(err, users) {
+      if (err) return cb(err);
+      cb(null, users);
+    });
+  }
 });
+
+model.beforeCreate.push(require('../services/virtualize.js')(model.attributes));
+model.beforeUpdate = [require('../services/virtualize.js')(model.attributes)];
