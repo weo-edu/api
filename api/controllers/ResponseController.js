@@ -29,7 +29,6 @@ module.exports = {
 
   create: function(req, res) {
   	var response = req.params.all();
-    console.log('creat', response);
   	Response.create(response, function(err, response) {
   		if (err) return res.serverError(err);
   		Response.publish(response.collection, {
