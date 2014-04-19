@@ -8,14 +8,28 @@
 module.exports = {
 
   _routes: {
+    'GET @/:collection': 'find',
   	'POST @': 'create',
   	'PATCH /response/:id': 'update',
     'POST @/:collection/subscription': 'createSubscription',
     'DELETE @/:collection/subscription': 'deleteSubscription',
   },
 
+  find: function(req, res) {
+    var collection = req.param('collection');
+    var user = req.param('user');
+    var options = {collection: collection};
+    if (user)
+      options.user = user;
+    Response.find(options).done(function(err, responses) {
+      if (err) return res.serverError(err);
+      res.json(responses);
+    });
+  },
+
   create: function(req, res) {
   	var response = req.params.all();
+    console.log('creat', response);
   	Response.create(response, function(err, response) {
   		if (err) return res.serverError(err);
   		Response.publish(response.collection, {
