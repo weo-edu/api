@@ -18,7 +18,7 @@ var internet = {
             result = Faker.random.first_name() + Faker.random.last_name();
             break;
         }
-        return randomPrefix() + result;
+        return randomPrefix() + result.replace("'", '');
     },
 
     domainName: function () {

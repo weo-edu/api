@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "description": "a Sails application",
   "dependencies": {
-    "sails": "git://github.com/weo-edu/sails#weo",
     "grunt": "0.4.1",
     "sails-disk": "~0.9.0",
     "ejs": "0.8.4",
@@ -36,7 +35,8 @@
     "parse-redis-url": "0.0.1",
     "debug-trace": "^0.2.2",
     "express-inject-latency": "0.0.3",
-    "passport": "~0.2.0"
+    "passport": "~0.2.0",
+    "sails": "git://github.com/weo-edu/sails.git#weo2"
   },
   "scripts": {
     "start": "node app.js",
