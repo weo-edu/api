@@ -24,7 +24,7 @@ module.exports = {
   },
 
   create: function(req, res) {
-    var share = req.params.all();
+    var share = req.body;
     var creator = req.user.id;
   	Assignment.construct(creator, share, share.object, function(err, share) {
   		if (err) {

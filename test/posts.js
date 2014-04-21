@@ -100,8 +100,6 @@ describe('Post controller', function() {
 				.seq(done);
 		});
 
-		// XXX get body or media validation working
-		
 		it('when body is not given', function(done) {
 			var post = Post.generate();
 			post.type = 'post';
