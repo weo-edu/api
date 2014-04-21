@@ -27,7 +27,6 @@ module.exports[400] = function badRequest(validationErrors, redirectTo, req, res
    * work just like their Express equivalents to handle HTTP requests, they also simulate
    * the same interface for receiving socket messages.
    */
-
   var statusCode = 400;
 
   var result = {
