@@ -2,6 +2,8 @@ var subSchema = require('../services/subSchema');
 var date = require('../../lib/date');
 var moment = require('moment');
 
+var VISIBILITY_DELIMITER = ':';
+
 /**
  * Share
  *
@@ -52,10 +54,6 @@ module.exports = {
       type: 'string',
       required: true
     },
-    // defines which roles can see event
-    visibility: {
-      type: 'string'
-    },
     published_at: {
       type: 'date',
       required: true
@@ -67,10 +65,15 @@ module.exports = {
     },
     payload: 'json'
   },
-  receivedBy: function(to, role) {
-    return Share.find({to: to, or: [{visibility: role}, {visibility: undefined}]});
+  receivedBy: function(to, user) {
+    to = Share.normalizeRequestTo(to, user);
+    return Share.find({to: to});
   },
   createAndEmit: function(userId, share, cb) {
+    //XXX why is access token in share?
+    delete share.access_token;
+
+    share.to = Share.normalizeCreateTo(share.to);
     Share.setDefaults(share);
     User.get(userId, function(err, user) {
       if (err) return cb(err);
@@ -97,18 +100,12 @@ module.exports = {
   },
 
   emit: function(share, verb) {
-    var roles = share.visibility 
-      ? [share.visibility]
-      : ['teacher', 'student'];
-    _.each(roles, function(role) {
-      _.each(share.to, function(to) {
-        var roleTo = {id: role + ':' + to};
-        Share.publish(roleTo, {
-          model: Share.identity,
-          verb: verb,
-          data: share,
-          id: to
-        });
+    _.each(share.to, function(to) {
+      Share.publish(to, {
+        model: Share.identity,
+        verb: verb,
+        data: share,
+        id: share.id
       });
     });
   },
@@ -127,6 +124,34 @@ module.exports = {
       }
     };
   },
+
+  normalizeCreateTo: function(to) {
+    var newTo = [];
+    _.each(to, function(id) {
+      var idSplit = id.split(VISIBILITY_DELIMITER);
+      if (!idSplit[1]) {
+        newTo.push(id + VISIBILITY_DELIMITER + 'teacher');
+        newTo.push(id + VISIBILITY_DELIMITER + 'student');
+      } else {
+        newTo.push(id);
+      }
+    });
+    return _.unique(newTo); //XXX is this necessary?
+  },
+
+  normalizeRequestTo: function(to, user) {
+    to = [].concat(to);
+    to = _.map(to, function(id) {
+      return id + VISIBILITY_DELIMITER + user.role;
+    });
+    if (role === 'student') {
+      to = to.concat(_.map(to, function(id) {
+        return id.split(VISIBILITY_DELIMITER)[0] + VISIBILITY_DELIMITER + user.id;
+      }));
+    }
+    return to;
+  },
+
   setDefaults: function(share) {
     if (share.queue) {
       share.status = 'pending';
