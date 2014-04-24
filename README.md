@@ -11,6 +11,7 @@
 ## Share
 
 |Property|Value|Description|
+|--------|-----|-----------|
 |type|string|type of share|
 |created_at|datetime|the time at which the share was created|
 |updated_at|datetime|the time at which the share was last edited|
@@ -25,7 +26,8 @@
 |object|object|the object of the activity|
 |object.type|string|sub type of share|
 |to|object|receivers of share|
-|to.namespace|string|namespace of share|
+|to.scope|string|id of parent - groups are inherited from parent, they can be changed but must be a subset|
+|to.scope_path|string|concated sting of ancestors|
 |to.groups[]|list|list of groups to share with|
 |to.groups[].id|string|id of group|
 |to.groups[].domains[]|list|list of domains: `all`,`teacher`, `student`,`thisTeacher`,`thisStudent`,`[studentId]`
