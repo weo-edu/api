@@ -52,8 +52,9 @@ var User = module.exports = {
       .end(function(err, res) {
         // XXX Kind of hacky, but without it
         // it's too easy to forget to do this
-        if(res.status === 201)
-          opts._id = res.body._id;
+        if(res.status === 201) {
+          opts.id = opts._id = res.body._id;
+        }
         return cb.apply(this, arguments);
       });
     return opts;
@@ -76,7 +77,6 @@ var User = module.exports = {
         user = User.create(opts, this);
       })
       .seq(function(res) {
-        user.id = res.body._id;
         if(res.statusCode !== 201) return cb('User creation failed', res);
         User.login(user.username, user.password, this);
       })

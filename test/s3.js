@@ -60,11 +60,14 @@ describe('S3 controller', function() {
   				request
   					.put('/s3/upload/' + file.id + '/complete')
   					.send({base: 's3.amazon.com'})
+            .set('Authorization', authToken)
   					.end(this);
   			})
   			.seq(function(res) {
+          expect(res).to.have.status(204);
   				request
   					.get('/s3/' + this.vars.file.id)
+            .set('Authorization', authToken)
   					.end(this);
   			})
   			.seq(function(res) {
