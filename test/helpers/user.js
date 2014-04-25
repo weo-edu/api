@@ -7,8 +7,9 @@ function teacherDefaults() {
     type: 'teacher',
     first_name: sanitize(Faker.Name.firstName()),
     last_name: sanitize(Faker.Name.lastName()),
-    groups: ['fakeGroupId'],
-    username: sanitize(Faker.Internet.email()),
+    // Meaningless, but real-looking mongo id
+    groups: ['535729acad50c37bb9c84df3'],
+    username: sanitize(Faker.Internet.email()).toLowerCase(),
     password: 'testpassword',
     password_confirmation: 'testpassword',
     title: 'Mr.'
@@ -52,7 +53,7 @@ var User = module.exports = {
         // XXX Kind of hacky, but without it
         // it's too easy to forget to do this
         if(res.status === 201)
-          opts.id = res.body.id;
+          opts._id = res.body._id;
         return cb.apply(this, arguments);
       });
     return opts;
@@ -75,6 +76,7 @@ var User = module.exports = {
         user = User.create(opts, this);
       })
       .seq(function(res) {
+        user.id = res.body._id;
         if(res.statusCode !== 201) return cb('User creation failed', res);
         User.login(user.username, user.password, this);
       })

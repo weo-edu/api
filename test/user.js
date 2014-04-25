@@ -10,7 +10,7 @@ describe('User controller', function() {
     it('should validate new user data', function(done) {
       Seq()
         .seq(function() {
-          var user = UserHelper.generate({username: 'a', type: 'notAValidType'});
+          var user = UserHelper.generate({username: 'a'});
           request
             .post('/user')
             .send(user)
@@ -18,9 +18,7 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have
-            .ValidationError('invalid', 'username')
-            .and
-            .ValidationError('invalid', 'type');
+            .ValidationError('username');
           this();
         })
         .seq(done);
@@ -136,25 +134,27 @@ describe('User controller', function() {
     function(done) {
       Seq()
         .seq(function() {
+          var user = UserHelper.generate({type: 'teacher'});
+          user.type = 'student';
           request
             .post('/teacher')
-            .send(UserHelper.generate({type: 'student', email: 'test@test.com'}))
+            .send(user)
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.ValidationError('invalid', 'type', 'teacher',
-            {rule: 'in'});
+          expect(res.body.type).to.equal('teacher');
           this();
         })
         .seq(function() {
+          var user = UserHelper.generate({type: 'student'});
+          user.type = 'teacher';
           request
             .post('/student')
-            .send(UserHelper.generate({type: 'teacher', email: 'test@test.com'}))
+            .send(user)
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.ValidationError('invalid', 'type', 'student',
-            {rule: 'in'});
+          expect(res.body.type).to.equal('student');
           this();
         })
         .seq(done);
@@ -172,7 +172,7 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(400);
           expect(res).to.have
-            .ValidationError('already_exists', 'username', 'teacher', {rule: 'unique'});
+            .ValidationError('username', 'user defined', 'Username already exists');
           this();
         })
         .seq(done);
@@ -245,9 +245,8 @@ describe('User controller', function() {
           // Create teacher
           UserHelper.createAndLogin({type: 'teacher'}, this);
         })
-        .par(function(_teacher) {
+        .par(function() {
           // Create student
-          teacher = _teacher;
           UserHelper.createAndLogin({type: 'student'}, this);
         })
         .seq(function(_teacher, _student) {
@@ -269,7 +268,10 @@ describe('User controller', function() {
             .set('Authorization', student.token)
             .end(this);
         })
-        .seq(function() { done(); });
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          done();
+        });
     });
 
     it('should let teachers reset students passwords', function(done) {
@@ -277,7 +279,7 @@ describe('User controller', function() {
         .seq(function() {
           // Set a new password for student, as teacher
           request
-            .patch('/student/' + student.id + '/password')
+            .patch('/student/' + student._id + '/password')
             .send({newPassword: 'new password'})
             .set('Authorization', teacher.token)
             .end(this);
@@ -308,7 +310,7 @@ describe('User controller', function() {
         .seq(function(student2) {
           // Make sure student's cannot set each others passwords
           request
-            .patch('/student/' + student.id + '/password')
+            .patch('/student/' + student._id + '/password')
             .send({newPassword: 'other password'})
             .set('Authorization', student2.token)
             .end(this);
@@ -333,7 +335,7 @@ describe('User controller', function() {
           // other teacher who does not own a group that
           // the student belongs to
           request
-            .patch('/student/' + student.id + '/password')
+            .patch('/student/' + student._id + '/password')
             .send({newPassword: 'other password'})
             .set('Authorization', otherTeacher.token)
             .end(this);

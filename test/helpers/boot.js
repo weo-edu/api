@@ -1,9 +1,10 @@
-var sails = require('sails')
-  , supertest = require('supertest')
-  , chai = require('chai')
-  , _ = require('lodash')
-  , socket = require('socket.io-client')
-  , querystring = require('querystring');
+var path = require('path');
+var app = require(path.join(process.cwd(), 'app.js'));
+var supertest = require('supertest')
+var chai = require('chai')
+var _ = require('lodash')
+var socket = require('socket.io-client')
+var querystring = require('querystring');
 
 chai.use(require('./chai'));
 chai.use(require('chai-properties'));
@@ -19,25 +20,13 @@ global.expect = chai.expect;
 // be running
 process.env.PORT = 1339;
 
-before(function(done) {
-  this.timeout(4000);
-  sails.lift();
-  sails.on('ready', function() {
-    global.request = supertest(sails.express.app);
-    global.socketConnect = function(token, cookie) {
-      var qs = querystring.stringify({cookie: cookie, access_token: token});
-      var s = socket.connect('http://localhost:' + process.env.PORT + '?' + qs, {"force new connection": true});
-      socketMixin(s);
-      return s;
-    };
-    setTimeout(done);
-  });
-});
-
-after(function(done) {
-  sails.lower(done);
-});
-
+global.request = supertest(app);
+global.socketConnect = function(token, cookie) {
+  var qs = querystring.stringify({cookie: cookie, access_token: token});
+  var s = socket.connect('http://localhost:' + process.env.PORT + '?' + qs, {"force new connection": true});
+  socketMixin(s);
+  return s;
+};
 
 function socketMixin(s) {
   s.get = function (url, data, cb) {

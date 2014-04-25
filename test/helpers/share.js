@@ -18,7 +18,7 @@ var Share = module.exports = {
   queue: function(opts, groups, authToken, cb) {
     var share = Share.generate(opts);
     share.to = [].concat(groups);
-    share.queue = true;
+    share.status = 'pending';
     request
       .post('/share')
       .set('Authorization', authToken)
@@ -43,6 +43,7 @@ var Share = module.exports = {
     return _.defaults(opts, {
       verb: _.sample(verbs),
       object: Share.generateObject(opts.object),
+      actor: Share.generateObject(opts.actor),
       payload: {},
       type: _.sample(types)
     });
@@ -51,7 +52,7 @@ var Share = module.exports = {
     opts = opts || {};
     var name = Faker.Company.catchPhrase();
     return _.defaults(opts, {
-      id: 'fakeObjectId',
+      id: '53597542e326fb10ef42b87e',
       name: name,
       link: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });

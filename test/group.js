@@ -85,7 +85,7 @@ describe('GroupHelper controller', function() {
             .end(this);
         })
         .seq(function(res){
-          expect(res).to.have.status(409);
+          expect(res).to.have.status(400);
           this();
         })
         .seq(done);
@@ -147,9 +147,10 @@ describe('GroupHelper controller', function() {
       var member;
   		Seq()
   			.seq(function() {
-  				UserHelper.create(this);
+  				UserHelper.create({type: 'student'}, this);
   			})
   			.seq(function(res) {
+          expect(res).to.have.status(201);
           member = res.body;
           request
             .post('/group')
@@ -187,18 +188,12 @@ describe('GroupHelper controller', function() {
   			.seq(function(res) {
   				newUser = res.body;
   				request
-  					.put('/group/doesntexist/members/' + newUser.id)
+  					.put('/group/535abe6b16213d4e8d331ed1/members/' + newUser.id)
             .set('Authorization', user.token)
   					.end(this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(404);
-  				expect(res.body.message).to.equal('Group not found');
-  				expect(res.body.errors).to.include.something.that.eql({
-  					resource: 'group',
-  					field: 'id',
-  					code: 'missing'
-  				});
   				this();
   			})
   			.seq(done);
@@ -252,14 +247,18 @@ describe('GroupHelper controller', function() {
     it('should be case sensitive', function(done) {
       Seq()
         .seq(function() {
-          Group.create(GroupHelper.generate({
-            code: 'test code',
-            owners: [user.id]
-          }))
-          .done(this);
+          // Guarantee our code contains lowercase letters
+          // to ensure we're actually testing what we think we are
+          var code = 'new code' + (+new Date) + '' + Math.random();
+          request
+            .post('/group')
+            .send(GroupHelper.generate({code: code}))
+            .set('Authorization', user.token)
+            .end(this);
         })
-        .seq(function(group) {
-          this.vars.group = group;
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          this.vars.group = res.body;
           request
             .put('/group/join/' + this.vars.group.code.toUpperCase())
             .set('Authorization', student.token)
@@ -267,7 +266,7 @@ describe('GroupHelper controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(404);
-          Group.destroy(this.vars.group.id).done(this);
+          this();
         })
         .seq(function() { done(); })
     });
@@ -276,18 +275,12 @@ describe('GroupHelper controller', function() {
       Seq()
         .seq(function() {
           request
-            .put('/group/join/doesntexist')
+            .put('/group/join/535abfe3dac02cfe4a7a4f1b')
             .set('Authorization', student.token)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(404);
-          expect(res.body.message).to.equal('Group not found');
-          expect(res.body.errors).to.include.something.that.eql({
-            resource: 'group',
-            field: 'code',
-            code: 'missing'
-          });
           this();
         })
         .seq(done);
@@ -307,7 +300,7 @@ describe('GroupHelper controller', function() {
         })
         .seq(function(res) {
           var group = res.body;
-          expect(group.type).to.equal('class');
+          expect(group.status).to.equal('active');
           request
             .patch('/group/' + group.id + '/archive')
             .set('Authorization', user.token)
@@ -315,7 +308,7 @@ describe('GroupHelper controller', function() {
         })
         .seq(function(res) {
           var group = res.body;
-          expect(group.type).to.equal('class:archived');
+          expect(group.status).to.equal('archived');
           this();
         })
         .seq(done);
