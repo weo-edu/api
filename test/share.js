@@ -61,33 +61,17 @@ describe('Share controller', function() {
     it('should show up in a users feed', function(done) {
       Seq()
         .seq(function() {
-          this.vars.share = Share.post({}, group.id, authToken, this);
+          Share.post({}, group.id, authToken, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
+          this.vars.share = res.body;
           Share.feed(user, [group.id], authToken, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an.array;
-          expect(res.body).to.include.an.item.with.properties(this.vars.share);
-          this();
-        })
-        .seq(done);
-    });
-
-    it('should show up in the users groups feeds', function(done) {
-      Seq()
-        .seq(function() {
-          this.vars.share = Share.post({}, group.id, authToken, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          Share.feed(user, [group.id], authToken, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200);
-          expect(res.body).to.include.an.item.with.properties(this.vars.share);
+          expect(res.body).to.include.an.item.with.properties({id: this.vars.share.id});
           this();
         })
         .seq(done);
@@ -140,7 +124,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an.array;
-          expect(res.body).to.include.an.item.with.properties(this.vars.share);
+          expect(res.body).to.include.an.item.with.properties({id: this.vars.share.id});
           this();
         })
         .seq(done);

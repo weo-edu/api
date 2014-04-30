@@ -36,9 +36,11 @@ describe('User controller', function() {
         .seq(function(res) {
           var user = this.vars.user;
           expect(res).to.have.status(201);
+          
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
+          console.log('pass omissions');
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
           expect(res.body.groups).to.have.length(1);
@@ -82,6 +84,23 @@ describe('User controller', function() {
         .seq(done);
     });
 
+    it('should allow login with email address', function(done) {
+      Seq()
+        .seq(function() {
+          this.vars.user = UserHelper.create({type: 'teacher'}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          var user = this.vars.user;
+          UserHelper.login(user.email, user.password, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          this();
+        })
+        .seq(done);
+    });
+
     it('should add type field when creating a teacher', function(done) {
       Seq()
         .seq(function() {
@@ -114,21 +133,7 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    it('should replace a teacher\'s username with their email address', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .post('/teacher')
-            .send(UserHelper.generate())
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          expect(res.body.username).to.equal(res.body.email);
-          this();
-        })
-        .seq(done);
-    });
+
 
     it('should return an error if you pass type "student" to the teacher endpoint and vice versa',
     function(done) {

@@ -6,6 +6,7 @@ var Seq = require('seq')
   , _ = require('lodash')
   , moment = require('moment');
 
+var util = require('util');
 
 require('./helpers/boot');
 
@@ -77,8 +78,8 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.assignment = res.body;
 					request
-  					.put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
-            .set('Authorization', teacherToken)
+  					.put('/group/' + group.id + '/members')
+            .set('Authorization', studentToken)
   					.end(this);
 				})
 				.seq(function(res) {
@@ -91,7 +92,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
 					var assignment = res.body;
-					expect(assignment.object.payload.students).to.have.property(student.id);
+					expect(assignment.payload[group.id].students).to.have.property(student.id);
 					this();
 				})
 				.seq(done);
@@ -107,13 +108,13 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.assignment = res.body;
 					request
-            .put('/group/' + this.vars.assignment.to[0] + '/members/' + student.id)
-            .set('Authorization', teacherToken)
+            .put('/group/' + group.id + '/members')
+            .set('Authorization', studentToken)
   					.end(this);
 				})
 				.seq(function(res) {
 					request
-						.patch('/assignment/' + this.vars.assignment.id + '/score')
+						.patch('/assignment/' + this.vars.assignment.id + '/groups/' + group.id + '/score')
 						.set('Authorization', studentToken)
 						.send({score: 5})
 						.end(this);
