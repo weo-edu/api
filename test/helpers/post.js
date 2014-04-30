@@ -1,16 +1,19 @@
 var Faker = require('Faker')
   , chai = require('chai')
   , moment = require('moment')
-  , Seq = require('seq');
+  , Seq = require('seq')
+  , Share = require('./share');
 
 
 var Post = module.exports = {
-  generate: function(opts) {
-    opts = opts || {};
-    _.defaults(opts, {
-      body: Faker.Lorem.paragraph(),
+  generate: function(opts, groups) {
+    var share = Share.generate(opts, groups);
+    share.type = 'post';
+    delete share.verb;
+    _.defaults(share.object, {
+      content: Faker.Lorem.paragraph(),
     });
-    return opts;
+    return share;
   },
 
   randomTo: function() {
@@ -18,10 +21,8 @@ var Post = module.exports = {
   },
 
   create: function(token, type, opts, cb) {
-    var post = this.generate(opts);
-    post.type = type;
-    var share = {to: opts.to || this.randomTo()};
-    share.object = post;
+    var share = this.generate(opts, opts.to || [this.randomTo()]);
+    share.object.type = type;
     request
       .post('/post')
       .send(share)
@@ -29,4 +30,3 @@ var Post = module.exports = {
       .end(cb);
   }
 };
-

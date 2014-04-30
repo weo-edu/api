@@ -26,7 +26,6 @@ describe('Post controller', function() {
 	it('should create post', function(done) {
 		Seq()
 			.seq(function() {
-				console.log('call create');
 				Post.create(token, 'post', {}, this);
 			})
 			.seq(function(res) {
@@ -101,11 +100,8 @@ describe('Post controller', function() {
 		});
 
 		it('when body is not given', function(done) {
-			var post = Post.generate();
-			post.type = 'post';
-			var share = {to: Post.randomTo()};
-			post.body = '';
-			share.object = post;
+			var share = Post.generate({}, [Post.randomTo()]);
+			share.object.content = undefined;
 			Seq()
 				.seq(function() {
 					request
@@ -115,8 +111,7 @@ describe('Post controller', function() {
 			      .end(this);
 				})
 				.seq(function(res) {
-					expect(res).to.have.ValidationError('missing_field', 'body', 'post',
-            {rule: 'required'});
+					expect(res).to.have.ValidationError('object.content', 'user defined', 'Required if no media', '');
 					this();
 				})
 				.seq(done);

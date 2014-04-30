@@ -9,11 +9,12 @@ var Assignment = module.exports = {
   generate: function(opts, groups) {
     var share = Share.generate(opts, groups);
     _.defaults(share.object, {
-      body: Faker.Lorem.paragraph(),
+      content: Faker.Lorem.paragraph(),
       max_score: 10,
       reward: 10
     })
-    return opts;
+    share.object.type = 'poll';
+    return share;
   },
 
   create: function(token, type, opts, cb) {
