@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -40,14 +40,15 @@
     "validator": "~3.10.0"
   },
   "devDependencies": {
+    "Faker": "~0.7.0",
     "chai": "~1.9.1",
-    "chai-things": "~0.2.0",
-    "underscore": "~1.6.0",
     "chai-fuzzy": "~1.4.0",
-    "lodash": "~2.4.1",
-    "chai-properties": "~1.1.0",
     "chai-http": "~0.4.0",
+    "chai-properties": "~1.1.0",
+    "chai-things": "~0.2.0",
+    "lodash": "~2.4.1",
+    "mocha": "^1.18.2",
     "supertest": "~0.11.0",
-    "Faker": "~0.7.0"
+    "underscore": "~1.6.0"
   }
 }
