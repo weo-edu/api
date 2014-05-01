@@ -189,11 +189,9 @@ module.exports = function(Schema) {
     /**
      * type of share
      * @type {Object}
+     *
+     * Implemented by virtual
      */
-    type: {
-      type: String,
-      required: true
-    },
 
     /**
      * time share is `activated`
@@ -255,7 +253,7 @@ module.exports = function(Schema) {
         required: true
       },
       content: {
-        type: String,
+        type: String
       },
       originalContent: {
         type: String,
@@ -303,7 +301,11 @@ module.exports = function(Schema) {
       enum: ['active', 'pending'],
       default: 'active',
       required: true
-    },
+    }
+  });
+
+  ShareSchema.virtual('type').get(function() {
+    return this.__t;
   });
 
   ShareSchema.method('address', function(address) {

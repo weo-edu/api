@@ -40,7 +40,6 @@ describe('User controller', function() {
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
-          console.log('pass omissions');
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
           expect(res.body.groups).to.have.length(1);
