@@ -9,7 +9,8 @@ function teacherDefaults() {
     last_name: sanitize(Faker.Name.lastName()),
     // Meaningless, but real-looking mongo id
     groups: ['535729acad50c37bb9c84df3'],
-    username: sanitize(Faker.Internet.email()).toLowerCase(),
+    email: sanitize(Faker.Internet.email()).toLowerCase(),
+    username: sanitize(Faker.Internet.userName()),
     password: 'testpassword',
     password_confirmation: 'testpassword',
     title: 'Mr.'
@@ -18,8 +19,8 @@ function teacherDefaults() {
 
 function studentDefaults() {
   var defaults = teacherDefaults();
-  defaults.username = sanitize(Faker.Internet.userName());
   delete defaults.title;
+  delete defaults.email;
   return defaults;
 }
 

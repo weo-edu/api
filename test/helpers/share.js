@@ -6,8 +6,7 @@ var verbs = ['completed', 'liked', 'joined', 'assigned', 'created']
 
 var Share = module.exports = {
   post: function(opts, groups, authToken, cb) {
-    var share = Share.generate(opts);
-    share.to = [].concat(groups);
+    var share = Share.generate(opts, groups);
     request
       .post('/share')
       .set('Authorization', authToken)
@@ -16,8 +15,7 @@ var Share = module.exports = {
     return share;
   },
   queue: function(opts, groups, authToken, cb) {
-    var share = Share.generate(opts);
-    share.to = [].concat(groups);
+    var share = Share.generate(opts, groups);
     share.status = 'pending';
     request
       .post('/share')
@@ -38,23 +36,29 @@ var Share = module.exports = {
       .query({to: groups})
       .end(cb);
   },
-  generate: function(opts) {
+  generate: function(opts, groups) {
     opts = opts || {};
-    return _.defaults(opts, {
+    var share = _.defaults(opts, {
       verb: _.sample(verbs),
       object: Share.generateObject(opts.object),
-      actor: Share.generateObject(opts.actor),
       payload: {},
       type: _.sample(types)
     });
+    share.to = { addresses: [] };
+    _.each([].concat(groups), function(group) {
+      share.to.addresses.push({id: group, access: [
+        {type: 'public', role: 'teacher'},
+        {type: 'group', role: 'student', id: group}
+      ]});
+    });
+    return share;
   },
   generateObject: function(opts) {
     opts = opts || {};
     var name = Faker.Company.catchPhrase();
     return _.defaults(opts, {
-      id: '53597542e326fb10ef42b87e',
-      name: name,
-      link: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
+      type: 'post',
+      url: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });
   },
   del: function(shareId, authToken, cb) {

@@ -2,29 +2,27 @@ var Faker = require('Faker')
   , chai = require('chai')
   , moment = require('moment')
   , Seq = require('seq')
-  , UserHelper = require('./user');
-
+  , UserHelper = require('./user')
+  , Share = require('./share');
 
 var Assignment = module.exports = {
-  generate: function(opts) {
-    opts = opts || {};
-    _.defaults(opts, {
+  generate: function(opts, groups) {
+    var share = Share.generate(opts, groups);
+    _.defaults(share.object, {
       body: Faker.Lorem.paragraph(),
       max_score: 10,
       reward: 10
-    });
+    })
     return opts;
   },
 
   create: function(token, type, opts, cb) {
-    var assignment = this.generate(opts);
-    assignment.type = type;
-    var share = {to: opts.to || this.randomTo()};
-    share.object = assignment;
+    var share = this.generate(opts, opts.to);
     request
       .post('/assignment')
       .send(share)
       .set('Authorization', token)
       .end(cb);
+    return share;
   }
 };

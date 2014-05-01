@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 require('./helpers/boot');
 
-describe('GroupHelper controller', function() {
+describe('Group controller', function() {
   var user;
   before(function(done) {
     Seq()
@@ -161,7 +161,7 @@ describe('GroupHelper controller', function() {
   			.seq(function(res) {
           group = res.body;
   				request
-  					.put('/group/' + group.id + '/members/' + member.id)
+  					.put('/group/' + group.id + '/members')
             .set('Authorization', user.token)
   					.end(this);
   			})
