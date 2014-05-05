@@ -228,13 +228,6 @@ describe('Share controller', function() {
       })
     });
 
-    /*afterEach(function() {
-      console.log('reset messages');
-      _.each([teacher, student, teacherMember, studentMember], function(user) {
-        user.messages = [];
-      });
-    });*/
-
     describe('post to class', function() {
       var post = null;
       before(function() {
@@ -405,7 +398,6 @@ describe('Share controller', function() {
 function connectUser(user, cb) {
   var con = socketConnect(user.socketToken);
   con.on('message', function(msg) {
-    console.log('mgs', msg);
     user.messages.push(msg);
   });
   con.on('connect', function() {
