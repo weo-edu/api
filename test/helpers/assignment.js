@@ -18,7 +18,10 @@ var Assignment = module.exports = {
   },
 
   create: function(token, type, opts, cb) {
-    var share = this.generate(opts, opts.to);
+    var groups = opts.to;
+    delete opts.to;
+    var share = this.generate(opts, groups);
+    console.log('create', share);
     request
       .post('/assignment')
       .send(share)

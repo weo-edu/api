@@ -84,6 +84,7 @@ var User = module.exports = {
       .seq(function(res) {
         if(res.statusCode !== 200) return cb('User login failed', res);
         user.token = 'Bearer ' + res.body.token;
+        user.socketToken = res.body.token;
         cb(null, user);
       });
   }

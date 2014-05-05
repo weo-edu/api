@@ -2,35 +2,25 @@ var Seq = require('seq')
   , User = require('./helpers/user')
   , Share = require('./helpers/share')
   , Group = require('./helpers/group')
-  , Cookie = require('cookie');
+  , Cookie = require('cookie')
+  , access = require('lib/access');
 
 require('./helpers/boot');
 describe('Share controller', function() {
-  var authToken
-    , user
-    , group
-    , token
-    , cookie;
+  var user = null
+    , group = null;
+
   before(function(done) {
     Seq()
       .seq(function() {
-        user = User.create(this);
+        User.createAndLogin(this);
       })
-      .seq(function() {
-        User.login(user.username, user.password, this);
-      })
-      .seq(function(res) {
-        token = res.body.token;
-//        cookie = Cookie.parse(res.headers['set-cookie'][0]);
- //       cookie = Cookie.serialize('sails.sid', cookie['sails.sid']);
-        authToken = 'Bearer ' + res.body.token;
-        this();
-      })
-      .seq(function() {
+      .seq(function(u) {
+        user = u;
         request
           .post('/group')
           .send(Group.generate())
-          .set('Authorization', authToken)
+          .set('Authorization', user.token)
           .end(this);
       })
       .seq(function(res) {
@@ -45,7 +35,7 @@ describe('Share controller', function() {
     it('should populate actor', function(done) {
       Seq()
         .seq(function() {
-          Share.post({}, group.id, authToken, this);
+          Share.post({}, group.id, user.token, this);
         })
         .seq(function(res) {
           var share = res.body;
@@ -61,12 +51,12 @@ describe('Share controller', function() {
     it('should show up in a users feed', function(done) {
       Seq()
         .seq(function() {
-          Share.post({}, group.id, authToken, this);
+          Share.post({}, group.id, user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.share = res.body;
-          Share.feed(user, [group.id], authToken, this);
+          Share.feed(user, [group.id], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -83,7 +73,7 @@ describe('Share controller', function() {
       Seq(_.range(1, 5))
         .seqEach(function() {
           var self = this;
-          Share.post({}, group.id, authToken, function(err, res) {
+          Share.post({}, group.id, user.token, function(err, res) {
             self(err, res);
           });
         })
@@ -91,7 +81,7 @@ describe('Share controller', function() {
           _.each(responses, function(res) {
             expect(res).to.have.status(201);
           });
-          Share.feed(user, [group.id], authToken, this);
+          Share.feed(user, [group.id], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -114,12 +104,12 @@ describe('Share controller', function() {
     it('should show up in feed', function(done) {
       Seq()
         .seq(function() {
-          Share.queue({}, group.id, authToken, this);
+          Share.queue({}, group.id, user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.share = res.body;
-          Share.feed(user, [group.id], authToken, this);
+          Share.feed(user, [group.id], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -133,17 +123,17 @@ describe('Share controller', function() {
     it('should show queued shares before published shares', function(done) {
       Seq()
         .seq(function() {
-          Share.queue({}, group.id, authToken, this);
+          Share.queue({}, group.id, user.token, this);
         })
         .seq(function(res) {
           this.vars.queued = res.body;
           expect(res).to.have.status(201);
-          Share.post({}, group.id, authToken, this);
+          Share.post({}, group.id, user.token, this);
         })
         .seq(function(res) {
           this.vars.share = res.body;
           expect(res).to.have.status(201);
-          Share.feed(user, [group.id], authToken, this);
+          Share.feed(user, [group.id], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -160,12 +150,12 @@ describe('Share controller', function() {
     it('should succeed for queued shares', function(done) {
       Seq()
         .seq(function() {
-          Share.queue({}, group.id, authToken, this);
+          Share.queue({}, group.id, user.token, this);
         })
         .seq(function(res) {
           var queued = res.body;
           expect(res).to.have.status(201);
-          Share.del(queued.id, authToken, this);
+          Share.del(queued.id, user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(204);
@@ -177,12 +167,12 @@ describe('Share controller', function() {
     it('should fail for active shares', function(done) {
       Seq()
         .seq(function() {
-          Share.post({}, group.id, authToken, this);
+          Share.post({}, group.id, user.token, this);
         })
         .seq(function(res) {
           var queued = res.body;
           expect(res).to.have.status(201);
-          Share.del(queued.id, authToken, this);
+          Share.del(queued.id, user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(403);
@@ -192,105 +182,267 @@ describe('Share controller', function() {
     });
   });
 
-
-  describe('live share', function() {
-    var scTeacher = null
-      , scStudent = null
-      , teacherMessages = []
-      , studentMessages = [];
+  describe('access', function() {
+    var teacher = null
+      , student = null
+      , teacherMember = null
+      , studentMember = null;
 
     before(function(done) {
       Seq()
-        .par(function() {
-          connectNewUser({}, this);
-        })
-        .par(function() {
-          connectNewUser({type: 'student'}, this);
-        })
-        .seq(function(tCon, sCon) {
-          scTeacher = tCon;
-          scTeacher.on('message', function(msg) {
-            teacherMessages.push(msg);
-          });
-          scStudent = sCon;
-          scStudent.on('message', function(msg) {
-            studentMessages.push(msg);
-          });
-          scTeacher.post('/share/subscription', {addresses: group.id});
-          scStudent.post('/share/subscription', {addresses: group.id});
-          this();
-        })
-        .seq(done);
-    });
-
-
-    beforeEach(function() {
-      teacherMessages = [];
-      studentMessages = [];
-    });
-
-    it.only('teacher should receive its emitted shares', function(done) {
-      Seq()
-        .seq(function() {
-          Share.post({}, group.id, authToken, this);
-        })
-        .seq(function() {
-          var msg = teacherMessages[0];
-          var address = msg.data.to.addresses[0].id;
-          expect(teacherMessages).to.have.length(1);
-          expect(address).to.equal(group.id);
-          this();
-        })
-        .seq(done);
-    });
-
-    it('student should receive teacher shares', function(done) {
-      Seq()
-        .seq(function() {
-          Share.post({}, group.id, authToken, this);
-        })
-        .seq(function() {
-          var msg = studentMessages[0];
-          var address = msg.data.to.addresses[0].id;
-          expect(studentMessages).to.have.length(1);
-          expect(address).to.equal(group.id);
-          this();
-        })
-        .seq(done);
-    });
-
-    it('teacher should receive queued posts and students should not', function(done) {
-      Seq()
-        .seq(function() {
-          Share.queue({}, group.id, authToken, this);
-        })
-        .seq(function() {
-          expect(teacherMessages).to.have.length(1);
-          expect(teacherMessages[0].id).to.equal(group.id);
-          expect(studentMessages).to.have.length(0);
-          this();
-        })
-        .seq(done);
-    })
-  });
-});
-
-
-function connectNewUser(opts, cb) {
-  opts = opts || {};
-  var user, token, cookie;
-  Seq()
-    .seq(function() {
-      user = User.create(opts, this);
-    })
-    .seq(function() {
-      User.login(user.username, user.password, this);
-    })
-    .seq(function(res) {
-      token = res.body.token;
-      var con = socketConnect(token);
-      con.on('connect', function() {
-        cb(null, con);
+      .seq(function() {
+        teacherMember = user;
+        User.createAndLogin({type: 'student'},this);
+      })
+      .seq(function(s) {
+        student = s;
+        User.createAndLogin(this);
+      })
+      .seq(function(t) {
+        teacher = t;
+        User.createAndLogin({type: 'student'}, this);
+      })
+      .seq(function(s) {
+        studentMember = s;
+        Group.join(group, studentMember, this);
+      })
+      .seq(function() {
+        this(null, [teacher, student, teacherMember, studentMember])
+      })
+      .flatten()
+      .parEach(function(user) {
+        connectUser(user, this);
+      })
+      .seq(function() {
+        this(null, [teacher, student, teacherMember, studentMember])
+      })
+      .flatten()
+      .parEach(function(user) {
+        var self = this;
+        user.con.post('/share/subscription', {to: group.id}, function() {
+          self();
+        });
+      })
+      .seq(function() {
+        done();
       })
     });
+
+    /*afterEach(function() {
+      console.log('reset messages');
+      _.each([teacher, student, teacherMember, studentMember], function(user) {
+        user.messages = [];
+      });
+    });*/
+
+    describe('post to class', function() {
+      var post = null;
+      before(function() {
+        _.each([teacher, student, teacherMember, studentMember], function(user) {
+          user.messages = [];
+        });
+      });
+
+      before(function(done) {
+        Seq()
+          .seq(function() {
+            Share.post({}, group.id, teacherMember.token, this)
+          })
+          .seq(function(res) {
+            post = res.body;
+            this();
+          })
+          .seq(done);
+        
+      });
+
+      it('should be in teacher feed', function(done) {
+        checkinFeed(teacher, group, post, done);
+      });
+
+      it('should be in teacher member feed', function(done) {
+        checkinFeed(teacherMember, group, post, done);
+      });
+
+      it('should be in student member feed', function(done) {
+        checkinFeed(studentMember, group, post, done);
+      });
+
+      it('should not be in student feed', function(done) {
+        checkNotInFeed(student, group, post, done);
+      });
+
+      describe('live updates', function() {
+        
+
+        it('should appear in teacher feed', function() {
+          expect(teacher.messages.length).to.equal(1);
+        });
+
+        it('should appear in teacher member feed', function() {
+          expect(teacherMember.messages.length).to.equal(1);
+        });
+
+        it('shold appear in student member feed', function() {
+          expect(studentMember.messages.length).to.equal(1);
+        });
+
+        it('should not appear in student feed', function() {
+          expect(student.messages.length).to.equal(0);
+        });
+      });
+    });
+
+    describe('post to individual', function() {
+      var post = null;
+
+      before(function() {
+        _.each([teacher, student, teacherMember, studentMember], function(user) {
+          user.messages = [];
+        });
+      });
+
+      before(function(done) {
+        Seq()
+          .seq(function() {
+            Share.post({
+              to: [{
+                id: group.id,
+                allow: [access.entry('group', 'teacher', group.id), access.entry('user', 'student', studentMember.id)]
+              }]
+            }, group.id, teacherMember.token, this);
+          })
+          .seq(function(res) {
+            post = res.body;
+            done();
+          });
+      });
+
+      it('should not be in teacher feed', function(done) {
+        checkNotInFeed(teacher, group, post, done);
+      });
+
+      it('should be in teacher member feed', function(done) {
+        checkinFeed(teacherMember, group, post, done);
+      });
+
+      it('should be in student member feed', function(done) {
+        checkinFeed(studentMember, group, post, done);
+      });
+
+      it('should not be in student feed', function(done) {
+        checkNotInFeed(student, group, post, done);
+      });
+
+      describe('live updates', function() {
+        
+
+        it('should not appear in teacher feed', function() {
+          expect(teacher.messages.length).to.equal(0);
+        });
+
+        it('should appear in teacher member feed', function() {
+          expect(teacherMember.messages.length).to.equal(1);
+        });
+
+        it('shold appear in student member feed', function() {
+          expect(studentMember.messages.length).to.equal(1);
+        });
+
+        it('should not appear in student feed', function() {
+          expect(student.messages.length).to.equal(0);
+        });
+      });
+    });
+
+    describe('queue to class', function() {
+      var post = null;
+
+      before(function() {
+        _.each([teacher, student, teacherMember, studentMember], function(user) {
+          user.messages = [];
+        });
+      });
+      
+      before(function(done) {
+        Seq()
+          .seq(function() {
+            Share.queue({}, group.id, teacherMember.token, this)
+          })
+          .seq(function(res) {
+            post = res.body;
+            this();
+          })
+          .seq(done);
+      });
+
+      it('should be in teacher member feed', function(done) {
+        checkinFeed(teacherMember, group, post, done);
+      });
+
+      it('should not be in student member feed', function(done) {
+        checkNotInFeed(studentMember, group, post, done);
+      });
+
+      describe('live updates', function() {
+        it('should appear in teacher member feed', function() {
+          expect(teacherMember.messages.length).to.equal(1);
+        });
+
+        it('should not appear in student feed', function() {
+          expect(studentMember.messages.length).to.equal(0);
+        });
+      });
+
+
+    });
+
+    
+  });
+
+});
+
+function connectUser(user, cb) {
+  var con = socketConnect(user.socketToken);
+  con.on('message', function(msg) {
+    console.log('mgs', msg);
+    user.messages.push(msg);
+  });
+  con.on('connect', function() {
+    cb(null, con);
+  });
+  user.con = con;
+  user.messages = [];
+}
+
+function checkinFeed(user, group, post, done) {
+  Seq()
+    .seq(function() {
+      Share.feed(user, group.id, user.token, this)
+    })
+    .seq(function(res) {
+      var shares = res.body;
+      expect(shares[0].id).to.equal(post.id);
+      this()
+    })
+    .seq(done);
+}
+
+function checkNotInFeed(user, group, post, done) {
+  Seq()
+    .seq(function() {
+      Share.feed(user, group.id, user.token, this)
+    })
+    .seq(function(res) {
+      var shares = res.body;
+      expect(shares.length).to.satisfy(function(length) {
+        if (length) {
+          return shares[0].id != post.id;
+        } else {
+          return true;
+        }
+      });
+      this()
+    })
+    .seq(done);
 }
