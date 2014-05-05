@@ -36,7 +36,7 @@ describe('User controller', function() {
         .seq(function(res) {
           var user = this.vars.user;
           expect(res).to.have.status(201);
-          
+
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
@@ -176,7 +176,7 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(400);
           expect(res).to.have
-            .ValidationError('username', 'user defined', 'Username already exists');
+            .ValidationError('username', 'unique', 'Username already exists');
           this();
         })
         .seq(done);
