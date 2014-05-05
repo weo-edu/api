@@ -61,6 +61,38 @@ process.chdir = function (dir) {
 };
 
 },{}],2:[function(require,module,exports){
+module.exports = function(Schema) {
+  var AssignmentSchema = new Schema({
+    object: {
+      type: {
+        type: String,
+        default: 'poll',
+        enum: ['generic', 'poll', 'quiz']
+      },
+      max_score: {
+        type: Number
+      },
+      reward: {
+        type: Number
+      }
+    },
+    verb: {
+      type: String,
+      default: 'assigned'
+    }
+
+    /**
+     * payload.{address}.{studentId}
+     * @field porgress The student progress on the assignment.
+     * @field score The student score on the assignment.
+     * @field rewared_claimed Whether the reward for the assignment was claimed.
+     */
+  }, {id: true, _id: true});
+
+
+  return AssignmentSchema;
+}
+},{}],3:[function(require,module,exports){
 var validations = require('lib/validations');
 
 module.exports = function(Schema) {
@@ -92,7 +124,69 @@ module.exports = function(Schema) {
 
   return GroupSchema;
 };
-},{"lib/validations":13}],3:[function(require,module,exports){
+},{"lib/validations":15}],4:[function(require,module,exports){
+module.exports = function(Schema) {
+
+ function mediaOrContentValidation(content) {
+  if (!content && !this.media) {
+    return false
+  } else {
+    return true;
+  }
+ }
+
+   var PostSchema = new Schema({
+    object: {
+      type: {
+        type: String,
+        default: 'post',
+        enum: ['post', 'answer', 'comment', 'question']
+      },
+      content: {
+        type: String,
+        default: '',
+        validate: [mediaOrContentValidation, 'Required if no media', 'required']
+      },
+      media: {
+        type: Schema.Types.Mixed,
+      }
+    },
+    verb: {
+      type: String,
+      default: 'shared',
+      enum: ['asked', 'shared', 'answered', 'commented']
+    }
+
+    /**
+     * payload.{address}.{studentId}
+     * @field porgress The student progress on the assignment.
+     * @field score The student score on the assignment.
+     * @field rewared_claimed Whether the reward for the assignment was claimed.
+     */
+  }, {id: true, _id: true});
+
+  // XXX is there a better way to do this?
+  PostSchema.pre('save', function(next) {
+    var verb = this.verb;
+    switch(this.object.type) {
+      case 'question':
+        verb = 'asked';
+        break;
+      case 'answer':
+        verb = 'answered';
+        break;
+      case 'comment':
+        verb = 'commented';
+        break;
+    }
+    this.verb = verb;
+    next();
+  });
+
+
+  return PostSchema;
+}
+},{}],5:[function(require,module,exports){
 var validations = require('lib/validations');
 
 module.exports = function(Schema) {
@@ -128,7 +222,7 @@ module.exports = function(Schema) {
 
   return S3Schema;
 };
-},{"lib/validations":13}],4:[function(require,module,exports){
+},{"lib/validations":15}],6:[function(require,module,exports){
 var validations = require('lib/validations');
 
 
@@ -161,7 +255,7 @@ module.exports = function(Schema) {
   return AccessSchema;
 };
 
-},{"lib/validations":13}],5:[function(require,module,exports){
+},{"lib/validations":15}],7:[function(require,module,exports){
 var validations = require('lib/validations');
 
 module.exports = function(Schema) {
@@ -175,7 +269,7 @@ module.exports = function(Schema) {
   }, {_id: false});
   return AddressSchema;
 }
-},{"./accessSchema":4,"lib/validations":13}],6:[function(require,module,exports){
+},{"./accessSchema":6,"lib/validations":15}],8:[function(require,module,exports){
 var validations = require('lib/validations')
   , _ = require('lodash');
 
@@ -283,12 +377,8 @@ module.exports = function(Schema) {
      * @field addresses[].access[].type Type of access. Possible values are `public`, `group`, or `individual`.
      */
     to: {
-      scope: {
-        type: String,
-      },
-      scope_path: {
-        type: String,
-      },
+      scope: String,
+      scope_path: String,
       addresses: [AddressSchema]
     },
 
@@ -345,16 +435,24 @@ module.exports = function(Schema) {
     });
   });
 
+  ShareSchema.method('isPublished', function() {
+    return ! this.isNew && this.status === 'active';
+  });
+
+  ShareSchema.method('isQueued', function() {
+    return this.status === 'pending';
+  });
+
   return ShareSchema;
 };
-},{"./addressSchema":5,"lib/validations":13,"lodash":14}],7:[function(require,module,exports){
+},{"./addressSchema":7,"lib/validations":15,"lodash":16}],9:[function(require,module,exports){
 var validations = require('lib/validations');
 
 module.exports = function(Schema) {
   var StudentSchema = new Schema({}, {id: true, _id: true});
   return StudentSchema;
 };
-},{"lib/validations":13}],8:[function(require,module,exports){
+},{"lib/validations":15}],10:[function(require,module,exports){
 var validations = require('lib/validations');
 /*
   This schema is intended to inherit from the User schema, and so
@@ -390,7 +488,7 @@ module.exports = function(Schema) {
 
   return TeacherSchema;
 };
-},{"lib/validations":13}],9:[function(require,module,exports){
+},{"lib/validations":15}],11:[function(require,module,exports){
 var validations = require('lib/validations');
 var config = require('lib/config');
 
@@ -473,7 +571,7 @@ module.exports = function(Schema) {
 
   return UserSchema;
 };
-},{"lib/config":12,"lib/validations":13}],"eos-schemas":[function(require,module,exports){
+},{"lib/config":14,"lib/validations":15}],"eos-schemas":[function(require,module,exports){
 module.exports=require('XpodvI');
 },{}],"XpodvI":[function(require,module,exports){
 module.exports = {
@@ -481,12 +579,12 @@ module.exports = {
   User: require('lib/User/schema'),
   Student: require('lib/Student/schema'),
   Teacher: require('lib/Teacher/schema'),
-//  Assignment: require('lib/Assignment/schema'),
+  Assignment: require('lib/Assignment/schema'),
   S3: require('lib/S3/schema'),
-//  Post: require('lib/Post/schema'),
+  Post: require('lib/Post/schema'),
   Share: require('lib/Share/schema')
 };
-},{"lib/Group/schema":2,"lib/S3/schema":3,"lib/Share/schema":6,"lib/Student/schema":7,"lib/Teacher/schema":8,"lib/User/schema":9}],12:[function(require,module,exports){
+},{"lib/Assignment/schema":2,"lib/Group/schema":3,"lib/Post/schema":4,"lib/S3/schema":5,"lib/Share/schema":8,"lib/Student/schema":9,"lib/Teacher/schema":10,"lib/User/schema":11}],14:[function(require,module,exports){
 (function (process){
 module.exports = {
   // Port for the app to listen on
@@ -525,7 +623,7 @@ module.exports = {
   userProfile: 'http://weo.io/user/'
 };
 }).call(this,require("/Users/andrewshaffer/weo/api/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/andrewshaffer/weo/api/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":1}],13:[function(require,module,exports){
+},{"/Users/andrewshaffer/weo/api/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":1}],15:[function(require,module,exports){
 var validator = require('validator');
 
 module.exports = {
@@ -547,7 +645,7 @@ module.exports = {
     };
   }
 };
-},{"validator":15}],14:[function(require,module,exports){
+},{"validator":17}],16:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -7336,7 +7434,7 @@ module.exports = {
 }.call(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*!
  * Copyright (c) 2014 Chris O'Hara <cohara87@gmail.com>
  *
