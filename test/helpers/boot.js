@@ -26,7 +26,6 @@ global.request = supertest(app);
 global.socketConnect = function(token) {
   var qs = querystring.stringify({access_token: token});
   var url = 'http://localhost:' + config.port + '?' + qs;
-  console.log('send socket connect');
   var s = socket.connect(url, {forceNew: true});
   return routerIO(s);
 };

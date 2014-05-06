@@ -41,7 +41,6 @@ describe('User controller', function() {
               ['password', 'password_confirmation', 'groups']));
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
-          expect(res.body.groups).to.have.length(1);
           this();
         })
         .seq(function() {
@@ -68,7 +67,6 @@ describe('User controller', function() {
               ['password', 'password_confirmation', 'groups']));
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
-          expect(res.body.groups).to.have.length(1);
           this();
         })
         .seq(function() {

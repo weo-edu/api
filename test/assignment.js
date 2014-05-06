@@ -70,14 +70,13 @@ describe('Assignment controller', function() {
   });
 
 	describe('should add student to assignment', function() {
-		it.only('when student is added to group', function(done) {
+		it('when student is added to group', function(done) {
 			Seq()
 				.seq(function() {
           AssignmentHelper.create(teacherToken, 'poll', {to: group.id}, this);
 				})
 				.seq(function(res) {
 					this.vars.assignment = res.body;
-          console.log('put groupid', group.id);
 					request
   					.put('/group/' + group.id + '/members')
             .set('Authorization', studentToken)
@@ -85,7 +84,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
           expect(res).to.have.status(200);
-					var url = '/assignment/' + this.vars.assignment.id;
+          var url = '/assignment/' + this.vars.assignment.id;
 					request
 						.get(url)
 						.set('Authorization', studentToken)
@@ -93,7 +92,6 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
 					var assignment = res.body;
-          //console.log('assignment', assignment);
 					expect(assignment.payload[group.id].students).to.have.property(student.id);
 					this();
 				})

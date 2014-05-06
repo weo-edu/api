@@ -40,7 +40,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           var share = res.body;
           expect(res).to.have.status(201);
-          expect(share.actor).to.have.property('name');
+          expect(share.actor).to.have.property('displayName');
           this();
         })
         .seq(done);
@@ -100,7 +100,7 @@ describe('Share controller', function() {
     });
   });
 
-  describe('queueing an share', function() {
+  describe('queueing a share', function() {
     it('should show up in feed', function(done) {
       Seq()
         .seq(function() {
@@ -228,13 +228,6 @@ describe('Share controller', function() {
       })
     });
 
-    /*afterEach(function() {
-      console.log('reset messages');
-      _.each([teacher, student, teacherMember, studentMember], function(user) {
-        user.messages = [];
-      });
-    });*/
-
     describe('post to class', function() {
       var post = null;
       before(function() {
@@ -276,7 +269,6 @@ describe('Share controller', function() {
 
 
         it('should appear in teacher feed', function() {
-          console.log('teacher.messages', teacher.messages);
           expect(teacher.messages.length).to.equal(1);
         });
 
@@ -406,7 +398,6 @@ describe('Share controller', function() {
 function connectUser(user, cb) {
   var con = socketConnect(user.socketToken);
   con.on('message', function(msg) {
-    console.log('mgs', msg);
     user.messages.push(msg);
   });
   con.on('connect', function() {

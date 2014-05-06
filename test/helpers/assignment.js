@@ -21,7 +21,6 @@ var Assignment = module.exports = {
     var groups = opts.to;
     delete opts.to;
     var share = this.generate(opts, groups);
-    console.log('create', share);
     request
       .post('/assignment')
       .send(share)

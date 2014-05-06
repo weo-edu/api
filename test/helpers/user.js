@@ -11,7 +11,7 @@ function teacherDefaults() {
       title: 'Mr.'
     },
     // Meaningless, but real-looking mongo id
-    groups: ['535729acad50c37bb9c84df3'],
+    //groups: ['535729acad50c37bb9c84df3'],
     email: sanitize(Faker.Internet.email()).toLowerCase(),
     username: sanitize(Faker.Internet.userName()),
     password: 'testpassword',
