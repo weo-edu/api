@@ -70,7 +70,7 @@ describe('Assignment controller', function() {
   });
 
 	describe('should add student to assignment', function() {
-		it('when student is added to group', function(done) {
+		it.only('when student is added to group', function(done) {
 			Seq()
 				.seq(function() {
           AssignmentHelper.create(teacherToken, 'poll', {to: group.id}, this);
