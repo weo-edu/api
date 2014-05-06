@@ -1028,8 +1028,8 @@ module.exports = function(Schema) {
   });
 
   // returns access with address prepended
-  UserSchema.method('fullAccess', function(group) {
-    return access.all({id: group, access: this.access(group)});
+  UserSchema.method('fullAccess', function(group, parent) {
+    return access.all({id: group, access: this.access(group)}, parent);
   });
 
   return UserSchema;
@@ -1069,13 +1069,17 @@ access.decode = function(entry, key) {
   return key ? entry[key] : entry;
 };
 
-access.full = function(addressId, entry) {
-  return addressId + ':' + entry;
+access.encode = function(entry) {
+  return access.entry(entry.type, entry.role, entry.id);
+}
+
+access.full = function(addressId, entry, parent) {
+  return (parent ? parent + ':' : '') + addressId + ':' + entry;
 };
 
-access.all = function(address) {
+access.all = function(address, parent) {
   return _.map(address.access, function(entry) {
-    return access.full(address.id, entry);
+    return access.full(address.id, entry, parent);
   })
 };
 },{}],12:[function(require,module,exports){

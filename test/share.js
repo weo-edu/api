@@ -100,7 +100,7 @@ describe('Share controller', function() {
     });
   });
 
-  describe('queueing an share', function() {
+  describe('queueing a share', function() {
     it('should show up in feed', function(done) {
       Seq()
         .seq(function() {
@@ -356,7 +356,7 @@ describe('Share controller', function() {
           user.messages = [];
         });
       });
-      
+
       before(function(done) {
         Seq()
           .seq(function() {

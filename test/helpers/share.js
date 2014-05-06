@@ -25,16 +25,18 @@ var Share = module.exports = {
       .end(cb);
     return share;
   },
-  feed: function(user, groups, authToken, cb) {
+  feed: function(user, query, authToken, cb) {
     if (!cb) {
       cb = authToken;
       authToken = groups;
       groups = undefined;
     }
+    if (!_.isObject(query) || _.isArray(query))
+      query = {to: query};
     request
       .get('/' + [user.type, 'shares'].join('/'))
       .set('Authorization', authToken)
-      .query({to: groups})
+      .query(query)
       .end(cb);
   },
   generate: function(opts, groups) {
