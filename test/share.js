@@ -40,7 +40,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           var share = res.body;
           expect(res).to.have.status(201);
-          expect(share.actor).to.have.property('name');
+          expect(share.actor).to.have.property('displayName');
           this();
         })
         .seq(done);
@@ -246,7 +246,7 @@ describe('Share controller', function() {
             this();
           })
           .seq(done);
-        
+
       });
 
       it('should be in teacher feed', function(done) {
@@ -266,7 +266,7 @@ describe('Share controller', function() {
       });
 
       describe('live updates', function() {
-        
+
 
         it('should appear in teacher feed', function() {
           expect(teacher.messages.length).to.equal(1);
@@ -328,7 +328,7 @@ describe('Share controller', function() {
       });
 
       describe('live updates', function() {
-        
+
 
         it('should not appear in teacher feed', function() {
           expect(teacher.messages.length).to.equal(0);
@@ -390,7 +390,7 @@ describe('Share controller', function() {
 
     });
 
-    
+
   });
 
 });

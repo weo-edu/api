@@ -84,7 +84,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
           expect(res).to.have.status(200);
-					var url = '/assignment/' + this.vars.assignment.id;
+          var url = '/assignment/' + this.vars.assignment.id;
 					request
 						.get(url)
 						.set('Authorization', studentToken)

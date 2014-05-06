@@ -5,21 +5,23 @@ var Seq = require('seq');
 function teacherDefaults() {
   return {
     type: 'teacher',
-    first_name: sanitize(Faker.Name.firstName()),
-    last_name: sanitize(Faker.Name.lastName()),
+    name: {
+      first: sanitize(Faker.Name.firstName()),
+      last: sanitize(Faker.Name.lastName()),
+      title: 'Mr.'
+    },
     // Meaningless, but real-looking mongo id
-    groups: ['535729acad50c37bb9c84df3'],
+    //groups: ['535729acad50c37bb9c84df3'],
     email: sanitize(Faker.Internet.email()).toLowerCase(),
     username: sanitize(Faker.Internet.userName()),
     password: 'testpassword',
     password_confirmation: 'testpassword',
-    title: 'Mr.'
   };
 }
 
 function studentDefaults() {
   var defaults = teacherDefaults();
-  delete defaults.title;
+  delete defaults.name.title;
   delete defaults.email;
   return defaults;
 }
