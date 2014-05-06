@@ -36,7 +36,6 @@ describe('User controller', function() {
         .seq(function(res) {
           var user = this.vars.user;
           expect(res).to.have.status(201);
-
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));

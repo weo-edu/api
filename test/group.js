@@ -160,10 +160,7 @@ describe('Group controller', function() {
   			})
   			.seq(function(res) {
           group = res.body;
-  				request
-  					.put('/group/' + group.id + '/members')
-            .set('Authorization', user.token)
-  					.end(this);
+  				GroupHelper.addMember(group, user, this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(200);
@@ -180,17 +177,9 @@ describe('Group controller', function() {
   	});
 
   	it('should handle non existent group', function(done) {
-      var newUser;
   		Seq()
   			.seq(function() {
-  				UserHelper.create({}, this);
-  			})
-  			.seq(function(res) {
-  				newUser = res.body;
-  				request
-  					.put('/group/535abe6b16213d4e8d331ed1/members/' + newUser.id)
-            .set('Authorization', user.token)
-  					.end(this);
+          GroupHelper.addMember({id: "535abe6b16213d4e8d331ed1"}, user, this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(404);
@@ -225,10 +214,7 @@ describe('Group controller', function() {
     it('join existing group', function(done) {
       Seq()
         .seq(function() {
-          request
-            .put('/group/join/' + group.code)
-            .set('Authorization', student.token)
-            .end(this);
+          GroupHelper.join(group, student, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);

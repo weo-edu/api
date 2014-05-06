@@ -46,3 +46,4 @@ coverage
 badge.png
 
 node_modules/lib
+assets/eos-schemas.js

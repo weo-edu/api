@@ -7,5 +7,17 @@ var Group = module.exports = {
       name: 'Test Group ' + (idx++),
       type: 'class'
     }, opts);
+  },
+  addMember: function(group, user, cb) {
+    request
+      .put('/group/' + group.id + '/members')
+      .set('Authorization', user.token)
+      .end(cb);
+  },
+  join: function(group, user, cb) {
+    request
+      .put('/group/join/' + group.code)
+      .set('Authorization', user.token)
+      .end(cb);
   }
 };

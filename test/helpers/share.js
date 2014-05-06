@@ -1,5 +1,6 @@
 var Faker = require('Faker')
-  , chai = require('chai');
+  , chai = require('chai')
+  , access = require('lib/access');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created']
   , types = ['comment', 'assignment'];
@@ -44,13 +45,16 @@ var Share = module.exports = {
       payload: {},
       type: _.sample(types)
     });
-    share.to = { addresses: [] };
-    _.each([].concat(groups), function(group) {
-      share.to.addresses.push({id: group, access: [
-        {type: 'public', role: 'teacher'},
-        {type: 'group', role: 'student', id: group}
-      ]});
-    });
+    if (!opts.to) {
+      share.to = [];
+      _.each([].concat(groups), function(group) {
+        share.to.push({id: group, allow: [
+          access.entry('public', 'teacher'),
+          access.entry('group', 'student', group)
+        ]});
+      });
+    }
+    
     return share;
   },
   generateObject: function(opts) {
