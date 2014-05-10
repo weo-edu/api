@@ -31,7 +31,7 @@ var Share = module.exports = {
       groups = undefined;
     }
     if (!_.isObject(query) || _.isArray(query))
-      query = {to: query};
+      query = {board: query};
     request
       .get('/' + [user.userType, 'shares'].join('/'))
       .set('Authorization', authToken)
@@ -48,7 +48,7 @@ var Share = module.exports = {
     if (!opts.to) {
       share.to = [];
       _.each([].concat(groups), function(group) {
-        share.to.push({id: group, allow: [
+        share.to.push({board: group, allow: [
           access.entry('public', 'teacher'),
           access.entry('group', 'student', group)
         ]});
