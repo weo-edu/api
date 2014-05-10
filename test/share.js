@@ -192,7 +192,7 @@ describe('Share controller', function() {
       Seq()
       .seq(function() {
         teacherMember = user;
-        User.createAndLogin({type: 'student'},this);
+        User.createAndLogin({userType: 'student'},this);
       })
       .seq(function(s) {
         student = s;
@@ -200,7 +200,7 @@ describe('Share controller', function() {
       })
       .seq(function(t) {
         teacher = t;
-        User.createAndLogin({type: 'student'}, this);
+        User.createAndLogin({userType: 'student'}, this);
       })
       .seq(function(s) {
         studentMember = s;

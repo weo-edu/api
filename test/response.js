@@ -1,15 +1,14 @@
 var Seq = require('seq')
   , User = require('./helpers/user')
+  , Group = require('./helpers/group')
   , Faker = require('Faker');
 
 require('./helpers/boot');
 
 function generate(user, collection) {
   return {
-    object: {
-      question: Faker.Lorem.words().join(' '),
-      answer: Faker.Lorem.words().join(' ')
-    }
+    questionContent: Faker.Lorem.words().join(' '),
+    content: Faker.Lorem.words().join(' ')
   };
 };
 
@@ -22,6 +21,14 @@ describe('response', function() {
       })
       .seq(function(u) {
         user = u;
+        request
+          .post('/group')
+          .send(Group.generate())
+          .set('Authorization', user.token)
+          .end(this);
+      })
+      .seq(function(res) {
+        group = res.body;
         this();
       })
       .seq(done);
@@ -33,14 +40,15 @@ describe('response', function() {
         request
           .post('/response')
           .set('Authorization', user.token)
+          .query({to: group.id, channel: '/123/response'})
           .send(generate(user, 'collection'))
           .end(this);
       })
       .seq(function(res) {
         var response = res.body;
         expect(res).to.have.status(201);
-        expect(response.object).to.have.property('question');
-        expect(response.object).to.have.property('answer');
+        expect(response.object).to.have.property('content');
+        expect(response.object).to.have.property('objectType');
         this();
       })
       .seq(done);

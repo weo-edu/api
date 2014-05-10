@@ -34,7 +34,7 @@ describe('Group controller', function() {
           expect(res).to.have.status(201);
           group = res.body;
           request
-          	.get('/' + [user.type, user.id].join('/'))
+          	.get('/' + [user.userType, user.id].join('/'))
             .set('Authorization', user.token)
           	.end(this);
         })
@@ -50,7 +50,7 @@ describe('Group controller', function() {
       var student;
       Seq()
         .seq(function() {
-          UserHelper.createAndLogin({type: 'student'}, this);
+          UserHelper.createAndLogin({userType: 'student'}, this);
         })
         .seq(function(student) {
           request

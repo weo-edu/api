@@ -40,7 +40,7 @@ describe('nested share', function() {
   it('should validate', function(done) {
     Seq()
       .seq(function() {
-        Share.post({parent: {id: post.id + ':discussion'}}, group.id, user.token, this);
+        Share.post({channel: post.id + ':discussion'}, group.id, user.token, this);
       })
       .seq(function(res) {
         expect(res).to.have.status(201);
@@ -51,7 +51,7 @@ describe('nested share', function() {
 
   it('nested feed should only contain nested shares', function(done) {
     var nested = null;
-    var parentId = post.id + ':discussion'
+    var channel = post.id + ':discussion'
 
     Seq()
       .seq(function() {
@@ -59,16 +59,16 @@ describe('nested share', function() {
       })
       .seq(function() {
         var self = this;
-        user.con.post('/share/subscription', {to: group.id, parent: parentId}, function() {
+        user.con.post('/share/subscription', {to: group.id, channel: channel}, function() {
           self();
         })
       })
       .seq(function() {
-        Share.post({parent: {id: parentId}}, group.id, user.token, this);
+        Share.post({channel: channel}, group.id, user.token, this);
       })
       .seq(function(res) {
         nested = res.body;
-        Share.feed(user, {to: group.id, parent: parentId}, user.token, this);
+        Share.feed(user, {to: group.id, channel: channel}, user.token, this);
       })
       .seq(function(res) {
         var shares = res.body;

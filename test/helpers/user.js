@@ -4,11 +4,11 @@ var Seq = require('seq');
 
 function teacherDefaults() {
   return {
-    type: 'teacher',
+    userType: 'teacher',
     name: {
-      first: sanitize(Faker.Name.firstName()),
-      last: sanitize(Faker.Name.lastName()),
-      title: 'Mr.'
+      givenName: sanitize(Faker.Name.firstName()),
+      familyName: sanitize(Faker.Name.lastName()),
+      honorificPrefix: 'Mr.'
     },
     // Meaningless, but real-looking mongo id
     //groups: ['535729acad50c37bb9c84df3'],
@@ -34,7 +34,7 @@ var User = module.exports = {
   generate: function(opts) {
     opts = opts || {};
     var defaults = null;
-    if (opts.type === 'student') {
+    if (opts.userType === 'student') {
       defaults = studentDefaults();
     } else {
       defaults = teacherDefaults();
@@ -50,7 +50,7 @@ var User = module.exports = {
 
     opts = User.generate(opts);
     request
-      .post('/' + opts.type)
+      .post('/' + opts.userType)
       .send(opts)
       .end(function(err, res) {
         // XXX Kind of hacky, but without it
