@@ -8,10 +8,10 @@ var Group = module.exports = {
       type: 'class'
     }, opts);
   },
-  addMember: function(group, user, cb) {
+  addMember: function(group, user, token, cb) {
     request
-      .put('/group/' + group.id + '/members')
-      .set('Authorization', user.token)
+      .put('/group/' + group.id + '/members/' + user)
+      .set('Authorization', token)
       .end(cb);
   },
   join: function(group, user, cb) {

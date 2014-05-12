@@ -11,7 +11,7 @@ var Post = module.exports = {
     share.type = 'post';
     delete share.verb;
     _.defaults(share.object, {
-      content: Faker.Lorem.paragraph(),
+      originalContent: Faker.Lorem.paragraph(),
     });
     return share;
   },

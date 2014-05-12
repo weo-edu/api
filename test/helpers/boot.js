@@ -6,7 +6,7 @@ var _ = require('lodash')
 var socket = require('socket.io-client')
 var querystring = require('querystring');
 var config = require('lib/config');
-var routerIO = require('lib/router.io-cli');
+var routerIO = require('lib/router.io-client')(true);
 
 chai.use(require('./chai'));
 chai.use(require('chai-properties'));

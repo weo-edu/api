@@ -143,15 +143,22 @@ describe('Group controller', function() {
   });
 
   describe('addMember method', function() {
-  	it('should add member to existing group', function(done) {
-      var member;
-  		Seq()
-  			.seq(function() {
-  				UserHelper.create({type: 'student'}, this);
-  			})
-  			.seq(function(res) {
+    var member;
+    before(function(done) {
+      Seq()
+        .seq(function() {
+          UserHelper.create({type: 'student'}, this);
+        })
+        .seq(function(res) {
           expect(res).to.have.status(201);
           member = res.body;
+          done();
+        });
+    });
+
+  	it('should add member to existing group', function(done) {
+  		Seq()
+  			.seq(function() {
           request
             .post('/group')
             .send(GroupHelper.generate())
@@ -160,7 +167,7 @@ describe('Group controller', function() {
   			})
   			.seq(function(res) {
           group = res.body;
-  				GroupHelper.addMember(group, user, this);
+  				GroupHelper.addMember(group, member.id, user.token, this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(200);
@@ -179,7 +186,7 @@ describe('Group controller', function() {
   	it('should handle non existent group', function(done) {
   		Seq()
   			.seq(function() {
-          GroupHelper.addMember({id: "535abe6b16213d4e8d331ed1"}, user, this);
+          GroupHelper.addMember({id: "535abe6b16213d4e8d331ed1"}, member.id, user.token, this);
   			})
   			.seq(function(res) {
   				expect(res).to.have.status(404);

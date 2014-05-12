@@ -56,7 +56,7 @@ var Share = module.exports = {
         ]});
       });
     }
-    
+
     return share;
   },
   generateObject: function(opts) {

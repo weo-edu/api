@@ -146,7 +146,7 @@ describe('Share controller', function() {
     });
   });
 
-  describe('deleting an share', function() {
+  describe('deleting a share', function() {
     it('should succeed for queued shares', function(done) {
       Seq()
         .seq(function() {
@@ -158,7 +158,7 @@ describe('Share controller', function() {
           Share.del(queued.id, user.token, this);
         })
         .seq(function(res) {
-          expect(res).to.have.status(204);
+          expect(res).to.have.status(200);
           this();
         })
         .seq(done);
@@ -266,8 +266,6 @@ describe('Share controller', function() {
       });
 
       describe('live updates', function() {
-
-
         it('should appear in teacher feed', function() {
           expect(teacher.messages.length).to.equal(1);
         });
@@ -386,13 +384,8 @@ describe('Share controller', function() {
           expect(studentMember.messages.length).to.equal(0);
         });
       });
-
-
     });
-
-
   });
-
 });
 
 function connectUser(user, cb) {
@@ -414,7 +407,7 @@ function checkinFeed(user, group, post, done) {
     })
     .seq(function(res) {
       var shares = res.body;
-      expect(shares[0].id).to.equal(post.id);
+      expect(shares).to.include.something.like(post);
       this()
     })
     .seq(done);

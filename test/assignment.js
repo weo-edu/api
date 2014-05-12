@@ -78,7 +78,7 @@ describe('Assignment controller', function() {
 				.seq(function(res) {
 					this.vars.assignment = res.body;
 					request
-  					.put('/group/' + group.id + '/members')
+  					.put('/group/join/' + group.code)
             .set('Authorization', studentToken)
   					.end(this);
 				})

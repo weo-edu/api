@@ -9,7 +9,7 @@ var Assignment = module.exports = {
   generate: function(opts, groups) {
     var share = Share.generate(opts, groups);
     _.defaults(share.object, {
-      content: Faker.Lorem.paragraph(),
+      originalContent: Faker.Lorem.paragraph(),
       max_score: 10,
       reward: 10
     })

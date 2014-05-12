@@ -101,7 +101,7 @@ describe('Post controller', function() {
 
 		it('when body is not given', function(done) {
 			var share = Post.generate({}, [Post.randomTo()]);
-			share.object.content = undefined;
+			share.object.originalContent = undefined;
 			Seq()
 				.seq(function() {
 					request
@@ -111,7 +111,7 @@ describe('Post controller', function() {
 			      .end(this);
 				})
 				.seq(function(res) {
-					expect(res).to.have.ValidationError('object.content', 'required', 'Required if no media', '');
+					expect(res).to.have.ValidationError('object.originalContent', 'required', 'Required if no media', '');
 					this();
 				})
 				.seq(done);
