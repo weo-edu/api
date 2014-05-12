@@ -46,7 +46,7 @@ var Share = module.exports = {
       payload: {}
     });
     if (!opts.to) {
-      share.to = [];
+      share.to= [];
       _.each([].concat(groups), function(group) {
         share.to.push({board: group, allow: [
           access.entry('public', 'teacher'),

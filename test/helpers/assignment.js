@@ -7,25 +7,28 @@ var Faker = require('Faker')
 
 var Assignment = module.exports = {
   generate: function(opts, groups) {
+    opts.object = {objectType: 'poll'};
     var share = Share.generate(opts, groups);
+    delete share.verb;
     _.defaults(share.object, {
       content: Faker.Lorem.paragraph(),
       max_score: 10,
-      reward: 10
+      reward: 10,
     })
-    share.object.type = 'poll';
     return share;
   },
 
+  randomTo: function() {
+    return '' + Math.random();
+  },
+
   create: function(token, type, opts, cb) {
-    var groups = opts.to;
-    delete opts.to;
-    var share = this.generate(opts, groups);
+    var share = this.generate(opts, opts.to || opts.board || [this.randomTo()]);
+    delete opts.board;
     request
-      .post('/assignment')
+      .post('/share')
       .send(share)
       .set('Authorization', token)
       .end(cb);
-    return share;
   }
 };

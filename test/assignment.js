@@ -56,7 +56,7 @@ describe('Assignment controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {to: group.id}, this);
+          AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
   			})
   			.seq(function(res) {
           var assignment = res.body;
@@ -73,7 +73,7 @@ describe('Assignment controller', function() {
 		it('when student is added to group', function(done) {
 			Seq()
 				.seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {to: group.id}, this);
+          AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
 				})
 				.seq(function(res) {
 					this.vars.assignment = res.body;
@@ -84,7 +84,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
           expect(res).to.have.status(200);
-          var url = '/assignment/' + this.vars.assignment.id;
+          var url = '/share/' + this.vars.assignment.id;
 					request
 						.get(url)
 						.set('Authorization', studentToken)
@@ -103,7 +103,7 @@ describe('Assignment controller', function() {
 		it('when information is entered properly', function(done) {
 			Seq()
 				.seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {to: group.id}, this);
+          AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
 				})
 				.seq(function(res) {
 					this.vars.assignment = res.body;
