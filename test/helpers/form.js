@@ -7,14 +7,14 @@ var Faker = require('Faker')
 
 var Form = module.exports = {
   generate: function(opts, groups) {
-    opts.object = {objectType: 'poll'};
     var share = Share.generate(opts, groups);
     delete share.verb;
-    _.defaults(share.object, {
+    share.object.attachments = [{
+      objectType: 'poll',
       content: Faker.Lorem.paragraph(),
       max_score: 10,
       reward: 10,
-    })
+    }];
     return share;
   },
 

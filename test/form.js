@@ -61,7 +61,8 @@ describe('Form controller', function() {
   			.seq(function(res) {
           var assignment = res.body;
           expect(assignment.actor.id).to.equal(teacher.id);
-  				expect(_.keys(res.body.students)).to.have.length(0);
+  				expect(_.keys(assignment.payload.students)).to.have.length(0);
+          expect(assignment.verb).to.equal('assigned');
   				this();
   			})
   			.seq(done);
@@ -77,7 +78,6 @@ describe('Form controller', function() {
 				})
 				.seq(function(res) {
 					this.vars.assignment = res.body;
-          console.log('poll', res.body);
 					request
   					.put('/group/' + group.id + '/members')
             .set('Authorization', studentToken)
