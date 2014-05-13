@@ -80,7 +80,7 @@ describe('Group controller', function() {
           expect(res).to.have.status(201);
           request
             .post('/group')
-            .send(GroupHelper.generate({name: group.name}))
+            .send(GroupHelper.generate({displayName: group.displayName}))
             .set('Authorization', user.token)
             .end(this);
         })
