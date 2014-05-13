@@ -5,7 +5,7 @@ var Faker = require('Faker')
   , UserHelper = require('./user')
   , Share = require('./share');
 
-var Assignment = module.exports = {
+var Form = module.exports = {
   generate: function(opts, groups) {
     opts.object = {objectType: 'poll'};
     var share = Share.generate(opts, groups);

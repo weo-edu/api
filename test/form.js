@@ -1,7 +1,7 @@
 var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
-  , AssignmentHelper = require('./helpers/assignment')
+  , AssignmentHelper = require('./helpers/form')
   , Faker = require('Faker')
   , _ = require('lodash')
   , moment = require('moment');
@@ -10,7 +10,7 @@ var util = require('util');
 
 require('./helpers/boot');
 
-describe('Assignment controller', function() {
+describe('Form controller', function() {
 
   var teacherToken, teacher, studentToken2, student;
   before(function(done) {
@@ -52,7 +52,7 @@ describe('Assignment controller', function() {
       .seq(done);
   });
 
-  describe('should create a new assignment', function() {
+  describe('should create a new form', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
@@ -69,7 +69,7 @@ describe('Assignment controller', function() {
 
   });
 
-	describe('should add student to assignment', function() {
+	describe('should add student to form', function() {
 		it('when student is added to group', function(done) {
 			Seq()
 				.seq(function() {
@@ -77,6 +77,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
 					this.vars.assignment = res.body;
+          console.log('poll', res.body);
 					request
   					.put('/group/' + group.id + '/members')
             .set('Authorization', studentToken)
@@ -114,7 +115,7 @@ describe('Assignment controller', function() {
 				})
 				.seq(function(res) {
 					request
-						.patch('/assignment/' + this.vars.assignment.id + '/groups/' + group.id + '/score')
+						.patch('/poll/' + this.vars.assignment.id + '/groups/' + group.id + '/score')
 						.set('Authorization', studentToken)
 						.send({score: 5})
 						.end(this);

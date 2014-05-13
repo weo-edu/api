@@ -22,6 +22,7 @@ var Post = module.exports = {
 
   create: function(token, type, opts, cb) {
     var share = this.generate(opts, opts.to || [this.randomTo()]);
+    share.object.objectType = type;
     request
       .post('/share')
       .send(share)
