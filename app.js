@@ -21,4 +21,6 @@ try {
 
 fs.symlinkSync(path.join(process.cwd(), 'lib'), lib, 'dir');
 
+console.log('booting');
+
 module.exports = require('lib/boot');
