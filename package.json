@@ -46,7 +46,9 @@
     "s3-policy": "~0.2.0",
     "seq": "~0.3.5",
     "subclass-error": "0.0.2",
-    "validator": "~3.10.0"
+    "validator": "~3.10.0",
+    "migrate": "~0.1.4",
+    "chug": "git://github.com/weo-edu/chug"
   },
   "devDependencies": {
     "Faker": "~0.7.0",
