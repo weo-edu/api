@@ -21,6 +21,11 @@ try {
 
 fs.symlinkSync(path.join(process.cwd(), 'lib'), lib, 'dir');
 
-console.log('booting');
+try {
+  fs.mkdirSync('assets');
+} catch (e) {
+  // do nothing if folder already exists
+}
+
 
 module.exports = require('lib/boot');
