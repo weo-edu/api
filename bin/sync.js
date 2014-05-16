@@ -21,6 +21,6 @@ mongodump.on('exit', function() {
   '-h', local.hosts[0].host + ':' + local.hosts[0].port, 
   '-d', local.database, 
   '-u', local.username,
-  '-p', local.password
+  '-p', local.password,
   'dump/'], {stdio: 'inherit'});
 });
