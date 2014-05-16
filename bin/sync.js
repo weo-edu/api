@@ -22,5 +22,5 @@ mongodump.on('exit', function() {
   '-d', local.database, 
   '-u', local.username,
   '-p', local.password,
-  'dump/'], {stdio: 'inherit'});
+  'dump/' + remote.database], {stdio: 'inherit'});
 });
