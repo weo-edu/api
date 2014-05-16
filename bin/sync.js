@@ -12,7 +12,7 @@ mongo.MongoClient.connect(process.env.MONGOHQ_URL, function(err, db) {
 
   db.admin().command({
     copydb: 1,
-    fromhost: remote.hosts[0].host + ':' remote.hosts[0].port,
+    fromhost: remote.hosts[0].host + ':' + remote.hosts[0].port,
     fromdb: remote.database,
     todb: local.database,
     username: remote.username,
