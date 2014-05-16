@@ -4,7 +4,7 @@ var _ = require('lodash');
 
 var map = {
   type: 'userType', 
-  name: 'displayName'
+  name: 'displayName',
   title: 'name.honorificPrefix',
   full_name: 'name.formatted',
   first_name: 'name.givenName',
