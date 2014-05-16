@@ -7,7 +7,7 @@ var map = {
 };
 
 exports.up = function(next){
-  chug.src('group')
+  chug.src('group', {})
     .pipe(chug.transform(map))
     .pipe(chug.dest('groups'))
     .on('end', next);
