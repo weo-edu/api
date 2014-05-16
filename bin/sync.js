@@ -12,4 +12,7 @@ console.log('local', local);
 console.log('remote', remote);
 
 
-spawn('mongodump', [], {stdio: 'inherit'});
+var mongodump = spawn('mongodump', [], {stdio: 'inherit'});
+mongodump.on('error', function(err) {
+  console.log('error', err.stack);
+});
