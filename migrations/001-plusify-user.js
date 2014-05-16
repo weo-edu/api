@@ -14,13 +14,13 @@ var map = {
 exports.up = function(next){
   chug.src('user', {})
     .pipe(chug.transform(map))
-    .pipe(chug.dest, 'users')
+    .pipe(chug.dest('users'))
     .on('end', next);
 };
 
 exports.down = function(next){
   chug.src('users', {})
     .pipe(chug.transform(_.invert(map)))
-    .pipe(chug.dest, 'user')
+    .pipe(chug.dest('user'))
     .on('end', next);
 };

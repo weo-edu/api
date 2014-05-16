@@ -14,8 +14,8 @@ exports.up = function(next){
 };
 
 exports.down = function(next){
-  chug.src('group')
+  chug.src('groups')
     .pipe(chug.transform(_.invert(map)))
-    .pipe(chug.dest('groups'))
+    .pipe(chug.dest('group'))
     .on('end', next);
 };
