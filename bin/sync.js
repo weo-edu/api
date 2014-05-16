@@ -10,17 +10,18 @@ var local = mongoURI.parse(process.env.MONGOHQ_URL)
 
 console.log('cwd', process.cwd());
 
-var mongodump = spawn('./bin/mongodump', [
+var mongodump = spawn('mongodump', [
   '-h', remote.hosts[0].host + ':' + remote.hosts[0].port, 
   '-d', remote.database, 
   '-u', remote.username,
   '-p', remote.password], {stdio: 'inherit'});
 
+var localPort = local.hosts[0].port
 mongodump.on('exit', function() {
-  spawn('./bin/mongorestore', [
-  '-h', local.hosts[0].host + ':' + local.hosts[0].port, 
+  spawn('mongorestore', [
+  '-h', local.hosts[0].host +  (localPort ? (':' + localPort) : ''), 
   '-d', local.database, 
-  '-u', local.username,
-  '-p', local.password,
+/*  '-u', local.username,
+  '-p', local.password, */
   'dump/' + remote.database], {stdio: 'inherit'});
 });
