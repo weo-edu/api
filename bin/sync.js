@@ -8,9 +8,7 @@ var spawn = require('child_process').spawn;
 var remote = mongoURI.parse(process.env.MONGO_PRODUCTION_URL);
 var local = mongoURI.parse(process.env.MONGOHQ_URL)
 
-console.log('cwd', process.cwd());
-
-var mongodump = spawn('mongodump', [
+var mongodump = spawn('./bin/mongodump', [
   '-h', remote.hosts[0].host + ':' + remote.hosts[0].port, 
   '-d', remote.database, 
   '-u', remote.username,
@@ -18,10 +16,10 @@ var mongodump = spawn('mongodump', [
 
 var localPort = local.hosts[0].port
 mongodump.on('exit', function() {
-  spawn('mongorestore', [
+  spawn('./bin/mongorestore', [
   '-h', local.hosts[0].host +  (localPort ? (':' + localPort) : ''), 
   '-d', local.database, 
-/*  '-u', local.username,
-  '-p', local.password, */
+  '-u', local.username,
+  '-p', local.password,
   'dump/' + remote.database], {stdio: 'inherit'});
 });
