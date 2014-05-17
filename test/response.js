@@ -47,8 +47,8 @@ describe('response', function() {
       .seq(function(res) {
         var response = res.body;
         expect(res).to.have.status(201);
-        expect(response.object).to.have.property('content');
-        expect(response.object).to.have.property('objectType');
+        expect(response._object[0]).to.have.property('content');
+        expect(response._object[0]).to.have.property('objectType');
         this();
       })
       .seq(done);

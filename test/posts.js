@@ -30,7 +30,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.objectType).to.equal('post');
+				expect(share._object[0].objectType).to.equal('post');
 				expect(share.verb).to.equal('shared');
 				this();
 			})
@@ -44,7 +44,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.objectType).to.equal('comment');
+				expect(share._object[0].objectType).to.equal('comment');
 				expect(share.verb).to.equal('commented');
 				this();
 			})
@@ -58,7 +58,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.objectType).to.equal('question');
+				expect(share._object[0].objectType).to.equal('question');
 				expect(share.verb).to.equal('asked');
 				this();
 			})
@@ -72,7 +72,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.objectType).to.equal('answer');
+				expect(share._object[0].objectType).to.equal('answer');
 				expect(share.verb).to.equal('answered');
 				this();
 			})
