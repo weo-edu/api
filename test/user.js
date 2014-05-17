@@ -27,7 +27,7 @@ describe('User controller', function() {
     it('should create a new student and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = UserHelper.generate({type: 'student'});
+          this.vars.user = UserHelper.generate({userType: 'student'});
           request
             .post('/student')
             .send(this.vars.user)
@@ -57,7 +57,7 @@ describe('User controller', function() {
     it('should create a new teacher and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = UserHelper.create({type: 'teacher'}, this);
+          this.vars.user = UserHelper.create({userType: 'teacher'}, this);
         })
         .seq(function(res) {
           var user = this.vars.user;
@@ -83,7 +83,7 @@ describe('User controller', function() {
     it('should allow login with email address', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = UserHelper.create({type: 'teacher'}, this);
+          this.vars.user = UserHelper.create({userType: 'teacher'}, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
@@ -102,12 +102,12 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/teacher')
-            .send(_.omit(UserHelper.generate(), 'type'))
+            .send(_.omit(UserHelper.generate(), 'userType'))
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          expect(res.body.type).to.equal('teacher');
+          expect(res.body.userType).to.equal('teacher');
           this();
         })
         .seq(done);
@@ -118,12 +118,12 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/student')
-            .send(_.omit(UserHelper.generate({type: 'student'}), 'type'))
+            .send(_.omit(UserHelper.generate({userType: 'student'}), 'userType'))
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          expect(res.body.type).to.equal('student');
+          expect(res.body.userType).to.equal('student');
           this();
         })
         .seq(done);
@@ -135,27 +135,27 @@ describe('User controller', function() {
     function(done) {
       Seq()
         .seq(function() {
-          var user = UserHelper.generate({type: 'teacher'});
-          user.type = 'student';
+          var user = UserHelper.generate({userType: 'teacher'});
+          user.userType = 'student';
           request
             .post('/teacher')
             .send(user)
             .end(this);
         })
         .seq(function(res) {
-          expect(res.body.type).to.equal('teacher');
+          expect(res.body.userType).to.equal('teacher');
           this();
         })
         .seq(function() {
-          var user = UserHelper.generate({type: 'student'});
-          user.type = 'teacher';
+          var user = UserHelper.generate({userType: 'student'});
+          user.userType = 'teacher';
           request
             .post('/student')
             .send(user)
             .end(this);
         })
         .seq(function(res) {
-          expect(res.body.type).to.equal('student');
+          expect(res.body.userType).to.equal('student');
           this();
         })
         .seq(done);
@@ -244,11 +244,11 @@ describe('User controller', function() {
       Seq()
         .par(function() {
           // Create teacher
-          UserHelper.createAndLogin({type: 'teacher'}, this);
+          UserHelper.createAndLogin({userType: 'teacher'}, this);
         })
         .par(function() {
           // Create student
-          UserHelper.createAndLogin({type: 'student'}, this);
+          UserHelper.createAndLogin({userType: 'student'}, this);
         })
         .seq(function(_teacher, _student) {
           // Create a group
@@ -306,7 +306,7 @@ describe('User controller', function() {
       Seq()
         .seq(function() {
           // Create another student
-          UserHelper.createAndLogin({type: 'student'}, this);
+          UserHelper.createAndLogin({userType: 'student'}, this);
         })
         .seq(function(student2) {
           // Make sure student's cannot set each others passwords
@@ -329,7 +329,7 @@ describe('User controller', function() {
         .seq(function() {
           // Create some other teacher who doesn't teach
           // the student we created in the beforeEach
-          UserHelper.createAndLogin({type: 'teacher'}, this);
+          UserHelper.createAndLogin({userType: 'teacher'}, this);
         })
         .seq(function(otherTeacher) {
           // Attempt to set the student's password as some

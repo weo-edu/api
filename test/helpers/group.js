@@ -4,8 +4,8 @@ var Group = module.exports = {
   generate: function(opts) {
     opts = opts || {};
     return _.extend({}, {
-      name: 'Test Group ' + (idx++),
-      type: 'class'
+      displayName: 'Test Group ' + (idx++),
+      groupType: 'class'
     }, opts);
   },
   addMember: function(group, user, token, cb) {

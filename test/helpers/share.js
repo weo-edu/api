@@ -2,8 +2,7 @@ var Faker = require('Faker')
   , chai = require('chai')
   , access = require('lib/access');
 
-var verbs = ['completed', 'liked', 'joined', 'assigned', 'created']
-  , types = ['comment', 'assignment'];
+var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
 var Share = module.exports = {
   post: function(opts, groups, authToken, cb) {
@@ -32,9 +31,9 @@ var Share = module.exports = {
       groups = undefined;
     }
     if (!_.isObject(query) || _.isArray(query))
-      query = {to: query};
+      query = {board: query};
     request
-      .get('/' + [user.type, 'shares'].join('/'))
+      .get('/' + [user.userType, 'shares'].join('/'))
       .set('Authorization', authToken)
       .query(query)
       .end(cb);
@@ -44,18 +43,18 @@ var Share = module.exports = {
     var share = _.defaults(opts, {
       verb: _.sample(verbs),
       object: Share.generateObject(opts.object),
-      payload: {},
-      type: _.sample(types)
+      payload: {}
     });
-    if (!opts.to) {
-      share.to = [];
-      _.each([].concat(groups), function(group) {
-        share.to.push({id: group, allow: [
+
+    share.to = opts.to || [].concat(groups).map(function(group) {
+      return {
+        board: group,
+        allow: [
           access.entry('public', 'teacher'),
           access.entry('group', 'student', group)
-        ]});
-      });
-    }
+        ]
+      };
+    });
 
     return share;
   },
@@ -63,7 +62,7 @@ var Share = module.exports = {
     opts = opts || {};
     var name = Faker.Company.catchPhrase();
     return _.defaults(opts, {
-      type: 'post',
+      objectType: 'post',
       url: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });
   },

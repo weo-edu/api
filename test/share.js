@@ -47,6 +47,7 @@ describe('Share controller', function() {
     });
   });
 
+  var util = require('util');
   describe('posting a share', function() {
     it('should show up in a users feed', function(done) {
       Seq()
@@ -192,7 +193,7 @@ describe('Share controller', function() {
       Seq()
       .seq(function() {
         teacherMember = user;
-        User.createAndLogin({type: 'student'},this);
+        User.createAndLogin({userType: 'student'},this);
       })
       .seq(function(s) {
         student = s;
@@ -200,7 +201,7 @@ describe('Share controller', function() {
       })
       .seq(function(t) {
         teacher = t;
-        User.createAndLogin({type: 'student'}, this);
+        User.createAndLogin({userType: 'student'}, this);
       })
       .seq(function(s) {
         studentMember = s;
@@ -219,7 +220,7 @@ describe('Share controller', function() {
       .flatten()
       .parEach(function(user) {
         var self = this;
-        user.con.post('/share/subscription', {to: group.id}, function() {
+        user.con.post('/share/subscription', {board: group.id}, function() {
           self();
         });
       })
@@ -298,7 +299,7 @@ describe('Share controller', function() {
           .seq(function() {
             Share.post({
               to: [{
-                id: group.id,
+                board: group.id,
                 allow: [access.entry('group', 'teacher', group.id), access.entry('user', 'student', studentMember.id)]
               }]
             }, group.id, teacherMember.token, this);

@@ -30,7 +30,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('post');
+				expect(share.object.objectType).to.equal('post');
 				expect(share.verb).to.equal('shared');
 				this();
 			})
@@ -44,7 +44,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('comment');
+				expect(share.object.objectType).to.equal('comment');
 				expect(share.verb).to.equal('commented');
 				this();
 			})
@@ -58,7 +58,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('question');
+				expect(share.object.objectType).to.equal('question');
 				expect(share.verb).to.equal('asked');
 				this();
 			})
@@ -72,7 +72,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('answer');
+				expect(share.object.objectType).to.equal('answer');
 				expect(share.verb).to.equal('answered');
 				this();
 			})
@@ -81,14 +81,11 @@ describe('Post controller', function() {
 
 	describe('should throw error', function() {
 		it('when user not authenticated', function(done) {
-			var post = Post.generate();
-			post.type = 'post';
-			var share = {to: Post.randomTo()};
-			share.post = post;
+			var share = Post.generate({}, [Post.randomTo()]);
 			Seq()
 				.seq(function() {
 					request
-			      .post('/post')
+			      .post('/share')
 			      .send(share)
 			      .end(this);
 				})
@@ -101,17 +98,17 @@ describe('Post controller', function() {
 
 		it('when body is not given', function(done) {
 			var share = Post.generate({}, [Post.randomTo()]);
-			share.object.originalContent = undefined;
+			share.object.originalContent = '';
 			Seq()
 				.seq(function() {
 					request
-			      .post('/post')
+			      .post('/share')
 			      .send(share)
 			      .set('Authorization', token)
 			      .end(this);
 				})
 				.seq(function(res) {
-					expect(res).to.have.ValidationError('object.originalContent', 'required', 'Required if no media', '');
+					expect(res).to.have.ValidationError('_object.0.originalContent', 'required', 'Required if no media', '', 'originalContent');
 					this();
 				})
 				.seq(done);

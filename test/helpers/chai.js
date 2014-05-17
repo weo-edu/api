@@ -1,9 +1,9 @@
 module.exports = function(chai, utils) {
   chai.Assertion.addMethod('ValidationError',
-  function(path, type, message, value) {
+  function(path, type, message, value, subPath) {
     new chai.Assertion(this._obj).to.have.status(400);
 
-    var error = {path: path};
+    var error = {path: subPath || path};
     if(arguments.length > 1)
       error.type = type;
     if(arguments.length > 2)
