@@ -30,4 +30,4 @@ try {
 
 module.exports = require('lib/boot');
 
-console.log('finish boot');
+debug('finish boot');
