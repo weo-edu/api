@@ -12,8 +12,10 @@ var Form = module.exports = {
     share.object.attachments = [{
       objectType: 'poll',
       originalContent: Faker.Lorem.paragraph(),
-      max_score: 10,
-      reward: 10,
+      attachments: [{
+        objectType: 'formQuestion',
+        displayName: 'How old are you?'
+      }]
     }];
     return share;
   },

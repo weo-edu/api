@@ -63,6 +63,8 @@ describe('Form controller', function() {
           expect(assignment.actor.id).to.equal(teacher.id);
   				expect(_.keys(assignment.payload.students)).to.have.length(0);
           expect(assignment.verb).to.equal('assigned');
+          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf('*')).to.be.greaterThan(0);
+          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf('*')).to.be.lessThan(0);
   				this();
   			})
   			.seq(done);
@@ -70,36 +72,7 @@ describe('Form controller', function() {
 
   });
 
-	describe('should add student to form', function() {
-		it('when student is added to group', function(done) {
-			Seq()
-				.seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
-				})
-				.seq(function(res) {
-					this.vars.assignment = res.body;
-					request
-  					.put('/group/join/' + group.code)
-            .set('Authorization', studentToken)
-  					.end(this);
-				})
-				.seq(function(res) {
-          expect(res).to.have.status(200);
-					request
-						.get('/share/' + this.vars.assignment.id)
-						.set('Authorization', studentToken)
-						.end(this);
-				})
-				.seq(function(res) {
-					var assignment = res.body;
-					expect(assignment.payload[group.id].students).to.have.property(student.id);
-					this();
-				})
-				.seq(done);
-		});
-	});
-
-	describe('should score a student', function() {
+	/*describe('should score a student', function() {
 		it('when information is entered properly', function(done) {
 			Seq()
 				.seq(function() {
@@ -127,6 +100,6 @@ describe('Form controller', function() {
 				})
 				.seq(done);
 		});
-	});
+	});*/
 
 });
