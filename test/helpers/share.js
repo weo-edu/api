@@ -46,7 +46,7 @@ var Share = module.exports = {
       payload: {}
     });
 
-    share.to = opts.to || [].concat(groups).map(function(group) {
+    share.to = opts.to || [].concat(opts.board || groups).map(function(group) {
       return {
         board: group,
         allow: [
@@ -55,6 +55,8 @@ var Share = module.exports = {
         ]
       };
     });
+
+    delete share.board;
 
     return share;
   },
