@@ -2,9 +2,11 @@ var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
   , AssignmentHelper = require('./helpers/form')
+  , Response = require('./helpers/response')
   , Faker = require('Faker')
   , _ = require('lodash')
-  , moment = require('moment');
+  , moment = require('moment')
+  , url = require('url');
 
 var util = require('util');
 
@@ -72,34 +74,40 @@ describe('Form controller', function() {
 
   });
 
-	/*describe('should score a student', function() {
-		it('when information is entered properly', function(done) {
-			Seq()
-				.seq(function() {
+  var util = require('util');
+  describe('should answer question', function() {
+    var assignment;
+    it('when question is formed properly', function(done) {
+      Seq()
+        .seq(function() {
           AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
-				})
-				.seq(function(res) {
-					this.vars.assignment = res.body;
-					request
-            .put('/group/' + group.id + '/members')
-            .set('Authorization', studentToken)
-  					.end(this);
-				})
-				.seq(function(res) {
-					request
-						.patch('/poll/' + this.vars.assignment.id + '/groups/' + group.id + '/score')
-						.set('Authorization', studentToken)
-						.send({score: 5})
-						.end(this);
-				})
-				.seq(function(res) {
-					var result = res.body;
-					expect(result.score).to.equal(5);
-					expect(result.progress).to.equal(1);
-					this();
-				})
-				.seq(done);
-		});
-	});*/
+        })
+        .seq(function(res) {
+          assignment = res.body;
+          var question = assignment._object[0].attachments[0].attachments[0];
+          var channel = url.parse(question.progress.selfLink, true).query.channel
+          Response.create(teacherToken, question, {board: group.id, channel: channel}, this)
+        })
+        .seq(function(res) {
+          request.get('/share/' + assignment._id)
+            .set('Authorization', teacherToken)
+            .end(this);
+        })
+        .seq(function(res) {
+          var updated = res.body;
+          console.log('updated', util.inspect(updated));
+          var question = updated._object[0].attachments[0].attachments[0];
+          console.log('question', question.progress.total)
+          
+          expect(question.progress.total.length).to.equal(1);
+          expect(question.progress.total[0]).to.be.like({board: group.id, progress: 1, correct: 1, items: 1});
+          this()
+        })
+        .seq(function() {
+          done();
+        })
+    });
+    
+  });
 
 });
