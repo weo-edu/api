@@ -33,7 +33,7 @@ var Share = module.exports = {
     if (!_.isObject(query) || _.isArray(query))
       query = {board: query};
     request
-      .get('/' + [user.userType, 'shares'].join('/'))
+      .get('/share')
       .set('Authorization', authToken)
       .query(query)
       .end(cb);

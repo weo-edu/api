@@ -164,23 +164,6 @@ describe('Share controller', function() {
         })
         .seq(done);
     });
-
-    it('should fail for active shares', function(done) {
-      Seq()
-        .seq(function() {
-          Share.post({}, group.id, user.token, this);
-        })
-        .seq(function(res) {
-          var queued = res.body;
-          expect(res).to.have.status(201);
-          Share.del(queued.id, user.token, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(403);
-          this();
-        })
-        .seq(done);
-    });
   });
 
   describe('access', function() {

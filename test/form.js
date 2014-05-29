@@ -2,6 +2,7 @@ var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
   , AssignmentHelper = require('./helpers/form')
+  , Response = require('./helpers/response')
   , Faker = require('Faker')
   , _ = require('lodash')
   , moment = require('moment')
@@ -64,8 +65,8 @@ describe('Form controller', function() {
           expect(assignment.actor.id).to.equal(teacher.id);
   				expect(_.keys(assignment.payload.students)).to.have.length(0);
           expect(assignment.verb).to.equal('assigned');
-          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf('*')).to.be.greaterThan(0);
-          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf('*')).to.be.lessThan(0);
+          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
+          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
   				this();
   			})
   			.seq(done);
