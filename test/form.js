@@ -2,7 +2,6 @@ var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
   , AssignmentHelper = require('./helpers/form')
-  , Response = require('./helpers/response')
   , Faker = require('Faker')
   , _ = require('lodash')
   , moment = require('moment')
@@ -98,7 +97,7 @@ describe('Form controller', function() {
           console.log('updated', util.inspect(updated));
           var question = updated._object[0].attachments[0].attachments[0];
           console.log('question', question.progress.total)
-          
+
           expect(question.progress.total.length).to.equal(1);
           expect(question.progress.total[0]).to.be.like({board: group.id, progress: 1, correct: 1, items: 1});
           this()
@@ -107,7 +106,7 @@ describe('Form controller', function() {
           done();
         })
     });
-    
+
   });
 
 });
