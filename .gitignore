@@ -44,3 +44,6 @@ config/local.js
 assets/js/clientModels.js
 coverage
 badge.png
+
+node_modules/lib
+assets/*

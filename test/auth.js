@@ -13,11 +13,6 @@ describe('Auth controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(404);
           expect(res.body.message).to.equal('User not found');
-          expect(res.body.errors).to.include.something.that.deep.equals({
-            resource: 'auth',
-            field: 'username',
-            code: 'missing'
-          });
           this();
         })
         .seq(done);
@@ -35,11 +30,6 @@ describe('Auth controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(401);
           expect(res.body.message).to.equal('Incorrect password');
-          expect(res.body.errors).to.contain.an.item.that.eql({
-            resource: 'auth',
-            field: 'password',
-            code: 'invalid'
-          });
           this();
         })
         .seq(done)

@@ -10,7 +10,7 @@ describe('User controller', function() {
     it('should validate new user data', function(done) {
       Seq()
         .seq(function() {
-          var user = UserHelper.generate({username: 'a', type: 'notAValidType'});
+          var user = UserHelper.generate({username: 'a'});
           request
             .post('/user')
             .send(user)
@@ -18,9 +18,7 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have
-            .ValidationError('invalid', 'username')
-            .and
-            .ValidationError('invalid', 'type');
+            .ValidationError('username');
           this();
         })
         .seq(done);
@@ -29,7 +27,7 @@ describe('User controller', function() {
     it('should create a new student and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = UserHelper.generate({type: 'student'});
+          this.vars.user = UserHelper.generate({userType: 'student'});
           request
             .post('/student')
             .send(this.vars.user)
@@ -43,7 +41,6 @@ describe('User controller', function() {
               ['password', 'password_confirmation', 'groups']));
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
-          expect(res.body.groups).to.have.length(1);
           this();
         })
         .seq(function() {
@@ -60,7 +57,7 @@ describe('User controller', function() {
     it('should create a new teacher and login successfully', function(done) {
       Seq()
         .seq(function() {
-          this.vars.user = UserHelper.create({type: 'teacher'}, this);
+          this.vars.user = UserHelper.create({userType: 'teacher'}, this);
         })
         .seq(function(res) {
           var user = this.vars.user;
@@ -70,7 +67,6 @@ describe('User controller', function() {
               ['password', 'password_confirmation', 'groups']));
           expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
-          expect(res.body.groups).to.have.length(1);
           this();
         })
         .seq(function() {
@@ -84,17 +80,34 @@ describe('User controller', function() {
         .seq(done);
     });
 
+    it('should allow login with email address', function(done) {
+      Seq()
+        .seq(function() {
+          this.vars.user = UserHelper.create({userType: 'teacher'}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          var user = this.vars.user;
+          UserHelper.login(user.email, user.password, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          this();
+        })
+        .seq(done);
+    });
+
     it('should add type field when creating a teacher', function(done) {
       Seq()
         .seq(function() {
           request
             .post('/teacher')
-            .send(_.omit(UserHelper.generate(), 'type'))
+            .send(_.omit(UserHelper.generate(), 'userType'))
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          expect(res.body.type).to.equal('teacher');
+          expect(res.body.userType).to.equal('teacher');
           this();
         })
         .seq(done);
@@ -105,56 +118,44 @@ describe('User controller', function() {
         .seq(function() {
           request
             .post('/student')
-            .send(_.omit(UserHelper.generate({type: 'student'}), 'type'))
+            .send(_.omit(UserHelper.generate({userType: 'student'}), 'userType'))
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
-          expect(res.body.type).to.equal('student');
+          expect(res.body.userType).to.equal('student');
           this();
         })
         .seq(done);
     });
 
-    it('should replace a teacher\'s username with their email address', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .post('/teacher')
-            .send(UserHelper.generate())
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          expect(res.body.username).to.equal(res.body.email);
-          this();
-        })
-        .seq(done);
-    });
+
 
     it('should return an error if you pass type "student" to the teacher endpoint and vice versa',
     function(done) {
       Seq()
         .seq(function() {
+          var user = UserHelper.generate({userType: 'teacher'});
+          user.userType = 'student';
           request
             .post('/teacher')
-            .send(UserHelper.generate({type: 'student', email: 'test@test.com'}))
+            .send(user)
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.ValidationError('invalid', 'type', 'teacher',
-            {rule: 'in'});
+          expect(res.body.userType).to.equal('teacher');
           this();
         })
         .seq(function() {
+          var user = UserHelper.generate({userType: 'student'});
+          user.userType = 'teacher';
           request
             .post('/student')
-            .send(UserHelper.generate({type: 'teacher', email: 'test@test.com'}))
+            .send(user)
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.ValidationError('invalid', 'type', 'student',
-            {rule: 'in'});
+          expect(res.body.userType).to.equal('student');
           this();
         })
         .seq(done);
@@ -172,7 +173,7 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(400);
           expect(res).to.have
-            .ValidationError('already_exists', 'username', 'teacher', {rule: 'unique'});
+            .ValidationError('username', 'unique', 'Username already exists');
           this();
         })
         .seq(done);
@@ -243,12 +244,11 @@ describe('User controller', function() {
       Seq()
         .par(function() {
           // Create teacher
-          UserHelper.createAndLogin({type: 'teacher'}, this);
+          UserHelper.createAndLogin({userType: 'teacher'}, this);
         })
-        .par(function(_teacher) {
+        .par(function() {
           // Create student
-          teacher = _teacher;
-          UserHelper.createAndLogin({type: 'student'}, this);
+          UserHelper.createAndLogin({userType: 'student'}, this);
         })
         .seq(function(_teacher, _student) {
           // Create a group
@@ -269,7 +269,10 @@ describe('User controller', function() {
             .set('Authorization', student.token)
             .end(this);
         })
-        .seq(function() { done(); });
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          done();
+        });
     });
 
     it('should let teachers reset students passwords', function(done) {
@@ -277,7 +280,7 @@ describe('User controller', function() {
         .seq(function() {
           // Set a new password for student, as teacher
           request
-            .patch('/student/' + student.id + '/password')
+            .patch('/student/' + student._id + '/password')
             .send({newPassword: 'new password'})
             .set('Authorization', teacher.token)
             .end(this);
@@ -303,12 +306,12 @@ describe('User controller', function() {
       Seq()
         .seq(function() {
           // Create another student
-          UserHelper.createAndLogin({type: 'student'}, this);
+          UserHelper.createAndLogin({userType: 'student'}, this);
         })
         .seq(function(student2) {
           // Make sure student's cannot set each others passwords
           request
-            .patch('/student/' + student.id + '/password')
+            .patch('/student/' + student._id + '/password')
             .send({newPassword: 'other password'})
             .set('Authorization', student2.token)
             .end(this);
@@ -326,14 +329,14 @@ describe('User controller', function() {
         .seq(function() {
           // Create some other teacher who doesn't teach
           // the student we created in the beforeEach
-          UserHelper.createAndLogin({type: 'teacher'}, this);
+          UserHelper.createAndLogin({userType: 'teacher'}, this);
         })
         .seq(function(otherTeacher) {
           // Attempt to set the student's password as some
           // other teacher who does not own a group that
           // the student belongs to
           request
-            .patch('/student/' + student.id + '/password')
+            .patch('/student/' + student._id + '/password')
             .send({newPassword: 'other password'})
             .set('Authorization', otherTeacher.token)
             .end(this);

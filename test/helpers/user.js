@@ -4,21 +4,25 @@ var Seq = require('seq');
 
 function teacherDefaults() {
   return {
-    type: 'teacher',
-    first_name: sanitize(Faker.Name.firstName()),
-    last_name: sanitize(Faker.Name.lastName()),
-    groups: ['fakeGroupId'],
-    username: sanitize(Faker.Internet.email()),
+    userType: 'teacher',
+    name: {
+      givenName: sanitize(Faker.Name.firstName()),
+      familyName: sanitize(Faker.Name.lastName()),
+      honorificPrefix: 'Mr.'
+    },
+    // Meaningless, but real-looking mongo id
+    //groups: ['535729acad50c37bb9c84df3'],
+    email: sanitize(Faker.Internet.email()).toLowerCase(),
+    username: sanitize(Faker.Internet.userName()),
     password: 'testpassword',
     password_confirmation: 'testpassword',
-    title: 'Mr.'
   };
 }
 
 function studentDefaults() {
   var defaults = teacherDefaults();
-  defaults.username = sanitize(Faker.Internet.userName());
-  delete defaults.title;
+  delete defaults.name.honorificPrefix;
+  delete defaults.email;
   return defaults;
 }
 
@@ -30,7 +34,7 @@ var User = module.exports = {
   generate: function(opts) {
     opts = opts || {};
     var defaults = null;
-    if (opts.type === 'student') {
+    if (opts.userType === 'student') {
       defaults = studentDefaults();
     } else {
       defaults = teacherDefaults();
@@ -46,13 +50,14 @@ var User = module.exports = {
 
     opts = User.generate(opts);
     request
-      .post('/' + opts.type)
+      .post('/' + opts.userType)
       .send(opts)
       .end(function(err, res) {
         // XXX Kind of hacky, but without it
         // it's too easy to forget to do this
-        if(res.status === 201)
-          opts.id = res.body.id;
+        if(res.status === 201) {
+          opts.id = opts._id = res.body._id;
+        }
         return cb.apply(this, arguments);
       });
     return opts;
@@ -81,6 +86,7 @@ var User = module.exports = {
       .seq(function(res) {
         if(res.statusCode !== 200) return cb('User login failed', res);
         user.token = 'Bearer ' + res.body.token;
+        user.socketToken = res.body.token;
         cb(null, user);
       });
   }

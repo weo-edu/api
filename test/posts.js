@@ -26,12 +26,11 @@ describe('Post controller', function() {
 	it('should create post', function(done) {
 		Seq()
 			.seq(function() {
-				console.log('call create');
 				Post.create(token, 'post', {}, this);
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('post');
+				expect(share._object[0].objectType).to.equal('post');
 				expect(share.verb).to.equal('shared');
 				this();
 			})
@@ -45,7 +44,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('comment');
+				expect(share._object[0].objectType).to.equal('comment');
 				expect(share.verb).to.equal('commented');
 				this();
 			})
@@ -59,7 +58,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('question');
+				expect(share._object[0].objectType).to.equal('question');
 				expect(share.verb).to.equal('asked');
 				this();
 			})
@@ -73,7 +72,7 @@ describe('Post controller', function() {
 			})
 			.seq(function(res) {
 				var share = res.body;
-				expect(share.object.type).to.equal('answer');
+				expect(share._object[0].objectType).to.equal('answer');
 				expect(share.verb).to.equal('answered');
 				this();
 			})
@@ -82,14 +81,11 @@ describe('Post controller', function() {
 
 	describe('should throw error', function() {
 		it('when user not authenticated', function(done) {
-			var post = Post.generate();
-			post.type = 'post';
-			var share = {to: Post.randomTo()};
-			share.post = post;
+			var share = Post.generate({}, [Post.randomTo()]);
 			Seq()
 				.seq(function() {
 					request
-			      .post('/post')
+			      .post('/share')
 			      .send(share)
 			      .end(this);
 				})
@@ -101,22 +97,18 @@ describe('Post controller', function() {
 		});
 
 		it('when body is not given', function(done) {
-			var post = Post.generate();
-			post.type = 'post';
-			var share = {to: Post.randomTo()};
-			post.body = '';
-			share.object = post;
+			var share = Post.generate({}, [Post.randomTo()]);
+			share.object.originalContent = '';
 			Seq()
 				.seq(function() {
 					request
-			      .post('/post')
+			      .post('/share')
 			      .send(share)
 			      .set('Authorization', token)
 			      .end(this);
 				})
 				.seq(function(res) {
-					expect(res).to.have.ValidationError('missing_field', 'body', 'post',
-            {rule: 'required'});
+					expect(res).to.have.ValidationError('_object.0.originalContent', 'required', 'Required if no media', '', 'originalContent');
 					this();
 				})
 				.seq(done);
