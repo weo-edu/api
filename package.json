@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "postinstall": "npm install weo-edu/node-migrate -g"
+    "postinstall": "npm install weo-edu/node-migrate -g",
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
