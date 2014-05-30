@@ -391,7 +391,8 @@ function checkinFeed(user, group, post, done) {
     })
     .seq(function(res) {
       var shares = res.body;
-      expect(shares).to.include.something.like(post);
+      var shareIds = _.pluck(shares, '_id');
+      expect(shareIds.indexOf(post._id)).to.be.at.least(0);
       this()
     })
     .seq(done);

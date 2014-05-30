@@ -11,6 +11,7 @@ module.exports = {
     opts.object = {
       objectType: 'formResponse',
       originalContent: Faker.Lorem.words().join(' '),
+      content: Faker.Lorem.words().join(' '),
       correct: 1,
       progress: 1,
       question: {
