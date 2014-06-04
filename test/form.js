@@ -16,11 +16,15 @@ describe('Form controller', function() {
 
   var teacherToken, teacher, studentToken2, student;
   before(function(done) {
+    var teacherPassword;
     Seq()
       .seq(function() {
-        teacher = UserHelper.create(this);
+        teacherPassword = UserHelper.create(this).password;
       })
-      .seq(function() {
+      .seq(function(res) {
+        teacher = res.body
+        teacher.password = teacherPassword
+        console.log('teacher', teacher);
         UserHelper.login(teacher.username, teacher.password, this);
       })
       .seq(function(res) {
@@ -76,7 +80,7 @@ describe('Form controller', function() {
 
   var util = require('util');
   describe('should answer question', function() {
-    var assignment;
+    var assignment, response;
     it('when question is formed properly', function(done) {
       Seq()
         .seq(function() {
@@ -89,6 +93,7 @@ describe('Form controller', function() {
           Response.create(teacherToken, question, {board: group.id, channel: channel}, this)
         })
         .seq(function(res) {
+          response = res.body;
           request.get('/share/' + assignment._id)
             .set('Authorization', teacherToken)
             .end(this);
@@ -97,7 +102,26 @@ describe('Form controller', function() {
           var updated = res.body;
           var question = updated._object[0].attachments[0].attachments[0];
           expect(question.progress.total.length).to.equal(1);
-          expect(question.progress.total[0]).to.be.like({board: group.id, progress: 1, correct: 1, items: 1});
+          var actorsTotal = {};
+          actorsTotal[teacher.id] = {
+            actor: {
+              displayName: teacher.displayName,
+              id: teacher.id,
+              image: {
+                url: teacher.image.url
+              }
+            },
+            progress: 1,
+            correct: 1,
+            items: 1
+          };
+          expect(question.progress.total[0]).to.be.like({
+            board: group.id, 
+            progress: 1, 
+            correct: 1, 
+            items: 1,
+            actors: actorsTotal
+          });
           this()
         })
         .seq(function() {
