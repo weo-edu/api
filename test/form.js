@@ -24,7 +24,6 @@ describe('Form controller', function() {
       .seq(function(res) {
         teacher = res.body
         teacher.password = teacherPassword
-        console.log('teacher', teacher);
         UserHelper.login(teacher.username, teacher.password, this);
       })
       .seq(function(res) {
@@ -116,9 +115,9 @@ describe('Form controller', function() {
             items: 1
           };
           expect(question.progress.total[0]).to.be.like({
-            board: group.id, 
-            progress: 1, 
-            correct: 1, 
+            board: group.id,
+            progress: 1,
+            correct: 1,
             items: 1,
             actors: actorsTotal
           });
