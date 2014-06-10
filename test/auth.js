@@ -18,7 +18,7 @@ describe('Auth controller', function() {
         .seq(done);
     });
 
-    it('should handle incorrect password', function(done) {
+    it.only('should handle incorrect password', function(done) {
       Seq()
         .seq(function() {
           this.vars.user = User.create({}, this);
