@@ -1,0 +1,11 @@
+image: bradrydzewski/node:0.10
+env:
+  - TEST="Hello World"
+script:
+  - npm test
+services:
+  - mongodb
+notify:
+  email:
+    recipients:
+      - joshrtay@gmail.com
