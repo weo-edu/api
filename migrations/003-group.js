@@ -12,6 +12,7 @@ exports.up = function(next){
     }))
     .pipe(es.through(function(doc) {
       if(! doc.access || ! doc.access.allow.length) {
+        doc.access = {};
         doc.access.allow = [
           access.entry('public', 'teacher'),
           access.entry('group', 'student', doc.id)
