@@ -19,8 +19,9 @@ exports.up = function(next){
 };
 
 exports.down = function(next){
-  chug.src('users', {})
-    .pipe(chug.transform(_.invert(map)))
-    .pipe(chug.dest('user'))
-    .on('end', next);
+  next();
+  // chug.src('users', {})
+  //   .pipe(chug.transform(_.invert(map)))
+  //   .pipe(chug.dest('user'))
+  //   .on('end', next);
 };
