@@ -1,4 +1,4 @@
-var chug = require('chug')(process.env.MONGOHQ_URL);
+var chug = require('chug')(require('../lib/config').mongo.url);
 var _ = require('lodash');
 
 

@@ -24,6 +24,7 @@
     "cookie-parser": "~1.0.1",
     "cors": "~2.2.0",
     "debug": "~0.8.0",
+    "event-stream": "^3.1.5",
     "express": "~4.0.0",
     "express-session": "~1.0.4",
     "glob": "^3.2.9",
