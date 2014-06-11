@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "migrate": "node bin/migrate.js"
   },
   "author": "",
   "license": "ISC",
@@ -34,7 +35,7 @@
     "knox": "~0.8.10",
     "lodash": "~2.4.1",
     "marked": "^0.3.2",
-    "migrate": "weo-edu/node-migrate",
+    "migrate": "git://github.com/weo-edu/node-migrate",
     "moment": "~2.6.0",
     "mongodb": "~1.4.4",
     "mongodb-uri": "~0.9.6",
