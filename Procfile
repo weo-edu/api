@@ -1,3 +1,3 @@
 web: node app.js
-migrate: migrate
+migrate: npm run migrate
 sync: ./bin/sync.js
