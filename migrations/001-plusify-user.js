@@ -1,9 +1,9 @@
-var chug = require('chug');
+var chug = require('chug')(process.env.MONGOHQ_URL);
 var _ = require('lodash');
 
 
 var map = {
-  type: 'userType', 
+  type: 'userType',
   name: 'displayName',
   title: 'name.honorificPrefix',
   full_name: 'name.formatted',

@@ -1,4 +1,4 @@
-var chug = require('chug');
+var chug = require('chug')(process.env.MONGOHQ_URL);
 var _ = require('lodash');
 
 var map = {

@@ -56,10 +56,7 @@
     "socket.io-redis": "~0.1.1",
     "subclass-error": "0.0.2",
     "validator": "~3.10.0",
-    "ware": "~0.3.0",
-    "migrate": "~0.1.4",
-    "chug": "git://github.com/weo-edu/chug",
-    "monk": "~0.9.0"
+    "ware": "~0.3.0"
   },
   "devDependencies": {
     "Faker": "~0.7.0",
