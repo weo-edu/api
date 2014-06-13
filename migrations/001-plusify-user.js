@@ -1,9 +1,9 @@
-var chug = require('chug');
+var chug = require('chug')(require('../lib/config').mongo.url);
 var _ = require('lodash');
 
 
 var map = {
-  type: 'userType', 
+  type: 'userType',
   name: 'displayName',
   title: 'name.honorificPrefix',
   full_name: 'name.formatted',
@@ -19,8 +19,9 @@ exports.up = function(next){
 };
 
 exports.down = function(next){
-  chug.src('users', {})
-    .pipe(chug.transform(_.invert(map)))
-    .pipe(chug.dest('user'))
-    .on('end', next);
+  next();
+  // chug.src('users', {})
+  //   .pipe(chug.transform(_.invert(map)))
+  //   .pipe(chug.dest('user'))
+  //   .on('end', next);
 };

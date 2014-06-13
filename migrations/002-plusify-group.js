@@ -1,4 +1,4 @@
-var chug = require('chug');
+var chug = require('chug')(require('../lib/config/').mongo.url);
 var _ = require('lodash');
 
 var map = {
@@ -14,8 +14,9 @@ exports.up = function(next){
 };
 
 exports.down = function(next){
-  chug.src('groups', {})
-    .pipe(chug.transform(_.invert(map)))
-    .pipe(chug.dest('group'))
-    .on('end', next);
+  next();
+  // chug.src('groups', {})
+  //   .pipe(chug.transform(_.invert(map)))
+  //   .pipe(chug.dest('group'))
+  //   .on('end', next);
 };

@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "postinstall": "npm install weo-edu/node-migrate -g",
-    "test": "mocha"
+    "test": "mocha",
+    "migrate": "node bin/migrate.js"
   },
   "author": "",
   "license": "ISC",
@@ -25,7 +25,9 @@
     "cookie-parser": "~1.0.1",
     "cors": "~2.2.0",
     "debug": "~0.8.0",
+    "event-stream": "^3.1.5",
     "express": "~4.0.0",
+    "express-inject-latency": "0.0.4",
     "express-session": "~1.0.4",
     "glob": "^3.2.9",
     "handlebars": "^2.0.0-alpha.2",
@@ -34,7 +36,7 @@
     "knox": "~0.8.10",
     "lodash": "~2.4.1",
     "marked": "^0.3.2",
-    "migrate": "~0.1.4",
+    "migrate": "git://github.com/weo-edu/node-migrate",
     "moment": "~2.6.0",
     "mongodb": "~1.4.4",
     "mongodb-uri": "~0.9.6",
@@ -57,10 +59,7 @@
     "socket.io-redis": "~0.1.1",
     "subclass-error": "0.0.2",
     "validator": "~3.10.0",
-    "ware": "~0.3.0",
-    "migrate": "~0.1.4",
-    "chug": "git://github.com/weo-edu/chug",
-    "monk": "~0.9.0"
+    "ware": "~0.3.0"
   },
   "devDependencies": {
     "Faker": "~0.7.0",
