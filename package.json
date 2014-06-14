@@ -27,6 +27,7 @@
     "debug": "~0.8.0",
     "event-stream": "^3.1.5",
     "express": "~4.0.0",
+    "express-inject-latency": "0.0.4",
     "express-session": "~1.0.4",
     "glob": "^3.2.9",
     "handlebars": "^2.0.0-alpha.2",

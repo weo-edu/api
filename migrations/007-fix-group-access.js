@@ -6,18 +6,10 @@ var access = require('../lib/access');
 exports.up = function(next){
   chug.src('groups', {})
     .pipe(es.through(function(doc) {
-      if(! doc.status)
-        doc.status = 'active';
-      this.emit('data', doc);
-    }))
-    .pipe(es.through(function(doc) {
-      if(! doc.access || ! doc.access.allow.length) {
-        doc.access = {};
-        doc.access.allow = [
-          access.entry('public', 'teacher'),
-          access.entry('group', 'student', doc._id)
-        ];
-      }
+      doc.access.allow = [
+        access.entry('public', 'teacher'),
+        access.entry('group', 'student', doc._id)
+      ];
 
       this.emit('data', doc);
     }))
