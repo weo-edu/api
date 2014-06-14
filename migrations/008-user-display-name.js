@@ -3,7 +3,7 @@ var es = require('event-stream');
 
 exports.up = function(next){
   chug.src('users', {})
-    .pipe(es.through(function() {
+    .pipe(es.through(function(user) {
       user.displayName = [(user.name.honorificPrefix === 'None' || !user.name.honorificPrefix)
         ? user.name.givenName
         : user.name.honorificPrefix,
