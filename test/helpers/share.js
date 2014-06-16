@@ -73,5 +73,11 @@ var Share = module.exports = {
       .del('/share/' + shareId)
       .set('Authorization', authToken)
       .end(cb);
+  },
+  members: function(shareId, board, authToken, cb) {
+    request
+      .get('/share/' + shareId + '/members?board=' + board)
+      .set('Authorization', authToken)
+      .end(cb)
   }
 };
