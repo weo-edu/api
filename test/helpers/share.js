@@ -31,7 +31,7 @@ var Share = module.exports = {
       groups = undefined;
     }
     if (!_.isObject(query) || _.isArray(query))
-      query = {board: query};
+      query = {context: query};
     request
       .get('/share')
       .set('Authorization', authToken)
@@ -46,9 +46,9 @@ var Share = module.exports = {
       payload: {}
     });
 
-    share.to = opts.to || [].concat(opts.board || groups).map(function(group) {
+    share.contexts = opts.contexts || [].concat(opts.contexts || groups).map(function(group) {
       return {
-        board: group,
+        id: group,
         allow: [
           access.entry('public', 'teacher'),
           access.entry('group', 'student', group)
@@ -56,7 +56,7 @@ var Share = module.exports = {
       };
     });
 
-    delete share.board;
+    delete share.context;
 
     return share;
   },

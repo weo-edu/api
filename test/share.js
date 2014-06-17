@@ -203,7 +203,7 @@ describe('Share controller', function() {
       .flatten()
       .parEach(function(user) {
         var self = this;
-        user.con.post('/share/subscription', {board: group.id}, function() {
+        user.con.post('/share/subscription', {context: group.id}, function() {
           self();
         });
       })
@@ -281,9 +281,12 @@ describe('Share controller', function() {
         Seq()
           .seq(function() {
             Share.post({
-              to: [{
-                board: group.id,
-                allow: [access.entry('group', 'teacher', group.id), access.entry('user', 'student', studentMember.id)]
+              contexts: [{
+                id: group.id,
+                allow: [
+                  access.entry('group', 'teacher', group.id),
+                  access.entry('user', 'student', studentMember.id)
+                ]
               }]
             }, group.id, teacherMember.token, this);
           })
@@ -310,8 +313,6 @@ describe('Share controller', function() {
       });
 
       describe('live updates', function() {
-
-
         it('should not appear in teacher feed', function() {
           expect(teacher.messages.length).to.equal(0);
         });

@@ -40,7 +40,7 @@ describe('response', function() {
         request
           .post('/response')
           .set('Authorization', user.token)
-          .query({board: group.id, channel: '/123/response'})
+          .query({contexts: [group.id], channel: '/123/response'})
           .send(generate(user, 'collection'))
           .end(this);
       })
