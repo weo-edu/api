@@ -49,6 +49,22 @@ describe('Share controller', function() {
 
   var util = require('util');
   describe('posting a share', function() {
+    var student = null;
+    before(function(done) {
+      Seq()
+        .seq(function() {
+          User.createAndLogin({userType: 'student'}, this);
+        })
+        .seq(function(s) {
+          student = s;
+          Group.join(group, student, this);
+        })
+        .seq(function() {
+          done();
+        });
+
+    });
+
     it('should show up in a users feed', function(done) {
       Seq()
         .seq(function() {
@@ -66,6 +82,22 @@ describe('Share controller', function() {
           this();
         })
         .seq(done);
+    });
+
+    it('should list student as member', function(done) {
+      Seq()
+        .seq(function() {
+          Share.post({}, group.id, user.token, this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          Share.members(share._id, group.id, user.token, this);
+        })
+        .seq(function(res) {
+          var students = res.body;
+          expect(students).to.have.length(1);
+          done();
+        })
     });
   });
 
