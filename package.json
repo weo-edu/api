@@ -50,6 +50,7 @@
     "passport-http-bearer": "~1.0.1",
     "password-hash": "~1.2.2",
     "property-path": "0.0.5",
+    "q": "^1.0.1",
     "redis": "~0.10.1",
     "redis-lock": "0.0.8",
     "redis-url": "~0.2.0",
