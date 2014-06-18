@@ -25,8 +25,8 @@ var Form = module.exports = {
   },
 
   create: function(token, type, opts, cb) {
-    var share = this.generate(opts, opts.to || opts.board || [this.randomTo()]);
-    delete opts.board;
+    var share = this.generate(opts, opts.to || opts.context || [this.randomTo()]);
+    delete opts.context;
     request
       .post('/share')
       .send(share)

@@ -59,7 +59,7 @@ describe('nested share', function() {
       })
       .seq(function() {
         var self = this;
-        user.con.post('/share/subscription', {board: group.id, channel: channel}, function() {
+        user.con.post('/share/subscription', {context: group.id, channel: channel}, function() {
           self();
         })
       })
@@ -68,7 +68,7 @@ describe('nested share', function() {
       })
       .seq(function(res) {
         nested = res.body;
-        Share.feed(user, {to: group.id, channel: channel}, user.token, this);
+        Share.feed(user, {context: group.id, channel: channel}, user.token, this);
       })
       .seq(function(res) {
         var shares = res.body;

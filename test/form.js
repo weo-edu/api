@@ -8,8 +8,6 @@ var Seq = require('seq')
   , moment = require('moment')
   , url = require('url');
 
-var util = require('util');
-
 require('./helpers/boot');
 
 describe('Form controller', function() {
@@ -61,7 +59,7 @@ describe('Form controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
+          AssignmentHelper.create(teacherToken, 'poll', {context: group.id}, this);
   			})
   			.seq(function(res) {
           var assignment = res.body;
@@ -77,19 +75,18 @@ describe('Form controller', function() {
 
   });
 
-  var util = require('util');
   describe('should answer question', function() {
     var assignment, response;
     it('when question is formed properly', function(done) {
       Seq()
         .seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {board: group.id}, this);
+          AssignmentHelper.create(teacherToken, 'poll', {context: group.id}, this);
         })
         .seq(function(res) {
           assignment = res.body;
           var question = assignment._object[0].attachments[0].attachments[0];
           var channel = url.parse(question.progress.selfLink, true).query.channel
-          Response.create(teacherToken, question, {board: group.id, channel: channel}, this)
+          Response.create(teacherToken, question, {contexts: group.id, channel: channel}, this)
         })
         .seq(function(res) {
           response = res.body;
@@ -115,7 +112,7 @@ describe('Form controller', function() {
             items: 1
           };
           expect(question.progress.total[0]).to.be.like({
-            board: group.id,
+            context: group.id,
             progress: 1,
             correct: 1,
             items: 1,
