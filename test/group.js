@@ -282,7 +282,8 @@ describe('Group controller', function() {
 
   //XXX archive tests
   describe('should archive class', function() {
-    it('when valid id is given', function(done){
+    var group;
+    beforeEach(function(done) {
       Seq()
         .seq(function() {
           request
@@ -292,8 +293,15 @@ describe('Group controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          var group = res.body;
-          expect(group.status).to.equal('active');
+          group = res.body;
+          this();
+        })
+        .seq(done);
+    });
+
+    it('when valid id is given', function(done){
+      Seq()
+        .seq(function() {
           request
             .patch('/group/' + group.id + '/archive')
             .set('Authorization', user.token)
@@ -305,8 +313,47 @@ describe('Group controller', function() {
           this();
         })
         .seq(done);
-
     });
 
+    it('should archive subgroups when parent is archived', function(done) {
+      var subgroup;
+      Seq()
+        .seq(function() {
+          subgroup = GroupHelper.generate({
+            parent: group.id,
+            groupType: 'group'
+          });
+
+          request
+            .post('/group')
+            .send(subgroup)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          subgroup = res.body;
+          expect(subgroup.status).to.equal('active');
+
+          request
+            .patch('/group/' + group.id + '/archive')
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          group = res.body;
+          expect(group.status).to.equal('archived');
+
+          request
+            .get('/group/' + subgroup.id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          subgroup = res.body;
+          expect(subgroup.status).to.equal('archived');
+          this();
+        })
+        .seq(done);
+    });
   });
 });
