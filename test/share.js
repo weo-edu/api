@@ -64,7 +64,7 @@ describe('Share controller', function() {
         });
 
     });
-    
+
     it('should show up in a users feed', function(done) {
       Seq()
         .seq(function() {
@@ -78,7 +78,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an.array;
-          expect(res.body).to.include.an.item.with.properties({id: this.vars.share.id});
+          expect(res.body.items).to.include.an.item.with.properties({id: this.vars.share.id});
           this();
         })
         .seq(done);
@@ -95,7 +95,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var students = res.body;
-          expect(students).to.have.length(1);
+          expect(students.items).to.have.length(1);
           done();
         })
     });
@@ -118,15 +118,48 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          expect(res.body).to.be.an.array;
+          expect(res.body.items).to.be.an.array;
 
           var last = Infinity;
-          _.each(res.body, function(item) {
+          _.each(res.body.items, function(item) {
             var time = + new Date(item.createdAt);
             expect(time).to.be.a.Number;
             expect(time).to.be.below(last);
             last = time;
           });
+          this();
+        })
+        .seq(done);
+    });
+
+    it.only('should allow paging', function(done) {
+      var last = null;
+      Seq(_.range(1, 5))
+        .seqEach(function() {
+          var self = this;
+          Share.post({}, group.id, user.token, function(err, res) {
+            self(err, res);
+          });
+        })
+        .seq(function() {
+          Share.feed(user, {context: group.id, maxResults: 2}, user.token, this);
+        })
+        .seq(function(res) {
+          var shares = res.body.items;
+          expect(shares).to.have.length(2);
+          last = shares[1];
+          Share.feed(user, {context: group.id, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+        })
+        .seq(function(res) {
+          var shares = res.body.items;
+          expect(shares).to.have.length(2);
+          expect(shares[1].id).not.to.equal(last.id)
+          Share.feed(user, {context: group.id, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+        })
+        .seq(function(res) {
+          var shares = res.body.items;
+          expect(shares).to.have.length(1);
+          expect(res.body.nextPageToken).to.be.undefined;
           this();
         })
         .seq(done);
@@ -146,8 +179,8 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          expect(res.body).to.be.an.array;
-          expect(res.body).to.include.an.item.with.properties({id: this.vars.share.id});
+          expect(res.body.items).to.be.an.array;
+          expect(res.body.items).to.include.an.item.with.properties({id: this.vars.share.id});
           this();
         })
         .seq(done);
@@ -170,7 +203,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          var shares = res.body;
+          var shares = res.body.items;
           expect(shares).to.be.an.array;
           expect(shares[0].id).to.equal(this.vars.queued.id);
           this();
@@ -235,7 +268,7 @@ describe('Share controller', function() {
       .flatten()
       .parEach(function(user) {
         var self = this;
-        user.con.post('/share/subscription', {board: group.id}, function() {
+        user.con.post('/share/subscription', {context: group.id}, function() {
           self();
         });
       })
@@ -313,9 +346,12 @@ describe('Share controller', function() {
         Seq()
           .seq(function() {
             Share.post({
-              to: [{
-                board: group.id,
-                allow: [access.entry('group', 'teacher', group.id), access.entry('user', 'student', studentMember.id)]
+              contexts: [{
+                id: group.id,
+                allow: [
+                  access.entry('group', 'teacher', group.id),
+                  access.entry('user', 'student', studentMember.id)
+                ]
               }]
             }, group.id, teacherMember.token, this);
           })
@@ -342,8 +378,6 @@ describe('Share controller', function() {
       });
 
       describe('live updates', function() {
-
-
         it('should not appear in teacher feed', function() {
           expect(teacher.messages.length).to.equal(0);
         });
@@ -422,7 +456,7 @@ function checkinFeed(user, group, post, done) {
       Share.feed(user, group.id, user.token, this)
     })
     .seq(function(res) {
-      var shares = res.body;
+      var shares = res.body.items;
       var shareIds = _.pluck(shares, '_id');
       expect(shareIds.indexOf(post._id)).to.be.at.least(0);
       this()
@@ -436,7 +470,7 @@ function checkNotInFeed(user, group, post, done) {
       Share.feed(user, group.id, user.token, this)
     })
     .seq(function(res) {
-      var shares = res.body;
+      var shares = res.body.items;
       expect(shares.length).to.satisfy(function(length) {
         if (length) {
           return shares[0].id != post.id;
