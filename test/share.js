@@ -32,7 +32,7 @@ describe('Share controller', function() {
   });
 
   describe('creating a share', function() {
-    it.only('should populate actor and full path', function(done) {
+    it('should populate actor and full path', function(done) {
       Seq()
         .seq(function() {
           Share.post({}, group.id, user.token, this);
