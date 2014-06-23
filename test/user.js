@@ -231,8 +231,9 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          expect(res.body).to.have.length(1);
-          expect(res.body[0]).to.deep.equal(group);
+          var groups = res.body.items;
+          expect(groups).to.have.length(1);
+          expect(groups[0]).to.deep.equal(group);
           this();
         })
         .seq(done);
