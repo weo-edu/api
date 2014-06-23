@@ -98,11 +98,32 @@ describe('Share controller', function() {
           var students = res.body;
           expect(students.items).to.have.length(1);
           done();
-        })
+        });
     });
   });
 
   describe('reading the feed', function() {
+    beforeEach(function(done) {
+      Seq()
+        .seq(function() {
+          User.createAndLogin(this);
+        })
+        .seq(function(u) {
+          user = u;
+          request
+            .post('/group')
+            .send(Group.generate())
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          group = res.body;
+          this();
+        })
+        .seq(done);
+    });
+
     it('should show up in chronological order', function(done) {
       Seq(_.range(1, 5))
         .seqEach(function() {
