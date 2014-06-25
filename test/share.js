@@ -32,7 +32,7 @@ describe('Share controller', function() {
   });
 
   describe('creating a share', function() {
-    it('should populate actor', function(done) {
+    it('should populate actor and full path', function(done) {
       Seq()
         .seq(function() {
           Share.post({}, group.id, user.token, this);
@@ -41,6 +41,7 @@ describe('Share controller', function() {
           var share = res.body;
           expect(res).to.have.status(201);
           expect(share.actor).to.have.property('displayName');
+          expect(share).to.have.property('fullPath')
           this();
         })
         .seq(done);
@@ -78,7 +79,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an.array;
-          expect(res.body).to.include.an.item.with.properties({id: this.vars.share.id});
+          expect(res.body.items).to.include.an.item.with.properties({id: this.vars.share.id});
           this();
         })
         .seq(done);
@@ -95,13 +96,34 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var students = res.body;
-          expect(students).to.have.length(1);
+          expect(students.items).to.have.length(1);
           done();
-        })
+        });
     });
   });
 
   describe('reading the feed', function() {
+    beforeEach(function(done) {
+      Seq()
+        .seq(function() {
+          User.createAndLogin(this);
+        })
+        .seq(function(u) {
+          user = u;
+          request
+            .post('/group')
+            .send(Group.generate())
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          group = res.body;
+          this();
+        })
+        .seq(done);
+    });
+
     it('should show up in chronological order', function(done) {
       Seq(_.range(1, 5))
         .seqEach(function() {
@@ -118,15 +140,48 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          expect(res.body).to.be.an.array;
+          expect(res.body.items).to.be.an.array;
 
           var last = Infinity;
-          _.each(res.body, function(item) {
+          _.each(res.body.items, function(item) {
             var time = + new Date(item.createdAt);
             expect(time).to.be.a.Number;
             expect(time).to.be.below(last);
             last = time;
           });
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should allow paging', function(done) {
+      var last = null;
+      Seq(_.range(1, 5))
+        .seqEach(function() {
+          var self = this;
+          Share.post({}, group.id, user.token, function(err, res) {
+            self(err, res);
+          });
+        })
+        .seq(function() {
+          Share.feed(user, {context: group.id, maxResults: 2}, user.token, this);
+        })
+        .seq(function(res) {
+          var shares = res.body.items;
+          expect(shares).to.have.length(2);
+          last = shares[1];
+          Share.feed(user, {context: group.id, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+        })
+        .seq(function(res) {
+          var shares = res.body.items;
+          expect(shares).to.have.length(2);
+          expect(shares[1].id).not.to.equal(last.id)
+          Share.feed(user, {context: group.id, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+        })
+        .seq(function(res) {
+          var shares = res.body.items;
+          expect(shares).to.have.length(1);
+          expect(res.body.nextPageToken).to.be.undefined;
           this();
         })
         .seq(done);
@@ -146,8 +201,8 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          expect(res.body).to.be.an.array;
-          expect(res.body).to.include.an.item.with.properties({id: this.vars.share.id});
+          expect(res.body.items).to.be.an.array;
+          expect(res.body.items).to.include.an.item.with.properties({id: this.vars.share.id});
           this();
         })
         .seq(done);
@@ -170,7 +225,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          var shares = res.body;
+          var shares = res.body.items;
           expect(shares).to.be.an.array;
           expect(shares[0].id).to.equal(this.vars.queued.id);
           this();
@@ -424,7 +479,7 @@ function checkinFeed(user, group, post, done) {
       Share.feed(user, 'group!' + group.id + '.board', user.token, this)
     })
     .seq(function(res) {
-      var shares = res.body;
+      var shares = res.body.items;
       var shareIds = _.pluck(shares, '_id');
       expect(shareIds.indexOf(post._id)).to.be.at.least(0);
       this()
@@ -438,7 +493,7 @@ function checkNotInFeed(user, group, post, done) {
       Share.feed(user, 'group!' + group.id + '.board', user.token, this)
     })
     .seq(function(res) {
-      var shares = res.body;
+      var shares = res.body.items;
       expect(shares.length).to.satisfy(function(length) {
         if (length) {
           return shares[0].id != post.id;

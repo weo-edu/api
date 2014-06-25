@@ -231,8 +231,14 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
+<<<<<<< HEAD
           expect(res.body).to.have.length(1);
           expect(_.omit(res.body[0], '__v', 'board', 'updatedAt')).to.deep.equal(_.omit(group, '__v', 'board', 'updatedAt'));
+=======
+          var groups = res.body.items;
+          expect(groups).to.have.length(1);
+          expect(groups[0]).to.deep.equal(group);
+>>>>>>> 2ccfa8e57860a43bac628c57ba0f324a92778e11
           this();
         })
         .seq(done);
