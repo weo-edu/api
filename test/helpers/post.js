@@ -17,12 +17,8 @@ var Post = module.exports = {
     return share;
   },
 
-  randomTo: function() {
-    return mongoose.mongo.ObjectID();
-  },
-
-  create: function(token, type, opts, cb) {
-    var share = this.generate(opts, opts.to || [this.randomTo()]);
+  create: function(token, type, opts, groups, cb) {
+    var share = this.generate(opts, groups);
     share.object.objectType = type;
     request
       .post('/share')

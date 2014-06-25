@@ -19,5 +19,14 @@ var Group = module.exports = {
       .put('/group/join/' + group.code)
       .set('Authorization', user.token)
       .end(cb);
+  },
+  create: function(opts, user, cb) {
+    opts = Group.generate(opts);
+    request
+      .post('/group')
+      .send(opts)
+      .set('Authorization', user.token)
+      .end(cb);
+
   }
 };

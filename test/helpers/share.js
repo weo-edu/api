@@ -31,7 +31,7 @@ var Share = module.exports = {
       groups = undefined;
     }
     if (!_.isObject(query) || _.isArray(query))
-      query = {context: query};
+      query = {channel: query};
     request
       .get('/share')
       .set('Authorization', authToken)
@@ -42,8 +42,7 @@ var Share = module.exports = {
     opts = opts || {};
     var share = _.defaults(opts, {
       verb: _.sample(verbs),
-      object: Share.generateObject(opts.object),
-      payload: {}
+      object: Share.generateObject(opts.object)
     });
 
     share.contexts = opts.contexts || [].concat(opts.contexts || groups).map(function(group) {
@@ -56,8 +55,13 @@ var Share = module.exports = {
       };
     });
 
-    delete share.context;
+    if(! share.channels) {
+      share.channels = share.contexts.map(function(context) {
+        return 'group!' + context.id + '.board';
+      });
+    }
 
+    delete share.context;
     return share;
   },
   generateObject: function(opts) {
