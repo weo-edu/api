@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "noiit && mocha",
+    "test": "noiit && jshint lib/** && mocha",
     "migrate": "node bin/migrate.js"
   },
   "author": "",
