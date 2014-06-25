@@ -72,6 +72,7 @@
     "chai-things": "~0.2.0",
     "debug-trace": "~0.2.3",
     "express-inject-latency": "0.0.3",
+    "jshint": "^2.5.1",
     "lodash": "~2.4.1",
     "mocha": "^1.18.2",
     "supertest": "~0.11.0"
