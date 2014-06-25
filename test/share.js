@@ -32,7 +32,7 @@ describe('Share controller', function() {
   });
 
   describe('creating a share', function() {
-    it('should populate actor and full path', function(done) {
+    it('should populate actor', function(done) {
       Seq()
         .seq(function() {
           Share.post({}, group.id, user.token, this);
@@ -41,7 +41,6 @@ describe('Share controller', function() {
           var share = res.body;
           expect(res).to.have.status(201);
           expect(share.actor).to.have.property('displayName');
-          expect(share).to.have.property('fullPath')
           this();
         })
         .seq(done);
@@ -156,27 +155,25 @@ describe('Share controller', function() {
 
     it('should allow paging', function(done) {
       var last = null;
+      var channel = 'group!' + group.id + '.board';
       Seq(_.range(1, 5))
         .seqEach(function() {
-          var self = this;
-          Share.post({}, group.id, user.token, function(err, res) {
-            self(err, res);
-          });
+          Share.post({}, group.id, user.token, this);
         })
         .seq(function() {
-          Share.feed(user, {context: group.id, maxResults: 2}, user.token, this);
+          Share.feed(user, {channel: channel, maxResults: 2}, user.token, this);
         })
         .seq(function(res) {
           var shares = res.body.items;
           expect(shares).to.have.length(2);
           last = shares[1];
-          Share.feed(user, {context: group.id, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+          Share.feed(user, {channel: channel, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
         })
         .seq(function(res) {
           var shares = res.body.items;
           expect(shares).to.have.length(2);
           expect(shares[1].id).not.to.equal(last.id)
-          Share.feed(user, {context: group.id, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+          Share.feed(user, {channel: channel, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
         })
         .seq(function(res) {
           var shares = res.body.items;
