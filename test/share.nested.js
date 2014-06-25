@@ -51,7 +51,7 @@ describe('nested share', function() {
 
   it('nested feed should only contain nested shares', function(done) {
     var nested = null;
-    var channel = post.id + ':discussion'
+    var channel = 'share!' + post.id + '.' + post._object[0]._id + '.replies'
 
     Seq()
       .seq(function() {
@@ -59,12 +59,12 @@ describe('nested share', function() {
       })
       .seq(function() {
         var self = this;
-        user.con.post('/share/subscription', {context: group.id, channel: channel}, function() {
+        user.con.post('/share/subscription', {channel: channel}, function() {
           self();
         })
       })
       .seq(function() {
-        Share.post({channel: channel}, group.id, user.token, this);
+        Share.post({channels: [channel]}, group.id, user.token, this);
       })
       .seq(function(res) {
         nested = res.body;

@@ -232,7 +232,7 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body).to.have.length(1);
-          expect(res.body[0]).to.deep.equal(group);
+          expect(_.omit(res.body[0], '__v', 'board', 'updatedAt')).to.deep.equal(_.omit(group, '__v', 'board', 'updatedAt'));
           this();
         })
         .seq(done);

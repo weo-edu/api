@@ -73,7 +73,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.share = res.body;
-          Share.feed(user, [group.id], user.token, this);
+          Share.feed(user, ['group!' + group.id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -114,7 +114,7 @@ describe('Share controller', function() {
           _.each(responses, function(res) {
             expect(res).to.have.status(201);
           });
-          Share.feed(user, [group.id], user.token, this);
+          Share.feed(user, ['group!' + group.id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -142,7 +142,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.share = res.body;
-          Share.feed(user, [group.id], user.token, this);
+          Share.feed(user, ['group!' + group.id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -166,7 +166,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           this.vars.share = res.body;
           expect(res).to.have.status(201);
-          Share.feed(user, [group.id], user.token, this);
+          Share.feed(user, ['group!' + group.id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -235,7 +235,7 @@ describe('Share controller', function() {
       .flatten()
       .parEach(function(user) {
         var self = this;
-        user.con.post('/share/subscription', {context: group.id}, function() {
+        user.con.post('/share/subscription', {channel: 'group!' + group.id + '.board'}, function() {
           self();
         });
       })
@@ -319,7 +319,8 @@ describe('Share controller', function() {
                   access.entry('group', 'teacher', group.id),
                   access.entry('user', 'student', studentMember.id)
                 ]
-              }]
+              }],
+              channels: ['group!' + group.id + '.board']
             }, group.id, teacherMember.token, this);
           })
           .seq(function(res) {
@@ -420,7 +421,7 @@ function connectUser(user, cb) {
 function checkinFeed(user, group, post, done) {
   Seq()
     .seq(function() {
-      Share.feed(user, group.id, user.token, this)
+      Share.feed(user, 'group!' + group.id + '.board', user.token, this)
     })
     .seq(function(res) {
       var shares = res.body;
@@ -434,7 +435,7 @@ function checkinFeed(user, group, post, done) {
 function checkNotInFeed(user, group, post, done) {
   Seq()
     .seq(function() {
-      Share.feed(user, group.id, user.token, this)
+      Share.feed(user, 'group!' + group.id + '.board', user.token, this)
     })
     .seq(function(res) {
       var shares = res.body;
