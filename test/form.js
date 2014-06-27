@@ -1,7 +1,7 @@
 var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
-  , AssignmentHelper = require('./helpers/form')
+  , FormHelper = require('./helpers/form')
   , Response = require('./helpers/response')
   , Faker = require('Faker')
   , _ = require('lodash')
@@ -59,12 +59,11 @@ describe('Form controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {context: group.id}, this);
+          FormHelper.create(teacherToken, 'poll', {contexts: group.id, channels: ['group!' + group.id + '.board']}, this);
   			})
   			.seq(function(res) {
           var assignment = res.body;
           expect(assignment.actor.id).to.equal(teacher.id);
-  				expect(_.keys(assignment.payload.students)).to.have.length(0);
           expect(assignment.verb).to.equal('assigned');
           expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
           expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
@@ -80,13 +79,13 @@ describe('Form controller', function() {
     it('when question is formed properly', function(done) {
       Seq()
         .seq(function() {
-          AssignmentHelper.create(teacherToken, 'poll', {context: group.id}, this);
+          FormHelper.create(teacherToken, 'poll', {contexts: group.id, channels: ['group!' + group.id + '.board']}, this);
         })
         .seq(function(res) {
           assignment = res.body;
           var question = assignment._object[0].attachments[0].attachments[0];
-          var channel = url.parse(question.progress.selfLink, true).query.channel
-          Response.create(teacherToken, question, {contexts: group.id, channel: channel}, this)
+          var channel = url.parse(question.progress.selfLink, true).query.channel;
+          Response.create(teacherToken, question, {contexts: group.id, channels: [channel]}, this)
         })
         .seq(function(res) {
           response = res.body;

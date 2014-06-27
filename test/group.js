@@ -111,7 +111,7 @@ describe('Group controller', function() {
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(group, 'createdAt', 'updatedAt'));
+  				expect(_.omit(res.body, 'createdAt', 'updatedAt', '__v', 'board')).to.eql(_.omit(group, 'createdAt', 'updatedAt', '__v', 'board'));
   				this();
   			})
   			.seq(done);
@@ -135,7 +135,7 @@ describe('Group controller', function() {
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt')).to.eql(_.omit(group, 'createdAt', 'updatedAt'));
+  				expect(_.omit(res.body, 'createdAt', 'updatedAt', '__v', 'board')).to.eql(_.omit(group, 'createdAt', 'updatedAt', '__v', 'board'));
   				this();
   			})
   			.seq(done);

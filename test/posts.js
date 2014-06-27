@@ -1,12 +1,12 @@
-var Seq = require('seq')
-  , Post = require('./helpers/post')
-  , UserHelper = require('./helpers/user');
-
+var Seq = require('seq');
+var Post = require('./helpers/post');
+var UserHelper = require('./helpers/user');
+var GroupHelper = require('./helpers/group');
 
 require('./helpers/boot');
 
 describe('Post controller', function() {
-	var teacher, token;
+	var teacher, token, group;
 	before(function(done) {
     Seq()
       .seq(function() {
@@ -19,6 +19,13 @@ describe('Post controller', function() {
         token = 'Bearer ' + res.body.token;
         this();
       })
+      .seq(function() {
+      	GroupHelper.create({}, {token: token}, this);
+      })
+      .seq(function(res) {
+      	group = res.body;
+      	this();
+      })
       .seq(done);
     });
 
@@ -26,7 +33,7 @@ describe('Post controller', function() {
 	it('should create post', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'post', {}, this);
+				Post.create(token, 'post', {}, [group.id], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -40,7 +47,7 @@ describe('Post controller', function() {
 	it('should create comment', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'comment', {}, this);
+				Post.create(token, 'comment', {}, [group.id], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -54,7 +61,7 @@ describe('Post controller', function() {
 	it('should create question', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'question', {}, this);
+				Post.create(token, 'question', {}, [group.id], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -68,7 +75,7 @@ describe('Post controller', function() {
 	it('should create answer', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'answer', {}, this);
+				Post.create(token, 'answer', {}, [group.id], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -81,7 +88,7 @@ describe('Post controller', function() {
 
 	describe('should throw error', function() {
 		it('when user not authenticated', function(done) {
-			var share = Post.generate({}, [Post.randomTo()]);
+			var share = Post.generate({}, [group.id]);
 			Seq()
 				.seq(function() {
 					request
@@ -97,7 +104,7 @@ describe('Post controller', function() {
 		});
 
 		it('when body is not given', function(done) {
-			var share = Post.generate({}, [Post.randomTo()]);
+			var share = Post.generate({}, [group.id]);
 			share.object.originalContent = '';
 			Seq()
 				.seq(function() {
