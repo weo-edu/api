@@ -59,7 +59,10 @@ describe('Form controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-          FormHelper.create(teacherToken, 'poll', {contexts: group.id, channels: ['group!' + group.id + '.board']}, this);
+          FormHelper.create(teacherToken, 'poll', {
+            contexts: group.id,
+            channels: ['group!' + group.id + '.board']
+          }, this);
   			})
   			.seq(function(res) {
           var assignment = res.body;
@@ -102,6 +105,7 @@ describe('Form controller', function() {
             actor: {
               displayName: teacher.displayName,
               id: teacher.id,
+              url: '/' + teacher.id + '/',
               image: {
                 url: teacher.image.url
               }

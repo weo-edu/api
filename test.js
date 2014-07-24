@@ -123,7 +123,6 @@ var oldCast = Oid.prototype.cast;
 Schema.Types.Oid = Oid;
 Oid.prototype.cast = function(value, doc, init) {
   var err = new Error;
-  console.log('here', util.inspect(doc, {customInspect: false}));
   value = oldCast.apply(this, arguments);
   return value;
 };

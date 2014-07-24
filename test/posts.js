@@ -33,7 +33,7 @@ describe('Post controller', function() {
 	it('should create post', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'post', {}, [group.id], this);
+				Post.create(token, 'post', {}, [group], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -47,7 +47,7 @@ describe('Post controller', function() {
 	it('should create comment', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'comment', {}, [group.id], this);
+				Post.create(token, 'comment', {}, [group], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -61,7 +61,7 @@ describe('Post controller', function() {
 	it('should create question', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'question', {}, [group.id], this);
+				Post.create(token, 'question', {}, [group], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -75,7 +75,7 @@ describe('Post controller', function() {
 	it('should create answer', function(done) {
 		Seq()
 			.seq(function() {
-				Post.create(token, 'answer', {}, [group.id], this);
+				Post.create(token, 'answer', {}, [group], this);
 			})
 			.seq(function(res) {
 				var share = res.body;
@@ -88,7 +88,7 @@ describe('Post controller', function() {
 
 	describe('should throw error', function() {
 		it('when user not authenticated', function(done) {
-			var share = Post.generate({}, [group.id]);
+			var share = Post.generate({}, [group]);
 			Seq()
 				.seq(function() {
 					request
@@ -104,7 +104,7 @@ describe('Post controller', function() {
 		});
 
 		it('when body is not given', function(done) {
-			var share = Post.generate({}, [group.id]);
+			var share = Post.generate({}, [group]);
 			share.object.originalContent = '';
 			Seq()
 				.seq(function() {

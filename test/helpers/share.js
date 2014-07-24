@@ -1,6 +1,7 @@
 var Faker = require('Faker')
   , chai = require('chai')
-  , access = require('lib/access');
+  , access = require('lib/access')
+  , Group = require('lib/Group/model');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
@@ -24,7 +25,7 @@ var Share = module.exports = {
       .end(cb);
     return share;
   },
-  feed: function(user, query, authToken, cb) {
+  feed: function(query, authToken, cb) {
     if (!cb) {
       cb = authToken;
       authToken = groups;
@@ -47,7 +48,7 @@ var Share = module.exports = {
 
     share.contexts = opts.contexts || [].concat(opts.contexts || groups).map(function(group) {
       return {
-        id: group,
+        descriptor: Group.toKey(group),
         allow: [
           access.entry('public', 'teacher'),
           access.entry('group', 'student', group)
@@ -57,7 +58,7 @@ var Share = module.exports = {
 
     if(! share.channels) {
       share.channels = share.contexts.map(function(context) {
-        return 'group!' + context.id + '.board';
+        return 'group!' + context.descriptor.id + '.board';
       });
     }
 

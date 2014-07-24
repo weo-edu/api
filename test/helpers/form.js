@@ -19,11 +19,9 @@ var Form = module.exports = {
     }];
     return share;
   },
-
   randomTo: function() {
     return '' + Math.random();
   },
-
   create: function(token, type, opts, cb) {
     var share = this.generate(opts, opts.to || opts.context || [this.randomTo()]);
     delete opts.context;
