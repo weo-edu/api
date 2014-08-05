@@ -1,5 +1,6 @@
-var Seq = require('seq')
-  , User = require('./helpers/user');
+var Seq = require('seq');
+var User = require('./helpers/user');
+
 
 require('./helpers/boot');
 
@@ -28,14 +29,14 @@ describe('S3 controller', function() {
 	  			request
 	        	.post('/s3/upload')
 		        .set('Authorization', authToken)
-		        .send({name: 'foo.jpg', type: 'image/jpeg'})
+            .send({name: 'foo.jpg', type: 'image/jpeg'})
 		        .end(this);
 	  		})
   			.seq(function(res) {
   				var file = res.body;
   				expect(file.name).to.equal('foo.jpg');
   				expect(file.completed).to.equal(false);
-  				expect(file.user).to.equal(user.id);
+  				expect(file.actor.id).to.equal(user.id);
   				expect(file.credential).to.have.property('signature');
   				this();
   			})

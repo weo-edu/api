@@ -39,7 +39,6 @@ describe('User controller', function() {
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
-          expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
           expect(res.body.displayName).to.exist;
           this();
@@ -66,7 +65,6 @@ describe('User controller', function() {
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
-          expect(res.body).not.to.have.key('password');
           expect(res.body).not.to.have.key('password_confirmation');
           this();
         })

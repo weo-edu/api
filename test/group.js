@@ -1,6 +1,7 @@
 var Seq = require('seq');
 var UserHelper = require('./helpers/user');
 var GroupHelper = require('./helpers/group');
+var Group = require('lib/Group/model');
 var _ = require('lodash');
 
 require('./helpers/boot');
@@ -40,7 +41,7 @@ describe('Group controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-        	expect(res.body.groups).to.contain(group.id);
+        	expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
         	this();
         })
         .seq(done);
@@ -177,7 +178,7 @@ describe('Group controller', function() {
             .end(this);
   			})
   			.seq(function(res) {
-  				expect(res.body.groups).to.contain(group.id);
+  				expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
   				this();
   			})
   			.seq(done);
@@ -231,7 +232,7 @@ describe('Group controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          expect(res.body.groups).to.contain(group.id);
+          expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
           this();
         })
         .seq(done);
@@ -320,7 +321,7 @@ describe('Group controller', function() {
       Seq()
         .seq(function() {
           subgroup = GroupHelper.generate({
-            parent: group.id,
+            parent: Group.toKey(group),
             groupType: 'group'
           });
 
