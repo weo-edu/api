@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "validate": "noiit && jshint lib/**",
     "test": "noiit && jshint lib/** && mocha",
     "migrate": "node bin/migrate.js"
   },
