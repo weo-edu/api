@@ -27,7 +27,7 @@ describe('nested share', function() {
       .seq(function(res) {
         expect(res).to.have.status(201);
         group = res.body;
-        Share.post({}, group.id, user.token, this);
+        Share.post({}, group, user.token, this);
       })
       .seq(function(res) {
         expect(res).to.have.status(201);
@@ -40,7 +40,7 @@ describe('nested share', function() {
   it('should validate', function(done) {
     Seq()
       .seq(function() {
-        Share.post({channel: post.id + ':discussion'}, group.id, user.token, this);
+        Share.post({channel: post.id + ':discussion'}, group, user.token, this);
       })
       .seq(function(res) {
         expect(res).to.have.status(201);
@@ -64,11 +64,11 @@ describe('nested share', function() {
         })
       })
       .seq(function() {
-        Share.post({channels: [channel]}, group.id, user.token, this);
+        Share.post({channels: [channel]}, group, user.token, this);
       })
       .seq(function(res) {
         nested = res.body;
-        Share.feed(user, {context: group.id, channel: channel}, user.token, this);
+        Share.feed({context: group.id, channel: channel}, user.token, this);
       })
       .seq(function(res) {
         var shares = res.body;

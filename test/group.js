@@ -1,6 +1,7 @@
 var Seq = require('seq');
 var UserHelper = require('./helpers/user');
 var GroupHelper = require('./helpers/group');
+var Group = require('lib/Group/model');
 var _ = require('lodash');
 
 require('./helpers/boot');
@@ -40,7 +41,7 @@ describe('Group controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-        	expect(res.body.groups).to.contain(group.id);
+        	expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
         	this();
         })
         .seq(done);
@@ -177,7 +178,7 @@ describe('Group controller', function() {
             .end(this);
   			})
   			.seq(function(res) {
-  				expect(res.body.groups).to.contain(group.id);
+  				expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
   				this();
   			})
   			.seq(done);
@@ -231,7 +232,7 @@ describe('Group controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          expect(res.body.groups).to.contain(group.id);
+          expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
           this();
         })
         .seq(done);
@@ -315,12 +316,61 @@ describe('Group controller', function() {
         .seq(done);
     });
 
+    it('should update foreign keys', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .get('/' + user.userType + '/' + user.id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+
+          var groups = res.body.groups;
+          expect(groups).to.contain.an.item.with.properties({
+            id: group.id,
+            status: 'active'
+          });
+
+          request
+            .patch('/group/' + group.id + '/archive')
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var self = this;
+          expect(res).to.have.status(200);
+          // We have to setTimeout here because
+          // these foreign keys are updated in a
+          // post hook so it may take an event loop
+          // or two for them to get updated
+          setTimeout(function() {
+            request
+              .get('/' + user.userType + '/' + user.id)
+              .set('Authorization', user.token)
+              .end(self);
+          }, 50);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+
+          var groups = res.body.groups;
+          expect(groups).to.contain.an.item.with.properties({
+            id: group.id,
+            status: 'archived'
+          });
+          this();
+        })
+        .seq(done);
+    })
+
     it('should archive subgroups when parent is archived', function(done) {
       var subgroup;
       Seq()
         .seq(function() {
           subgroup = GroupHelper.generate({
-            parent: group.id,
+            parent: Group.toKey(group),
             groupType: 'group'
           });
 
