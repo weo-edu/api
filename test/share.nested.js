@@ -51,7 +51,7 @@ describe('nested share', function() {
 
   it('nested feed should only contain nested shares', function(done) {
     var nested = null;
-    var channel = 'share!' + post.id + '.' + post._object[0]._id + '.replies'
+    var channel = 'share!' + post.id + '.replies';
 
     Seq()
       .seq(function() {
