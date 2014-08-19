@@ -70,6 +70,7 @@ var Share = module.exports = {
     var name = Faker.Company.catchPhrase();
     return _.defaults(opts, {
       objectType: 'post',
+      originalContent: 'test',
       url: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
     });
   },
