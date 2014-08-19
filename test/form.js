@@ -127,7 +127,5 @@ describe('Form controller', function() {
           done();
         })
     });
-
   });
-
 });
