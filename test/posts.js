@@ -115,7 +115,7 @@ describe('Post controller', function() {
 			      .end(this);
 				})
 				.seq(function(res) {
-					expect(res).to.have.ValidationError('_object.0.originalContent', 'required', 'Required if no media', '', 'originalContent');
+					expect(res).to.have.ValidationError('_object.0.originalContent', 'required', 'Path `originalContent` is required.', '', 'originalContent');
 					this();
 				})
 				.seq(done);
