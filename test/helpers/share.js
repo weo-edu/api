@@ -1,7 +1,8 @@
 var Faker = require('Faker')
   , chai = require('chai')
-  , access = require('lib/access')
-  , Group = require('lib/Group/model');
+  , access = require('lib/access/helpers')
+  , Group = require('lib/Group/model')
+  , ShareModel = require('lib/Share/model');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
@@ -25,6 +26,23 @@ var Share = module.exports = {
       .end(cb);
     return share;
   },
+
+  postShare: function(share, authToken, cb) {
+    request
+      .post('/share')
+      .set('Authorization', authToken)
+      .send(share)
+      .end(cb);
+  },
+
+  child: function(parent, objectType, channelFn) {
+    var parent = new ShareModel(parent);
+    var child = parent.createChild(objectType, {
+      channels: channelFn(parent)
+    });
+    return child.toJSON();
+  },
+
   feed: function(query, authToken, cb) {
     if (!cb) {
       cb = authToken;
@@ -48,10 +66,10 @@ var Share = module.exports = {
 
     share.contexts = opts.contexts || [].concat(opts.contexts || groups).map(function(group) {
       return {
-        descriptor: Group.toKey(group),
+        descriptor: Group.toAbstractKey(group),
         allow: [
           access.entry('public', 'teacher'),
-          access.entry('group', 'student', group)
+          access.entry('group', 'student', Group.toAbstractKey(group))
         ]
       };
     });
@@ -70,7 +88,7 @@ var Share = module.exports = {
     var name = Faker.Company.catchPhrase();
     return _.defaults(opts, {
       objectType: 'post',
-      url: '/' + ['object', Faker.Helpers.slugify(name)].join('/')
+      originalContent: 'test'
     });
   },
   del: function(shareId, authToken, cb) {

@@ -26,7 +26,7 @@ describe('Form controller', function() {
       })
       .seq(function(res) {
         teacherToken = 'Bearer ' + res.body.token;
-        student = UserHelper.create({type: 'student'}, this);
+        student = UserHelper.create({userType: 'student'}, this);
       })
       .seq(function() {
       	UserHelper.login(student.username, student.password, this);
@@ -127,7 +127,5 @@ describe('Form controller', function() {
           done();
         })
     });
-
   });
-
 });
