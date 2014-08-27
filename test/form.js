@@ -1,3 +1,5 @@
+require('./helpers/boot');
+
 var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
@@ -8,7 +10,7 @@ var Seq = require('seq')
   , moment = require('moment')
   , url = require('url');
 
-require('./helpers/boot');
+
 
 describe('Form controller', function() {
 
