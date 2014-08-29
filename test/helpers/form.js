@@ -1,6 +1,4 @@
 var Faker = require('Faker')
-  , chai = require('chai')
-  , moment = require('moment')
   , Seq = require('seq')
   , UserHelper = require('./user')
   , Share = require('./share');
@@ -10,7 +8,7 @@ var Form = module.exports = {
     var share = Share.generate(opts, groups);
     delete share.verb;
     share.object.attachments = [{
-      objectType: 'poll',
+      objectType: 'form',
       originalContent: Faker.Lorem.paragraph(),
       attachments: [{
         objectType: 'formQuestion',

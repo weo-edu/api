@@ -59,7 +59,7 @@ describe('Form controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-          FormHelper.create(teacherToken, 'poll', {
+          FormHelper.create(teacherToken, 'form', {
             contexts: group.id,
             channels: ['group!' + group.id + '.board']
           }, this);
@@ -82,7 +82,7 @@ describe('Form controller', function() {
     it('when question is formed properly', function(done) {
       Seq()
         .seq(function() {
-          FormHelper.create(teacherToken, 'poll', {contexts: group.id, channels: ['group!' + group.id + '.board']}, this);
+          FormHelper.create(teacherToken, 'form', {contexts: group.id, channels: ['group!' + group.id + '.board']}, this);
         })
         .seq(function(res) {
           assignment = res.body;
