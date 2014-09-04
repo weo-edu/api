@@ -12,7 +12,13 @@ var Form = module.exports = {
       originalContent: Faker.Lorem.paragraph(),
       attachments: [{
         objectType: 'formQuestion',
-        displayName: 'How old are you?'
+        displayName: 'How old are you?',
+        attachments: [
+          {
+            objectType: 'choice',
+            displayName: '18'
+          }
+        ]
       }]
     }];
     return share;
