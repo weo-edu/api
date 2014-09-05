@@ -58,34 +58,6 @@ describe('Post controller', function() {
 			.seq(done);
 	});
 
-	it('should create question', function(done) {
-		Seq()
-			.seq(function() {
-				Post.create(token, 'question', {}, [group], this);
-			})
-			.seq(function(res) {
-				var share = res.body;
-				expect(share._object[0].objectType).to.equal('question');
-				expect(share.verb).to.equal('asked');
-				this();
-			})
-			.seq(done);
-	});
-
-	it('should create answer', function(done) {
-		Seq()
-			.seq(function() {
-				Post.create(token, 'answer', {}, [group], this);
-			})
-			.seq(function(res) {
-				var share = res.body;
-				expect(share._object[0].objectType).to.equal('answer');
-				expect(share.verb).to.equal('answered');
-				this();
-			})
-			.seq(done);
-	});
-
 	describe('should throw error', function() {
 		it('when user not authenticated', function(done) {
 			var share = Post.generate({}, [group]);
