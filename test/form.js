@@ -70,8 +70,9 @@ describe('Form controller', function() {
           var assignment = res.body;
           expect(assignment.actor.id).to.equal(teacher.id);
           expect(assignment.verb).to.equal('assigned');
-          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
-          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
+          console.log('selfLink', assignment._object[0].attachments[0].progress.selfLink);
+          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
+          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
   				this();
   			})
   			.seq(done);
