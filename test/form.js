@@ -1,3 +1,5 @@
+require('./helpers/boot');
+
 var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
@@ -8,7 +10,7 @@ var Seq = require('seq')
   , moment = require('moment')
   , url = require('url');
 
-require('./helpers/boot');
+
 
 describe('Form controller', function() {
 
@@ -26,7 +28,7 @@ describe('Form controller', function() {
       })
       .seq(function(res) {
         teacherToken = 'Bearer ' + res.body.token;
-        student = UserHelper.create({type: 'student'}, this);
+        student = UserHelper.create({userType: 'student'}, this);
       })
       .seq(function() {
       	UserHelper.login(student.username, student.password, this);
@@ -68,8 +70,9 @@ describe('Form controller', function() {
           var assignment = res.body;
           expect(assignment.actor.id).to.equal(teacher.id);
           expect(assignment.verb).to.equal('assigned');
-          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
-          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._object[0]._id)).to.be.greaterThan(0);
+          console.log('selfLink', assignment._object[0].attachments[0].progress.selfLink);
+          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
+          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
   				this();
   			})
   			.seq(done);

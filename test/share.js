@@ -1,3 +1,5 @@
+require('./helpers/boot');
+
 var Seq = require('seq')
   , User = require('./helpers/user')
   , Share = require('./helpers/share')
@@ -6,7 +8,7 @@ var Seq = require('seq')
   , Cookie = require('cookie')
   , access = require('lib/access');
 
-require('./helpers/boot');
+
 describe('Share controller', function() {
   var user = null
     , group = null;
@@ -365,9 +367,9 @@ describe('Share controller', function() {
           .seq(function() {
             Share.post({
               contexts: [{
-                descriptor: Group.toKey(group),
+                descriptor: Group.toAbstractKey(group),
                 allow: [
-                  access.entry('group', 'teacher', Group.toKey(group)),
+                  access.entry('group', 'teacher', Group.toAbstractKey(group)),
                   access.entry('user', 'student', {id: studentMember.id})
                 ]
               }],

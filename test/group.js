@@ -148,7 +148,7 @@ describe('Group controller', function() {
     before(function(done) {
       Seq()
         .seq(function() {
-          UserHelper.create({type: 'student'}, this);
+          UserHelper.create({userType: 'student'}, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
@@ -202,7 +202,7 @@ describe('Group controller', function() {
     beforeEach(function(done) {
       Seq()
         .seq(function() {
-          UserHelper.createAndLogin({type: 'student'}, this);
+          UserHelper.createAndLogin({userType: 'student'}, this);
         })
         .seq(function(newUser) {
           student = newUser;

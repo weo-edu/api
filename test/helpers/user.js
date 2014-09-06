@@ -14,8 +14,7 @@ function teacherDefaults() {
     //groups: ['535729acad50c37bb9c84df3'],
     email: sanitize(Faker.Internet.email()).toLowerCase(),
     username: sanitize(Faker.Internet.userName()),
-    password: 'testpassword',
-    password_confirmation: 'testpassword',
+    password: 'testpassword'
   };
 }
 
@@ -23,6 +22,7 @@ function studentDefaults() {
   var defaults = teacherDefaults();
   delete defaults.name.honorificPrefix;
   delete defaults.email;
+  defaults.userType = 'student';
   return defaults;
 }
 
@@ -31,6 +31,12 @@ function sanitize(str) {
 }
 
 var User = module.exports = {
+  me: function(authToken, cb) {
+    request
+      .get('/user')
+      .set('Authorization', authToken)
+      .end(cb);
+  },
   generate: function(opts) {
     opts = opts || {};
     var defaults = null;
@@ -89,5 +95,31 @@ var User = module.exports = {
         user.socketToken = res.body.token;
         cb(null, user);
       });
+  },
+  updated: function(user, cb) {
+    Seq()
+      .seq(function() {
+        User.me(user.token, this);
+      })
+      .seq(function(res) {
+        var updated = res.body;
+        updated.token = user.token;
+        updated.socketToken = user.socketToken;
+        cb(null, updated);
+      })
+  },
+  changeAvatar: function(user, image, cb) {
+    request
+      .patch('/user/avatar')
+      .set('Authorization', user.token)
+      .send({image: image})
+      .end(cb);
+  },
+
+  reputation: function(user, cb) {
+    request
+      .get('/user/reputation')
+      .set('Authorization', user.token)
+      .end(cb);
   }
 };
