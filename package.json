@@ -63,7 +63,10 @@
     "subclass-error": "0.0.2",
     "uglifyify": "^2.5.0",
     "validator": "~3.10.0",
-    "ware": "~0.3.0"
+    "ware": "~0.3.0",
+    "nodemailer": "~1.2.2",
+    "ent": "~2.0.0",
+    "qs": "~2.2.3"
   },
   "devDependencies": {
     "Faker": "~0.7.0",
@@ -77,6 +80,10 @@
     "jshint": "^2.5.1",
     "lodash": "~2.4.1",
     "mocha": "^1.18.2",
-    "supertest": "~0.11.0"
+    "supertest": "~0.11.0",
+    "superagent": "~0.18.2",
+    "cookie-parser": "~1.0.1",
+    "cookie": "~0.1.2",
+    "cheerio": "~0.17.0"
   }
 }

@@ -31,6 +31,7 @@ function sanitize(str) {
 }
 
 var User = module.exports = {
+
   me: function(authToken, cb) {
     request
       .get('/user')
@@ -120,6 +121,13 @@ var User = module.exports = {
     request
       .get('/user/reputation')
       .set('Authorization', user.token)
+      .end(cb);
+  },
+
+  reset: function(token, password, cb) {
+    request
+      .patch('/user/reset')
+      .send({token: token, password: password})
       .end(cb);
   }
 };
