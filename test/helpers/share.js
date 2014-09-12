@@ -34,7 +34,13 @@ var Share = module.exports = {
       .send(share)
       .end(cb);
   },
-
+  patchShare: function(share, authToken, cb) {
+    request
+      .patch('/share')
+      .set('Authorization', authToken)
+      .send(share)
+      .end(cb);
+  },
   child: function(parent, objectType, channelFn) {
     var parent = new ShareModel(parent);
     var child = parent.createChild(objectType, {

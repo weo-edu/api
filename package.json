@@ -6,6 +6,7 @@
   "scripts": {
     "validate": "noiit && jshint lib/**",
     "test": "noiit && jshint lib/** && mocha",
+    "docs": "apidoc -i lib -o doc && apidoc-markdown -p doc -o api.md",
     "migrate": "node bin/migrate.js"
   },
   "author": "",

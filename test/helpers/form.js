@@ -26,6 +26,12 @@ var Form = module.exports = {
   randomTo: function() {
     return '' + Math.random();
   },
+  getInstance: function(token, id, userId, cb) {
+    request
+      .get('/share/' + id + '/instance/' + userId)
+      .set('Authorization', token)
+      .end(cb);
+  },
   create: function(token, type, opts, cb) {
     var share = this.generate(opts, opts.to || opts.context || [this.randomTo()]);
     delete opts.context;
