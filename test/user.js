@@ -1,6 +1,7 @@
 var Seq = require('seq')
   , UserHelper = require('./helpers/user')
-  , GroupHelper = require('./helpers/group');
+  , GroupHelper = require('./helpers/group')
+  , email = require('./helpers/email');
 
 
 require('./helpers/boot');
@@ -231,6 +232,53 @@ describe('User controller', function() {
           expect(res).to.have.status(200);
           expect(res.body.items).to.have.length(1);
           expect(_.omit(res.body.items[0], '__v', 'board', 'updatedAt')).to.deep.equal(_.omit(group, '__v', 'board', 'updatedAt'));
+          this();
+        })
+        .seq(done);
+    });
+  });
+
+  var cheerio = require('cheerio');
+  var ent = require('ent');
+  var url = require('url')
+  describe('forgot password', function() {
+    var user;
+    it('should send password reset email and reset with token', function(done) {
+      this.timeout(30000);
+      Seq()
+        .seq(function() {
+          email.get('email', this);
+        })
+        .seq(function(e) {
+          UserHelper.create({email: e}, this);
+        })
+        .seq(function(res) {
+          user = res.body;
+          request
+            .post('/user/forgot')
+            .send({username: user.username})
+            .end(this);
+        })
+        .seq(function() {
+          email.pollInbox(this);
+        })
+        .seq(function(emails) {
+          var email = emails[0];
+          expect(email.Subject).to.equal('Password Reset');
+          expect(email.From).to.equal('info@weo.io');
+
+
+          var $ = cheerio.load(ent.decode(email.HtmlBody));
+          var token = url.parse($('a').attr('href'), true).query.token;
+
+          UserHelper.reset(token, 'newpass', this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(204);
+          UserHelper.login(user.username, 'newpass', this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
           this();
         })
         .seq(done);

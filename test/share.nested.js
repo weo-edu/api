@@ -40,7 +40,7 @@ describe('nested share', function() {
   it('should validate', function(done) {
     Seq()
       .seq(function() {
-        Share.post({channel: post.id + ':discussion'}, group, user.token, this);
+        Share.post({channels: ['share!' + post.id + '.replies']}, group, user.token, this);
       })
       .seq(function(res) {
         expect(res).to.have.status(201);
