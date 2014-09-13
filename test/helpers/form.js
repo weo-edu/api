@@ -8,18 +8,14 @@ var Form = module.exports = {
     var share = Share.generate(opts, groups);
     delete share.verb;
     share.object.attachments = [{
-      objectType: 'form',
-      originalContent: Faker.Lorem.paragraph(),
-      attachments: [{
-        objectType: 'formQuestion',
-        displayName: 'How old are you?',
-        attachments: [
-          {
-            objectType: 'choice',
-            displayName: '18'
-          }
-        ]
-      }]
+      objectType: 'formQuestion',
+      displayName: 'How old are you?',
+      attachments: [
+        {
+          objectType: 'choice',
+          displayName: '18'
+        }
+      ]
     }];
     return share;
   },

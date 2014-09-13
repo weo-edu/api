@@ -73,7 +73,7 @@ describe('Form controller', function() {
   			.seq(function(res) {
           var assignment = res.body;
           expect(assignment.actor.id).to.equal(teacher.id);
-          expect(assignment.verb).to.equal('assigned');
+          expect(assignment.verb).to.equal('shared');
           expect(assignment.instances.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
   				this();
   			})
@@ -95,7 +95,7 @@ describe('Form controller', function() {
         })
         .seq(function(res) {
           var inst = res.body;
-          var question = inst._object[0].attachments[0].attachments[0];
+          var question = inst._object[0].attachments[0];
           expect(question.objectType).to.equal('formQuestion');
           question.response = question.attachments[0]._id;
           ShareHelper.patchShare(inst, studentToken, this);
