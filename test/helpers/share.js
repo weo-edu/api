@@ -74,8 +74,8 @@ var Share = module.exports = {
       return {
         descriptor: Group.toAbstractKey(group),
         allow: [
-          access.entry('public', 'teacher'),
-          access.entry('group', 'student', Group.toAbstractKey(group))
+          access.entry('group', 'student', Group.toAbstractKey(group)),
+          access.entry('group', 'teacher', Group.toAbstractKey(group))
         ]
       };
     });
