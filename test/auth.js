@@ -48,7 +48,7 @@ describe('Auth controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
-          expect(res.body).to.have.keys(['token', 'role', 'username', 'id']);
+          expect(res.body).to.include.keys(['token', 'userType', 'username', 'id']);
           this();
         })
         .seq(done)

@@ -265,7 +265,7 @@ describe('User controller', function() {
         .seq(function(emails) {
           var email = emails[0];
           expect(email.Subject).to.equal('Password Reset');
-          expect(email.From).to.equal('info@weo.io');
+          expect(email.From).to.equal('testmail@weo.io');
 
 
           var $ = cheerio.load(ent.decode(email.HtmlBody));
