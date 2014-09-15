@@ -4,7 +4,7 @@ var Seq = require('seq')
   , UserHelper = require('./helpers/user')
   , GroupHelper = require('./helpers/group')
   , FormHelper = require('./helpers/form')
-  , Response = require('./helpers/response')
+  , ShareHelper = require('./helpers/share')
   , Faker = require('Faker')
   , _ = require('lodash')
   , moment = require('moment')
@@ -30,7 +30,8 @@ describe('Form controller', function() {
         teacherToken = 'Bearer ' + res.body.token;
         student = UserHelper.create({userType: 'student'}, this);
       })
-      .seq(function() {
+      .seq(function(res) {
+        student = res.body;
       	UserHelper.login(student.username, student.password, this);
       })
       .seq(function(res) {
@@ -52,6 +53,9 @@ describe('Form controller', function() {
       })
       .seq(function(res) {
         group = res.body;
+        GroupHelper.join(group, {token: studentToken}, this);
+      })
+      .seq(function(res) {
         this();
       })
       .seq(done);
@@ -69,9 +73,8 @@ describe('Form controller', function() {
   			.seq(function(res) {
           var assignment = res.body;
           expect(assignment.actor.id).to.equal(teacher.id);
-          expect(assignment.verb).to.equal('assigned');
-          expect(assignment._object[0].attachments[0].progress.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
-          expect(assignment._object[0].attachments[0].attachments[0].progress.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
+          expect(assignment.verb).to.equal('shared');
+          expect(assignment.instances.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
   				this();
   			})
   			.seq(done);
@@ -80,7 +83,7 @@ describe('Form controller', function() {
   });
 
   describe('should answer question', function() {
-    var assignment, response;
+    var assignment;
     it('when question is formed properly', function(done) {
       Seq()
         .seq(function() {
@@ -88,9 +91,14 @@ describe('Form controller', function() {
         })
         .seq(function(res) {
           assignment = res.body;
-          var question = assignment._object[0].attachments[0].attachments[0];
-          var channel = url.parse(question.progress.selfLink, true).query.channel;
-          Response.create(teacherToken, question, {contexts: group.id, channels: [channel]}, this)
+          FormHelper.getInstance(studentToken, res.body._id, student._id, this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          var question = inst._object[0].attachments[0];
+          expect(question.objectType).to.equal('formQuestion');
+          question.response = question.attachments[0]._id;
+          ShareHelper.patchShare(inst, studentToken, this);
         })
         .seq(function(res) {
           response = res.body;
@@ -100,26 +108,21 @@ describe('Form controller', function() {
         })
         .seq(function(res) {
           var updated = res.body;
-          var question = updated._object[0].attachments[0].attachments[0];
-          expect(question.progress.total.length).to.equal(1);
+          expect(updated.instances.total.length).to.equal(1);
           var actorsTotal = {};
-          actorsTotal[teacher.id] = {
+          actorsTotal[student.id] = {
             actor: {
-              displayName: teacher.displayName,
-              id: teacher.id,
-              url: '/' + teacher.id + '/',
+              displayName: student.displayName,
+              id: student.id,
+              url: '/' + student.id + '/',
               image: {
-                url: teacher.image.url
+                url: student.image.url
               }
             },
-            progress: 1,
-            correct: 1,
             items: 1
           };
-          expect(question.progress.total[0]).to.be.like({
+          expect(updated.instances.total[0]).to.be.like({
             context: group.id,
-            progress: 1,
-            correct: 1,
             items: 1,
             actors: actorsTotal
           });

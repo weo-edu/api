@@ -261,7 +261,7 @@ describe('Share controller', function() {
       Seq()
       .seq(function() {
         teacherMember = user;
-        User.createAndLogin({userType: 'student'},this);
+        User.createAndLogin({userType: 'student'}, this);
       })
       .seq(function(s) {
         student = s;
@@ -315,7 +315,6 @@ describe('Share controller', function() {
             this();
           })
           .seq(done);
-
       });
 
       it('should not be in teacher feed', function(done) {
@@ -335,8 +334,8 @@ describe('Share controller', function() {
       });
 
       describe('live updates', function() {
-        it('should appear in teacher feed', function() {
-          expect(teacher.messages.length).to.equal(1);
+        it('should not appear in teacher feed', function() {
+          expect(teacher.messages.length).to.equal(0);
         });
 
         it('should appear in teacher member feed', function() {
