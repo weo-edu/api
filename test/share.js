@@ -186,6 +186,107 @@ describe('Share controller', function() {
     });
   });
 
+  describe('instances', function() {
+    var student = null;
+    before(function(done) {
+      Seq()
+        .seq(function() {
+          User.createAndLogin({userType: 'student'}, this);
+        })
+        .seq(function(s) {
+          student = s;
+          GroupHelper.join(group, student, this);
+        })
+        .seq(function() {
+          done();
+        });
+    });
+
+    it('should create a pending instance when a student requests it', function(done) {
+      var share;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          expect(inst.actor.id).to.equal(student._id);
+          expect(inst.root.id).to.equal(share._id);
+          expect(inst.status).to.equal('pending');
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should create a draft instance when a teacher requests it', function(done) {
+      var share;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          expect(inst.actor.id).to.equal(student._id);
+          expect(inst.root.id).to.equal(share._id);
+          expect(inst.status).to.equal('draft');
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should change from draft to pending if a teacher requests it and then the student requests it', function(done) {
+      var share;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          expect(inst.actor.id).to.equal(student._id);
+          expect(inst.root.id).to.equal(share._id);
+          expect(inst.status).to.equal('draft');
+          this();
+        })
+        .seq(function() {
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          expect(inst.actor.id).to.equal(student._id);
+          expect(inst.root.id).to.equal(share._id);
+          expect(inst.status).to.equal('pending');
+          this();
+        })
+        .seq(done);
+    });
+
+
+  });
+
   describe('queueing a share', function() {
     it('should show up in feed', function(done) {
       Seq()
