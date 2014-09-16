@@ -279,12 +279,43 @@ describe('Share controller', function() {
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
           expect(inst.status).to.equal('pending');
+          expect(inst.verb).to.equal('started');
           this();
         })
         .seq(done);
     });
 
+    it('should set the verb to "completed" on publish', function(done) {
+      var share;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          expect(inst.actor.id).to.equal(student._id);
+          expect(inst.root.id).to.equal(share._id);
+          expect(inst.verb).to.equal('started');
 
+          request
+            .put('/share/' + inst._id + '/published')
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          expect(inst.verb).to.equal('completed');
+          this();
+        })
+        .seq(done);
+    });
   });
 
   describe('queueing a share', function() {
