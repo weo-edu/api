@@ -244,7 +244,7 @@ describe('User controller', function() {
   describe('forgot password', function() {
     var user;
     it('should send password reset email and reset with token', function(done) {
-      this.timeout(30000);
+      this.timeout(60000);
       Seq()
         .seq(function() {
           email.get('email', this);

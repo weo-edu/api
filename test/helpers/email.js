@@ -28,5 +28,4 @@ exports.pollInbox = function(cb) {
       }, 1000);
     }
   })
-} 
-
+} ;
