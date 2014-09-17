@@ -63,7 +63,7 @@ describe('reputation hooks', function() {
         })
         .seq(done);
     })
-    
+
   });
 
   describe('should change user reputation', function() {
