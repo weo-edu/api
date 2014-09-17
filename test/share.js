@@ -500,8 +500,8 @@ describe('Share controller', function() {
               contexts: [{
                 descriptor: Group.toAbstractKey(group),
                 allow: [
-                  access.entry('group', Group.toAbstractKey(group)),
-                  access.entry('user', {id: studentMember.id})
+                  access.entry('group', 'teacher', Group.toAbstractKey(group)),
+                  access.entry('user', 'student', {id: studentMember.id})
                 ]
               }],
               channels: ['group!' + group.id + '.board']
