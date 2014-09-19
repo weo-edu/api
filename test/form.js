@@ -45,7 +45,6 @@ describe('Form controller', function() {
   beforeEach(function(done) {
     Seq()
       .seq(function() {
-        console.log('createGroup');
         request
           .post('/group')
           .set('Authorization', teacherToken)
@@ -53,12 +52,10 @@ describe('Form controller', function() {
           .end(this);
       })
       .seq(function(res) {
-        console.log('group cb', res.status, res.body);
         group = res.body;
         GroupHelper.join(group, {token: studentToken}, this);
       })
       .seq(function(res) {
-        console.log('join cb', res.status, res.body);
         this();
       })
       .seq(done);
@@ -68,7 +65,6 @@ describe('Form controller', function() {
   	it('when information is entered properly', function(done) {
   		Seq()
   			.seq(function() {
-          console.log('FormHelper.create');
           FormHelper.create(teacherToken, 'form', {
             contexts: group.id,
             channels: ['group!' + group.id + '.board']
