@@ -1,7 +1,7 @@
 /*
 
-	hashids
-	http://www.hashids.org/node-js/
+	Hashids
+	http://hashids.org/node-js
 	(c) 2013 Ivan Akimov
 
 	https://github.com/ivanakimov/hashids.node.js
@@ -9,7 +9,7 @@
 
 */
 
-/*jslint node: true, white: true, plusplus: true */
+/*jslint node: true, white: true, plusplus: true, nomen: true */
 
 "use strict";
 
@@ -17,7 +17,7 @@ function Hashids(salt, minHashLength, alphabet) {
 
 	var uniqueAlphabet, i, j, len, sepsLength, diff, guardCount;
 
-	this.version = "0.3.3";
+	this.version = "1.0.0";
 
 	/* internal settings */
 
@@ -108,7 +108,7 @@ function Hashids(salt, minHashLength, alphabet) {
 
 }
 
-Hashids.prototype.encrypt = function() {
+Hashids.prototype.encode = function() {
 
 	var ret = "",
 		i, len,
@@ -128,11 +128,11 @@ Hashids.prototype.encrypt = function() {
 		}
 	}
 
-	return this.encode(numbers);
+	return this._encode(numbers);
 
 };
 
-Hashids.prototype.decrypt = function(hash) {
+Hashids.prototype.decode = function(hash) {
 
 	var ret = [];
 
@@ -140,15 +140,15 @@ Hashids.prototype.decrypt = function(hash) {
 		return ret;
 	}
 
-	return this.decode(hash, this.alphabet);
+	return this._decode(hash, this.alphabet);
 
 };
 
-Hashids.prototype.encryptHex = function(str) {
+Hashids.prototype.encodeHex = function(str) {
 
-	var i, len, numbers,
-		str = str.toString();
+	var i, len, numbers;
 
+	str = str.toString();
 	if (!/^[0-9a-fA-F]+$/.test(str)) {
 		return "";
 	}
@@ -159,15 +159,15 @@ Hashids.prototype.encryptHex = function(str) {
 		numbers[i] = parseInt("1" + numbers[i], 16);
 	}
 
-	return this.encrypt.apply(this, numbers);
+	return this.encode.apply(this, numbers);
 
 };
 
-Hashids.prototype.decryptHex = function(hash) {
+Hashids.prototype.decodeHex = function(hash) {
 
 	var ret = "",
 		i, len,
-		numbers = this.decrypt(hash);
+		numbers = this.decode(hash);
 
 	for (i = 0, len = numbers.length; i !== len; i++) {
 		ret += (numbers[i]).toString(16).substr(1);
@@ -177,7 +177,7 @@ Hashids.prototype.decryptHex = function(hash) {
 
 };
 
-Hashids.prototype.encode = function(numbers) {
+Hashids.prototype._encode = function(numbers) {
 
 	var ret, lottery, i, len, number, buffer, last, sepsIndex, guardIndex, guard, halfLength, excess,
 		alphabet = this.alphabet,
@@ -242,7 +242,7 @@ Hashids.prototype.encode = function(numbers) {
 
 };
 
-Hashids.prototype.decode = function(hash, alphabet) {
+Hashids.prototype._decode = function(hash, alphabet) {
 
 	var ret = [],
 		i = 0,
@@ -275,7 +275,7 @@ Hashids.prototype.decode = function(hash, alphabet) {
 
 		}
 
-		if (this.encode(ret) !== hash) {
+		if (this._encode(ret) !== hash) {
 			ret = [];
 		}
 

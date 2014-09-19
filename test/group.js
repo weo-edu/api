@@ -238,20 +238,19 @@ describe('Group controller', function() {
         .seq(done);
     });
 
-    it('should be case sensitive', function(done) {
+    it('should be case insensitive', function(done) {
       Seq()
         .seq(function() {
-          // Guarantee our code contains lowercase letters
-          // to ensure we're actually testing what we think we are
-          var code = 'new code' + (+new Date) + '' + Math.random();
           request
             .post('/group')
-            .send(GroupHelper.generate({code: code}))
+            .send(GroupHelper.generate())
             .set('Authorization', user.token)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(201);
+          expect(res.body.code).to.match(/^[a-z0-9]{6,}$/);
+
           this.vars.group = res.body;
           request
             .put('/group/join/' + this.vars.group.code.toUpperCase())
@@ -259,7 +258,7 @@ describe('Group controller', function() {
             .end(this);
         })
         .seq(function(res) {
-          expect(res).to.have.status(404);
+          expect(res).to.have.status(200);
           this();
         })
         .seq(function() { done(); })
