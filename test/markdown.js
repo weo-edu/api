@@ -1,10 +1,78 @@
 var markdown = require('lib/markdown');
+var FormHelper = require('./helpers/form');
+var UserHelper = require('./helpers/user');
+var ShareHelper = require('./helpers/share');
+var GroupHelper = require('./helpers/group');
+var Seq = require('seq');
 
 require('./helpers/boot');
 
 describe('Markdown tests', function() {
-  it('should have hashtags (pound symbol) disabled', function() {
-    expect(markdown('#test')).to.equal('<p>#test</p>\n');
-    expect(markdown('test\n====')).to.equal('<h1 id="md-header-test">test</h1>\n');
+  var token, group;
+  before(function(done) {
+    Seq()
+      .seq(function() {
+        UserHelper.createAndLogin(this);
+      })
+      .seq(function(user) {
+        token = user.token;
+        GroupHelper.create({}, user, this);
+      })
+      .seq(function(res) {
+        group = res.body;
+        this();
+      })
+      .seq(done);
   });
+
+  it('should work in post content', function(done) {
+    Seq()
+      .seq(function() {
+        var share = ShareHelper.generate({}, group);
+        share.object = {
+          objectType: 'post',
+          originalContent: '## Title'
+        };
+
+        request.post('/share')
+          .set('Authorization', token)
+          .send(share)
+          .end(this);
+      })
+      .seq(function(res) {
+        var share = res.body;
+        expect(share._object[0].content).to.equal('<h2 id=\"title\">Title</h2>\n');
+        expect(share._object[0].displayName).to.equal('Title');
+        this();
+      })
+      .seq(done);
+  });
+
+  it('should work for question content', function(done) {
+    Seq()
+      .seq(function() {
+        var share = ShareHelper.generate({}, group);
+        share.object = {
+          objectType: 'formQuestion',
+          originalContent: '## Title',
+          attachments: [
+            {
+              objectType: 'text'
+            }
+          ]
+        };
+
+        request.post('/share')
+          .set('Authorization', token)
+          .send(share)
+          .end(this);
+      })
+      .seq(function(res) {
+        var share = res.body;
+        expect(share._object[0].content).to.equal('<h2 id=\"title\">Title</h2>\n');
+        expect(share._object[0].displayName).to.equal('Title');
+        this();
+      })
+      .seq(done);
+  })
 });

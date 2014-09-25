@@ -9,7 +9,7 @@ var Form = module.exports = {
     delete share.verb;
     share.object.attachments = [{
       objectType: 'formQuestion',
-      displayName: 'How old are you?',
+      originalContent: 'How old are you?',
       attachments: [
         {
           objectType: 'choice',

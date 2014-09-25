@@ -129,7 +129,12 @@ describe('reputation hooks', function() {
           Share.postShare(vote, teacher.token, this);
         })
         .seq(function() {
-          User.updated(student, this);
+          // Aggregates are done in a post hook, so give it some time
+          // to finish
+          var self = this;
+          setTimeout(function() {
+            User.updated(student, self);
+          }, 500);
         })
         .seq(function(updated) {
           student = updated;
@@ -144,7 +149,12 @@ describe('reputation hooks', function() {
           Share.postShare(vote, teacher.token, this);
         })
         .seq(function() {
-          User.updated(student, this);
+          // Aggregates are done in a post hook, so give it some time
+          // to finish
+          var self = this;
+          setTimeout(function() {
+            User.updated(student, self);
+          }, 500);
         })
         .seq(function(updated) {
           student = updated;
@@ -154,7 +164,5 @@ describe('reputation hooks', function() {
         })
         .seq(done);
     });
-
   });
-
 });
