@@ -3,7 +3,7 @@ var FormHelper = require('./helpers/form');
 var UserHelper = require('./helpers/user');
 var ShareHelper = require('./helpers/share');
 var GroupHelper = require('./helpers/group');
-var Seq = require('Seq');
+var Seq = require('seq');
 
 require('./helpers/boot');
 
