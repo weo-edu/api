@@ -67,8 +67,13 @@ describe('nested share', function() {
         Share.post({channels: [channel]}, group, user.token, this);
       })
       .seq(function(res) {
+        var self = this;
         nested = res.body;
-        Share.feed({context: group.id, channel: channel}, user.token, this);
+
+        // Aggregation happens in a post, give it a moment
+        setTimeout(function() {
+          Share.feed({context: group.id, channel: channel}, user.token, self);
+        }, 500);
       })
       .seq(function(res) {
         var shares = res.body;

@@ -83,8 +83,12 @@ describe('reputation hooks', function() {
           Share.postShare(comment, student.token, this);
         })
         .seq(function(res) {
+          var self = this;
           comment = res.body;
-          User.updated(teacher, this);
+          // Aggregate channel happens in a post, give it a moment
+          setTimeout(function() {
+            User.updated(teacher, self);
+          }, 500);
         })
         .seq(function(updated) {
           teacher = updated;

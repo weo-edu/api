@@ -74,5 +74,10 @@ describe('Markdown tests', function() {
         this();
       })
       .seq(done);
-  })
+  });
+
+  it('should render math content', function() {
+    expect(markdown('test $2^2$ test')).to.contain('katex');
+    expect(markdown('test\n$$\n2^2\n$$\ntest')).to.contain('katex');
+  });
 });
