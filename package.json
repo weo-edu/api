@@ -40,7 +40,7 @@
     "katex": "^0.1.0",
     "knox": "~0.8.10",
     "lodash": "~2.4.1",
-    "marked": "git://github.com/weo-edu/marked#master",
+    "marked": "git://github.com/weo-edu/marked",
     "migrate": "git://github.com/weo-edu/node-migrate",
     "moment": "~2.6.0",
     "mongodb": "~1.4.4",
