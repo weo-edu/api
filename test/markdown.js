@@ -77,7 +77,8 @@ describe('Markdown tests', function() {
   });
 
   it('should render math content', function() {
-    expect(markdown('test $2^2$ test')).to.contain('katex');
+    expect(markdown('test $2^2$ test')).not.to.contain('katex');
+    expect(markdown('test $$2^2$$ test')).to.contain('katex');
     expect(markdown('test\n$$\n2^2\n$$\ntest')).to.contain('katex');
   });
 });
