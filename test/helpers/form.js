@@ -10,6 +10,7 @@ var Form = module.exports = {
     share.object.attachments = [{
       objectType: 'formQuestion',
       originalContent: 'How old are you?',
+      correctAnswer: ['asdf'],
       attachments: [
         {
           objectType: 'choice',
