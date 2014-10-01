@@ -81,4 +81,8 @@ describe('Markdown tests', function() {
     expect(markdown('test $$2^2$$ test')).to.contain('katex');
     expect(markdown('test\n$$\n2^2\n$$\ntest')).to.contain('katex');
   });
+
+  it('should fail silently on invalid latex', function() {
+    expect(markdown('$$ 2 \\plust 2 $$')).to.equal('<p>2 \\plust 2</p>\n');
+  });
 });
