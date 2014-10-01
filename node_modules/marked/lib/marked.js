@@ -5,7 +5,16 @@
  */
 
 ;(function() {
-var katex = require('katex');
+var _katex = require('katex');
+
+function katex(str) {
+  try {
+    return _katex.renderToString(str);
+  } catch(e) {
+    return str;
+  }
+}
+
 
 /**
  * Block-Level Grammar
@@ -777,7 +786,7 @@ function Renderer(options) {
 }
 
 Renderer.prototype.math = function(tex) {
-  return katex.renderToString(tex);
+  return katex(tex);
 };
 
 Renderer.prototype.code = function(code, lang, escaped) {
