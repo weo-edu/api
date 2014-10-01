@@ -53,7 +53,7 @@ describe('Markdown tests', function() {
       .seq(function() {
         var share = ShareHelper.generate({}, group);
         share.object = {
-          objectType: 'formQuestion',
+          objectType: 'question',
           originalContent: '## Title',
           attachments: [
             {

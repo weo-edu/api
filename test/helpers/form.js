@@ -8,7 +8,7 @@ var Form = module.exports = {
     var share = Share.generate(opts, groups);
     delete share.verb;
     share.object.attachments = [{
-      objectType: 'formQuestion',
+      objectType: 'question',
       originalContent: 'How old are you?',
       correctAnswer: ['asdf'],
       attachments: [
