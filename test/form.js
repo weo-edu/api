@@ -96,7 +96,7 @@ describe('Form controller', function() {
         .seq(function(res) {
           var inst = res.body;
           var question = inst._object[0].attachments[0];
-          expect(question.objectType).to.equal('formQuestion');
+          expect(question.objectType).to.equal('question');
           question.response = question.attachments[0]._id;
           ShareHelper.patchShare(inst, studentToken, this);
         })
