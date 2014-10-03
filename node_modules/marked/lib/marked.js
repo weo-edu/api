@@ -306,7 +306,6 @@ Lexer.prototype.token = function(src, top, bq) {
       src = src.substring(cap[0].length);
       bull = cap[2];
 
-      console.log('bull', bull, Number(bull.slice(0, -1)));
       this.tokens.push({
         type: 'list_start',
         ordered: bull.length > 1,
