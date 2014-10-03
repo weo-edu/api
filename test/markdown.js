@@ -85,4 +85,8 @@ describe('Markdown tests', function() {
   it('should fail silently on invalid latex', function() {
     expect(markdown('$$ 2 \\plust 2 $$')).to.equal('<p>2 \\plust 2</p>\n');
   });
+
+  it('should support lists that start in the middle', function() {
+    expect(markdown('2. test')).to.equal('<ol start="2">\n<li>test</li>\n</ol>\n');
+  });
 });
