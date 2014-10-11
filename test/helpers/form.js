@@ -10,9 +10,9 @@ var Form = module.exports = {
     share.object.attachments = [{
       objectType: 'question',
       originalContent: 'How old are you?',
-      correctAnswer: ['asdf'],
       attachments: [
         {
+          correctAnswer: ['asdf'],
           objectType: 'choice',
           displayName: '18'
         }
