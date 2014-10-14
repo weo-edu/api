@@ -30,7 +30,7 @@ describe('Avatar controller', function() {
         .seq(function() {
           teacher = UserHelper.create(this);
         })
-        .seq(function() {
+        .seq(function(res) {
           UserHelper.login(teacher.username, teacher.password, this);
         })
         .seq(function(res) {

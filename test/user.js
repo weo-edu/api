@@ -25,6 +25,34 @@ describe('User controller', function() {
         .seq(done);
     });
 
+    it('should be case-insensitive with respect to usernames', function(done) {
+      var user;
+      Seq()
+        .seq(function() {
+          user = UserHelper.generate();
+          request
+            .post('/user')
+            .send(user)
+            .end(this);
+        })
+        .seq(function(res) {
+          user.username = user.username.toUpperCase();
+          request
+            .post('/user')
+            .send(user)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.ValidationError('username');
+          UserHelper.login(user.username, user.password, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          this();
+        })
+        .seq(done);
+    });
+
     it('should create a new student and login successfully', function(done) {
       Seq()
         .seq(function() {
@@ -37,6 +65,7 @@ describe('User controller', function() {
         .seq(function(res) {
           var user = this.vars.user;
           expect(res).to.have.status(201);
+          user.username = user.username.toLowerCase();
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
@@ -63,6 +92,7 @@ describe('User controller', function() {
         .seq(function(res) {
           var user = this.vars.user;
           expect(res).to.have.status(201);
+          user.username = user.username.toLowerCase();
           expect(res.body).to.have
             .properties(_.omit(user,
               ['password', 'password_confirmation', 'groups']));
