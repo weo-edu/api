@@ -11,7 +11,7 @@ describe('Avatar controller', function() {
       Seq()
         .seq(function() {
           request
-            .patch('/user/avatar')
+            .put('/user/avatar')
             .send({image: 'test.jpg'})
             .end(this);
         })
@@ -44,7 +44,7 @@ describe('Avatar controller', function() {
       Seq()
         .seq(function() {
           request
-            .patch('/user/avatar')
+            .put('/user/avatar')
             .set('Authorization', authToken)
             .end(this);
         })
@@ -59,7 +59,7 @@ describe('Avatar controller', function() {
       Seq()
         .seq(function() {
           request
-            .patch('/user/avatar')
+            .put('/user/avatar')
             .set('Authorization', authToken)
             .send({image: 'notAValidAvatar'})
             .end(this);
@@ -75,7 +75,7 @@ describe('Avatar controller', function() {
       Seq()
         .seq(function() {
           request
-            .patch('/user/avatar')
+            .put('/user/avatar')
             .set('Authorization', authToken)
             .send({image: '/originals/decks/lotus.png'})
             .end(this);
