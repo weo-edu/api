@@ -119,11 +119,13 @@ describe('Form controller', function() {
                 url: student.image.url
               }
             },
-            items: 1
+            items: 1,
+            status: 'pending'
           };
           expect(updated.instances.total[0]).to.be.like({
             context: group.id,
             items: 1,
+            status: 'pending',
             actors: actorsTotal
           });
           this()
