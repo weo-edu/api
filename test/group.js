@@ -303,7 +303,7 @@ describe('Group controller', function() {
       Seq()
         .seq(function() {
           request
-            .patch('/group/' + group.id + '/archive')
+            .put('/group/' + group.id + '/archive')
             .set('Authorization', user.token)
             .end(this);
         })
@@ -333,7 +333,7 @@ describe('Group controller', function() {
           });
 
           request
-            .patch('/group/' + group.id + '/archive')
+            .put('/group/' + group.id + '/archive')
             .set('Authorization', user.token)
             .end(this);
         })
@@ -384,7 +384,7 @@ describe('Group controller', function() {
           expect(subgroup.status).to.equal('active');
 
           request
-            .patch('/group/' + group.id + '/archive')
+            .put('/group/' + group.id + '/archive')
             .set('Authorization', user.token)
             .end(this);
         })
