@@ -357,7 +357,7 @@ describe('User controller', function() {
         .seq(function() {
           // Set a new password for student, as teacher
           request
-            .patch('/student/' + student._id + '/password')
+            .put('/student/' + student._id + '/password')
             .send({newPassword: 'new password'})
             .set('Authorization', teacher.token)
             .end(this);
@@ -388,7 +388,7 @@ describe('User controller', function() {
         .seq(function(student2) {
           // Make sure student's cannot set each others passwords
           request
-            .patch('/student/' + student._id + '/password')
+            .put('/student/' + student._id + '/password')
             .send({newPassword: 'other password'})
             .set('Authorization', student2.token)
             .end(this);
@@ -413,7 +413,7 @@ describe('User controller', function() {
           // other teacher who does not own a group that
           // the student belongs to
           request
-            .patch('/student/' + student._id + '/password')
+            .put('/student/' + student._id + '/password')
             .send({newPassword: 'other password'})
             .set('Authorization', otherTeacher.token)
             .end(this);

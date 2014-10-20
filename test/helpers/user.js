@@ -111,7 +111,7 @@ var User = module.exports = {
   },
   changeAvatar: function(user, image, cb) {
     request
-      .patch('/user/avatar')
+      .put('/user/avatar')
       .set('Authorization', user.token)
       .send({image: image})
       .end(cb);
@@ -126,7 +126,7 @@ var User = module.exports = {
 
   reset: function(token, password, cb) {
     request
-      .patch('/user/reset')
+      .put('/user/reset')
       .send({token: token, password: password})
       .end(cb);
   }
