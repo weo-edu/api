@@ -48,7 +48,7 @@ describe('reputation hooks', function() {
 
   after(function() {
     require('lib/Reputation/hooks').noCharge = true;
-  })
+  });
 
   describe('should get user reputation', function() {
     it('when requrested', function(done) {
