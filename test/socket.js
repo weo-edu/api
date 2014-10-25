@@ -10,13 +10,16 @@ function connectNewUser(opts, cb) {
   var user, token, cookie;
   Seq()
     .seq(function() {
+      console.log('user create')
       user = User.create(opts, this);
     })
     .seq(function() {
+      console.log('user login')
       User.login(user.username, user.password, this);
     })
     .seq(function(res) {
       token = res.body.token;
+      console.log('socket connect');
       var con = socketConnect(token)
       con.on('connect', function() {
         cb(null, con);
@@ -25,7 +28,8 @@ function connectNewUser(opts, cb) {
 }
 
 describe('socket', function() {
-  it('should connect with valid token', function(done) {
+  it.only('should connect with valid token', function(done) {
+    console.log('connect new user');
     connectNewUser({}, function(con) {
       done();
     })
