@@ -28,7 +28,7 @@ function connectNewUser(opts, cb) {
 }
 
 describe('socket', function() {
-  it.only('should connect with valid token', function(done) {
+  it('should connect with valid token', function(done) {
     this.timeout(5000);
     console.log('connect new user');
     connectNewUser({}, function(con) {
