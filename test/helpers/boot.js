@@ -25,9 +25,11 @@ process.env.PORT = 1339;
 
 global.request = supertest(app);
 global.socketConnect = function(token) {
+  console.log('token', token);
   var qs = querystring.stringify({access_token: token});
   var url = 'http://localhost:' + config.port + '?' + qs;
   var s = socket.connect(url, {forceNew: true});
+  console.log('socket connection');
   return routerIO(s);
 };
 
