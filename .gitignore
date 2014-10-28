@@ -38,3 +38,4 @@ badge.png
 
 node_modules/lib
 assets/*
+.elasticbeanstalk/
