@@ -16,7 +16,7 @@ exports.up = function(next){
     if (active > concurrent && !stream.paused)
       stream.pause();
 
-    share.autoGrade();
+    share.object.grade();
     aggreateChannel(share, function() {
       active--;
       if (active <= concurrent && stream.paused)
