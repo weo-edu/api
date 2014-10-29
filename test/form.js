@@ -98,6 +98,7 @@ describe('Form controller', function() {
           var question = inst._object[0].attachments[0];
           expect(question.objectType).to.equal('question');
           question.response = question.attachments[0]._id;
+          inst.status = 'active';
           ShareHelper.patchShare(inst, studentToken, this);
         })
         .seq(function(res) {
@@ -119,11 +120,15 @@ describe('Form controller', function() {
                 url: student.image.url
               }
             },
-            items: 1
+            items: 1,
+            pointsScaled: 1,
+            status: 'active'
           };
           expect(updated.instances.total[0]).to.be.like({
             context: group.id,
             items: 1,
+            status: 'active',
+            pointsScaled: 1,
             actors: actorsTotal
           });
           this()

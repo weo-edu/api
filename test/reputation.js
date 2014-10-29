@@ -48,7 +48,7 @@ describe('reputation hooks', function() {
 
   after(function() {
     require('lib/Reputation/hooks').noCharge = true;
-  })
+  });
 
   describe('should get user reputation', function() {
     it('when requrested', function(done) {
@@ -74,12 +74,11 @@ describe('reputation hooks', function() {
           Share.post({}, group, teacher.token, this);
         })
         .seq(function(res) {
-          var share = post = res.body
+          var share = post = res.body;
           comment = Share.child(share, 'comment', function(parent) {
             return parent.path('replies');
           });
           comment._object[0].originalContent = 'test comment';
-
           Share.postShare(comment, student.token, this);
         })
         .seq(function(res) {
