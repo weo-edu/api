@@ -11,7 +11,7 @@ var concurrent = 50;
 
 exports.up = function(next){
   var active = 0;
-  var stream = Share.find({_id: "544eac339d330812007263ea"}).stream();
+  var stream = Share.find().stream();
   stream.on('data', function(share) {
     active++;
     if (active > concurrent && !stream.paused)
