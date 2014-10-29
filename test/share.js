@@ -220,6 +220,15 @@ describe('Share controller', function() {
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
           expect(inst.status).to.equal('pending');
+          request
+            .get('/share/' + share._id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          // check status aggregation
+          expect(share.instances.total[0].actors[student.id].status).to.equal('pending');
           this();
         })
         .seq(done);
@@ -312,6 +321,14 @@ describe('Share controller', function() {
         .seq(function(res) {
           var inst = res.body;
           expect(inst.verb).to.equal('completed');
+          request
+            .get('/share/' + share._id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.instances.total[0].actors[student.id].status).to.equal('active');
           this();
         })
         .seq(done);
