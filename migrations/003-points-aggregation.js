@@ -4,13 +4,12 @@ require('lib/schema-plugin-discriminator');
 var Share = require('lib/Share/model');
 var aggreateChannel = require('lib/Share/hooks').aggregateChannel();
 
-console.log('load migration');
 
 var concurrent = 50;
 
 exports.up = function(next){
   var active = 0;
-  var stream = Share.find({}).stream();
+  var stream = Share.find({_id: "544eac339d330812007263ea"}).stream();
   stream.on('data', function(share) {
     active++;
     if (active > concurrent && !stream.paused)
