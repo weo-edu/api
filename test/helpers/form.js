@@ -1,18 +1,25 @@
 var Faker = require('Faker')
   , Seq = require('seq')
   , UserHelper = require('./user')
-  , Share = require('./share');
+  , Share = require('./share')
+  , ObjectId = require('mongoose').Types.ObjectId;
 
 var Form = module.exports = {
   generate: function(opts, groups) {
+    opts = opts || {};
+    opts.object = {objectType : 'section'};
     var share = Share.generate(opts, groups);
+
+    var correctId = new ObjectId();
+
     delete share.verb;
     share.object.attachments = [{
       objectType: 'question',
       originalContent: 'How old are you?',
       attachments: [
         {
-          correctAnswer: ['asdf'],
+          _id: correctId,
+          correctAnswer: [correctId],
           objectType: 'choice',
           displayName: '18'
         }

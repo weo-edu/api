@@ -14,10 +14,10 @@ var mongodump = spawn('./bin/mongodump', [
   '-u', remote.username,
   '-p', remote.password], {stdio: 'inherit'});
 
-var localPort = local.hosts[0].port
+var localPort = local.hosts[1].port
 mongodump.on('exit', function() {
   spawn('./bin/mongorestore', [
-  '-h', local.hosts[0].host +  (localPort ? (':' + localPort) : ''), 
+  '-h', local.hosts[1].host +  (localPort ? (':' + localPort) : ''), 
   '-d', local.database, 
   '-u', local.username,
   '-p', local.password,
