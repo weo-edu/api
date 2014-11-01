@@ -202,6 +202,30 @@ describe('Share controller', function() {
         });
     });
 
+    it.only('should create instances for students on share publish', function(done) {
+      var share;
+      Seq()
+        .seq(function() {
+          Share.post({status: 'active'}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          setTimeout(this, 100);
+        })
+        .seq(function() {
+          request
+            .get('/share/' + share._id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.instances.total[0].actors[student.id].status).to.equal('draft');
+          this();
+        })
+        .seq(done);
+    });
+
     it('should create a pending instance when a student requests it', function(done) {
       var share;
       Seq()
