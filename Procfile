@@ -1,3 +1,3 @@
-web: npm run migrate; node app.js
-migrate: npm run migrate
+web: node app.js
+migrate: ln -s `pwd`/lib node_modules/lib; npm run migrate;
 sync: ./bin/sync.js

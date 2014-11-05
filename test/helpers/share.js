@@ -36,7 +36,7 @@ var Share = module.exports = {
   },
   patchShare: function(share, authToken, cb) {
     request
-      .put('/share')
+      .put('/share/' + share.id)
       .set('Authorization', authToken)
       .send(share)
       .end(cb);
