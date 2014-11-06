@@ -187,7 +187,8 @@ describe('Share controller', function() {
   });
 
   describe('instances', function() {
-    var student = null;
+    var student = null,
+      student2 = null;
     before(function(done) {
       Seq()
         .seq(function() {
@@ -198,8 +199,40 @@ describe('Share controller', function() {
           GroupHelper.join(group, student, this);
         })
         .seq(function() {
+          User.createAndLogin({userType: 'student'}, this);
+        })
+        .seq(function(s) {
+          student2 = s;
+          GroupHelper.join(group, student2, this);
+        })
+        .seq(function() {
           done();
         });
+    });
+
+    it('should create instances for students on share publish', function(done) {
+      var share;
+      Seq()
+        .seq(function() {
+          Share.post({status: 'active', object: {objectType: 'section', attachments: [{objectType: 'text'}]}}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          setTimeout(this, 100);
+        })
+        .seq(function() {
+          request
+            .get('/share/' + share._id)
+            .set('Authorization', user.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.instances.total[0].actors[student.id].status).to.equal('draft');
+          expect(share.instances.total[0].actors[student2.id].status).to.equal('draft');
+          this();
+        })
+        .seq(done);
     });
 
     it('should create a pending instance when a student requests it', function(done) {
