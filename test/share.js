@@ -366,6 +366,52 @@ describe('Share controller', function() {
         })
         .seq(done);
     });
+
+    it('should update share instances on edit', function(done) {
+      var share, share2, inst, inst2;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share = res.body;
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          inst = res.body;
+          var tmp = _.clone(share, true);
+          tmp._object[0].attachments.push({
+            objectType: 'post',
+            originalContent: 'test'
+          });
+          Share.patchShare(tmp, user.token, this);
+        })
+        .seq(function(res) {
+          expect(res.status).to.equal(200);
+          var self = this;
+          setTimeout(function() {
+            share2 = res.body;
+            request
+              .get('/share/' + share._id + '/instance/' + student._id)
+              .set('Authorization', student.token)
+              .end(self);
+          }, 50);
+        })
+        .seq(function(res) {
+          inst2 = res.body;
+          expect(share._object[0].attachments.length).to.not.equal(share2._object[0].attachments.length);
+          expect(inst._object[0].attachments.length).to.not.equal(inst2._object[0].attachments.length);
+          expect(share._object[0].attachments.length).to.equal(inst._object[0].attachments.length);
+          expect(share2._object[0].attachments.length).to.equal(inst2._object[0].attachments.length);
+          this();
+        })
+        .seq(function() {
+          done();
+        });
+    });
   });
 
   describe('queueing a share', function() {

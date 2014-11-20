@@ -105,7 +105,7 @@ describe('Form controller', function() {
           response = res.body;
           request.get('/share/' + assignment._id)
             .set('Authorization', teacherToken)
-            .end(this);
+            .end(self);
         })
         .seq(function(res) {
           var updated = res.body;
