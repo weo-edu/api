@@ -74,12 +74,12 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.share = res.body;
-          Share.feed(['group!' + group.id + '.board'], user.token, this);
+          Share.feed(['group!' + group._id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an.array;
-          expect(res.body.items).to.include.an.item.with.properties({id: this.vars.share.id});
+          expect(res.body.items).to.include.an.item.with.properties({_id: this.vars.share._id});
           this();
         })
         .seq(done);
@@ -92,7 +92,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          Share.members(share._id, group.id, user.token, this);
+          Share.members(share._id, group._id, user.token, this);
         })
         .seq(function(res) {
           var students = res.body;
@@ -136,7 +136,7 @@ describe('Share controller', function() {
           _.each(responses, function(res) {
             expect(res).to.have.status(201);
           });
-          Share.feed(['group!' + group.id + '.board'], user.token, this);
+          Share.feed(['group!' + group._id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -156,7 +156,7 @@ describe('Share controller', function() {
 
     it('should allow paging', function(done) {
       var last = null;
-      var channel = 'group!' + group.id + '.board';
+      var channel = 'group!' + group._id + '.board';
       Seq(_.range(1, 5))
         .seqEach(function() {
           Share.post({}, group, user.token, this);
@@ -173,7 +173,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           var shares = res.body.items;
           expect(shares).to.have.length(2);
-          expect(shares[1].id).not.to.equal(last.id)
+          expect(shares[1]._id).not.to.equal(last._id)
           Share.feed({channel: channel, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
         })
         .seq(function(res) {
@@ -228,8 +228,8 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          expect(share.instances.total[0].actors[student.id].status).to.equal('draft');
-          expect(share.instances.total[0].actors[student2.id].status).to.equal('draft');
+          expect(share.instances.total[0].actors[student._id].status).to.equal('draft');
+          expect(share.instances.total[0].actors[student2._id].status).to.equal('draft');
           this();
         })
         .seq(done);
@@ -261,7 +261,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           var share = res.body;
           // check status aggregation
-          expect(share.instances.total[0].actors[student.id].status).to.equal('pending');
+          expect(share.instances.total[0].actors[student._id].status).to.equal('pending');
           this();
         })
         .seq(done);
@@ -361,7 +361,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          expect(share.instances.total[0].actors[student.id].status).to.equal('active');
+          expect(share.instances.total[0].actors[student._id].status).to.equal('active');
           this();
         })
         .seq(done);
@@ -423,12 +423,12 @@ describe('Share controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(201);
           this.vars.share = res.body;
-          Share.feed(['group!' + group.id + '.board'], user.token, this);
+          Share.feed(['group!' + group._id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body.items).to.be.an.array;
-          expect(res.body.items).to.include.an.item.with.properties({id: this.vars.share.id});
+          expect(res.body.items).to.include.an.item.with.properties({_id: this.vars.share._id});
           this();
         })
         .seq(done);
@@ -447,13 +447,13 @@ describe('Share controller', function() {
         .seq(function(res) {
           this.vars.share = res.body;
           expect(res).to.have.status(201);
-          Share.feed(['group!' + group.id + '.board'], user.token, this);
+          Share.feed(['group!' + group._id + '.board'], user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
           var shares = res.body.items;
           expect(shares).to.be.an.array;
-          expect(shares[0].id).to.equal(this.vars.queued.id);
+          expect(shares[0]._id).to.equal(this.vars.queued._id);
           this();
         })
         .seq(done);
@@ -469,7 +469,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           var queued = res.body;
           expect(res).to.have.status(201);
-          Share.del(queued.id, user.token, this);
+          Share.del(queued._id, user.token, this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);
@@ -516,7 +516,7 @@ describe('Share controller', function() {
       .flatten()
       .parEach(function(user) {
         var self = this;
-        user.con.post('/share/subscription', {channel: 'group!' + group.id + '.board'}, function() {
+        user.con.post('/share/subscription', {channel: 'group!' + group._id + '.board'}, function() {
           self();
         });
       })
@@ -597,10 +597,10 @@ describe('Share controller', function() {
                 descriptor: Group.toAbstractKey(group),
                 allow: [
                   access.entry('group', 'teacher', Group.toAbstractKey(group)),
-                  access.entry('user', 'student', {id: studentMember.id})
+                  access.entry('user', 'student', {id: studentMember._id})
                 ]
               }],
-              channels: ['group!' + group.id + '.board']
+              channels: ['group!' + group._id + '.board']
             }, group, teacherMember.token, this);
           })
           .seq(function(res) {
@@ -701,10 +701,10 @@ function connectUser(user, cb) {
 function checkinFeed(user, group, post, done) {
   Seq()
     .seq(function() {
-      Share.feed('group!' + group.id + '.board', user.token, this)
+      Share.feed('group!' + group._id + '.board', user.token, this)
     })
     .seq(function(res) {
-      expect(res.body.items).to.contain.an.item.with.properties({id: post._id});
+      expect(res.body.items).to.contain.an.item.with.properties({_id: post._id});
       this();
     })
     .seq(done);
@@ -713,13 +713,13 @@ function checkinFeed(user, group, post, done) {
 function checkNotInFeed(user, group, post, done) {
   Seq()
     .seq(function() {
-      Share.feed('group!' + group.id + '.board', user.token, this);
+      Share.feed('group!' + group._id + '.board', user.token, this);
     })
     .seq(function(res) {
       var shares = res.body.items;
       expect(shares).to.satisfy(function(shares) {
         return (shares || []).every(function(share) {
-          return share.id !== post.id;
+          return share._id !== post._id;
         });
       });
 

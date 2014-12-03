@@ -6,6 +6,8 @@ var _ = require('lodash');
 
 require('./helpers/boot');
 
+var excluded = ['__v', 'board', 'updatedAt', 'id', 'ownerIds', 'createdAt'];
+
 describe('Group controller', function() {
   var user;
   before(function(done) {
@@ -112,7 +114,7 @@ describe('Group controller', function() {
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt', '__v', 'board')).to.eql(_.omit(group, 'createdAt', 'updatedAt', '__v', 'board'));
+  				expect(_.omit(res.body, excluded)).to.eql(_.omit(group, excluded));
   				this();
   			})
   			.seq(done);
@@ -136,7 +138,7 @@ describe('Group controller', function() {
   					.end(this);
   			})
   			.seq(function(res) {
-  				expect(_.omit(res.body, 'createdAt', 'updatedAt', '__v', 'board')).to.eql(_.omit(group, 'createdAt', 'updatedAt', '__v', 'board'));
+  				expect(_.omit(res.body, excluded)).to.eql(_.omit(group, excluded));
   				this();
   			})
   			.seq(done);
