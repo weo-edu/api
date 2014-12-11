@@ -228,8 +228,8 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          expect(share.instances.total[0].actors[student._id].status).to.equal('draft');
-          expect(share.instances.total[0].actors[student2._id].status).to.equal('draft');
+          expect(share.instances.total[0].actors[student._id].status).to.equal('unstarted');
+          expect(share.instances.total[0].actors[student2._id].status).to.equal('unstarted');
           this();
         })
         .seq(done);
@@ -284,13 +284,13 @@ describe('Share controller', function() {
           var inst = res.body;
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
-          expect(inst.status).to.equal('draft');
+          expect(inst.status).to.equal('unstarted');
           this();
         })
         .seq(done);
     });
 
-    it('should change from draft to pending if a teacher requests it and then the student requests it', function(done) {
+    it('should change from unstarted to pending if a teacher requests it and then the student requests it', function(done) {
       var share;
       Seq()
         .seq(function() {
@@ -307,7 +307,7 @@ describe('Share controller', function() {
           var inst = res.body;
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
-          expect(inst.status).to.equal('draft');
+          expect(inst.status).to.equal('unstarted');
           this();
         })
         .seq(function() {
