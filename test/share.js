@@ -383,6 +383,7 @@ describe('Share controller', function() {
         .seq(function(res) {
           inst = res.body;
           var tmp = _.clone(share, true);
+          tmp.displayName = 'aaaaaaaa';
           tmp._object[0].attachments.push({
             objectType: 'post',
             originalContent: 'test'
@@ -402,6 +403,9 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           inst2 = res.body;
+          expect(share.displayName).to.not.equal(share2.displayName);
+          expect(inst.displayName).to.not.equal(inst2.displayName);
+          expect(inst2.displayName).to.equal(share2.displayName);
           expect(share._object[0].attachments.length).to.not.equal(share2._object[0].attachments.length);
           expect(inst._object[0].attachments.length).to.not.equal(inst2._object[0].attachments.length);
           expect(share._object[0].attachments.length).to.equal(inst._object[0].attachments.length);
