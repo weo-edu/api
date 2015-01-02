@@ -261,7 +261,8 @@ describe('User controller', function() {
         .seq(function(res) {
           expect(res).to.have.status(200);
           expect(res.body.items).to.have.length(1);
-          expect(_.omit(res.body.items[0], '__v', 'board', 'updatedAt')).to.deep.equal(_.omit(group, '__v', 'board', 'updatedAt'));
+          var excluded = ['__v', 'board', 'updatedAt', 'id', 'ownerIds'];
+          expect(_.omit(res.body.items[0], excluded)).to.deep.equal(_.omit(group, excluded));
           this();
         })
         .seq(done);
