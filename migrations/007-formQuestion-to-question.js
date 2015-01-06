@@ -6,8 +6,8 @@ var async = require('async');
 exports.up = function(next){
   chug.src('Share')
     .pipe(es.through(function(doc) {
-      var attachments = doc._object[0];
-      attachments.forEach(function(object) {
+      var attachments = doc._object[0].attachments;
+      attachments && attachments.forEach(function(object) {
         if(object.objectType === 'formQuestion')
           object.objectType = 'question';
       });
