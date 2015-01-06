@@ -1,8 +1,9 @@
-var Seq = require('seq')
-  , User = require('./helpers/user')
-  , Share = require('./helpers/share')
-  , Group = require('./helpers/group')
-  , access = require('lib/access');
+var Seq = require('seq');
+var User = require('./helpers/user');
+var Share = require('./helpers/share');
+var Group = require('./helpers/group');
+var access = require('lib/access');
+var awaitHooks = require('./helpers/awaitHooks');
 
 require('./helpers/boot');
 
@@ -66,14 +67,11 @@ describe('nested share', function() {
       .seq(function() {
         Share.post({channels: [channel]}, group, user.token, this);
       })
+      .seq(awaitHooks)
       .seq(function(res) {
-        var self = this;
         nested = res.body;
 
-        // Aggregation happens in a post, give it a moment
-        setTimeout(function() {
-          Share.feed({context: group.id, channel: channel}, user.token, self);
-        }, 500);
+        Share.feed({context: group.id, channel: channel}, user.token, this);
       })
       .seq(function(res) {
         var shares = res.body;

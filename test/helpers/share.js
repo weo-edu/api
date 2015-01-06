@@ -26,7 +26,6 @@ var Share = module.exports = {
       .end(cb);
     return share;
   },
-
   postShare: function(share, authToken, cb) {
     request
       .post('/share')
@@ -34,11 +33,18 @@ var Share = module.exports = {
       .send(share)
       .end(cb);
   },
-  patchShare: function(share, authToken, cb) {
+  updateShare: function(share, authToken, cb) {
     request
       .put('/share/' + share.id)
       .set('Authorization', authToken)
       .send(share)
+      .end(cb);
+  },
+  updateInstance: function(inst, authToken, cb) {
+    request
+      .put('/share/' + inst.id + '/instance')
+      .set('Authorization', authToken)
+      .send(inst)
       .end(cb);
   },
   child: function(parent, objectType, channelFn) {
@@ -48,7 +54,12 @@ var Share = module.exports = {
     });
     return child.toJSON();
   },
-
+  getInstance: function(token, id, userId, cb) {
+    request
+      .get('/share/' + id + '/instance/' + userId)
+      .set('Authorization', token)
+      .end(cb);
+  },
   feed: function(query, authToken, cb) {
     if (!cb) {
       cb = authToken;

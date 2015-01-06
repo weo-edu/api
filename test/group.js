@@ -2,6 +2,7 @@ var Seq = require('seq');
 var UserHelper = require('./helpers/user');
 var GroupHelper = require('./helpers/group');
 var Group = require('lib/Group/model');
+var awaitHooks = require('./helpers/awaitHooks');
 var _ = require('lodash');
 
 require('./helpers/boot');
@@ -339,19 +340,13 @@ describe('Group controller', function() {
             .set('Authorization', user.token)
             .end(this);
         })
+        .seq(awaitHooks)
         .seq(function(res) {
-          var self = this;
           expect(res).to.have.status(200);
-          // We have to setTimeout here because
-          // these foreign keys are updated in a
-          // post hook so it may take an event loop
-          // or two for them to get updated
-          setTimeout(function() {
-            request
-              .get('/' + user.userType + '/' + user.id)
-              .set('Authorization', user.token)
-              .end(self);
-          }, 50);
+          request
+            .get('/' + user.userType + '/' + user.id)
+            .set('Authorization', user.token)
+            .end(this);
         })
         .seq(function(res) {
           expect(res).to.have.status(200);

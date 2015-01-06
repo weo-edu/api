@@ -1,16 +1,13 @@
 require('./helpers/boot');
 
-
-var Seq = require('seq')
-  , User = require('./helpers/user')
-  , Share = require('./helpers/share')
-  , GroupHelper = require('./helpers/group')
-  , Group = require('lib/Group/model')
-  , Cookie = require('cookie')
-  , access = require('lib/access');
-
-
-
+var Seq = require('seq');
+var User = require('./helpers/user');
+var Share = require('./helpers/share');
+var GroupHelper = require('./helpers/group');
+var Group = require('lib/Group/model');
+var Cookie = require('cookie');
+var awaitHooks = require('./helpers/awaitHooks');
+var access = require('lib/access');
 
 describe('reputation hooks', function() {
   var teacher, group, student;
@@ -81,13 +78,11 @@ describe('reputation hooks', function() {
           comment._object[0].originalContent = 'test comment';
           Share.postShare(comment, student.token, this);
         })
+        .seq(awaitHooks)
         .seq(function(res) {
-          var self = this;
           comment = res.body;
           // Aggregate channel happens in a post, give it a moment
-          setTimeout(function() {
-            User.updated(teacher, self);
-          }, 500);
+          User.updated(teacher, this);
         })
         .seq(function(updated) {
           teacher = updated;
@@ -131,19 +126,16 @@ describe('reputation hooks', function() {
           vote._object[0].action = 'up';
           Share.postShare(vote, teacher.token, this);
         })
+        .seq(awaitHooks)
         .seq(function() {
           // Aggregates are done in a post hook, so give it some time
           // to finish
-          var self = this;
-          setTimeout(function() {
-            User.updated(student, self);
-          }, 500);
+          User.updated(student, this);
         })
         .seq(function(updated) {
           student = updated;
           expect(student.reputation.canonicalTotal.items).to.equal(1);
           expect(student.reputation.canonicalTotal.points).to.equal(1);
-
 
           var vote = Share.child(comment, 'vote', function(parent) {
             return [parent.object.path('votes')];
@@ -151,13 +143,11 @@ describe('reputation hooks', function() {
           vote._object[0].action = 'down';
           Share.postShare(vote, teacher.token, this);
         })
+        .seq(awaitHooks)
         .seq(function() {
           // Aggregates are done in a post hook, so give it some time
           // to finish
-          var self = this;
-          setTimeout(function() {
-            User.updated(student, self);
-          }, 500);
+          User.updated(student, this);
         })
         .seq(function(updated) {
           student = updated;
