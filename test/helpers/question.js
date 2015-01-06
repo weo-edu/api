@@ -1,10 +1,10 @@
-var Faker = require('Faker')
-  , Seq = require('seq')
-  , UserHelper = require('./user')
-  , Share = require('./share')
-  , ObjectId = require('mongoose').Types.ObjectId;
+var Faker = require('Faker');
+var Seq = require('seq');
+var UserHelper = require('./user');
+var Share = require('./share');
+var ObjectId = require('mongoose').Types.ObjectId;
 
-var Form = module.exports = {
+var Question = module.exports = {
   generate: function(opts, groups) {
     opts = opts || {};
     opts.object = {objectType : 'section'};
@@ -27,17 +27,13 @@ var Form = module.exports = {
     }];
     return share;
   },
-  randomTo: function() {
-    return '' + Math.random();
-  },
-  getInstance: function(token, id, userId, cb) {
-    request
-      .get('/share/' + id + '/instance/' + userId)
-      .set('Authorization', token)
-      .end(cb);
-  },
-  create: function(token, type, opts, cb) {
-    var share = this.generate(opts, opts.to || opts.context || [this.randomTo()]);
+  create: function(token, opts, cb) {
+    if(arguments.length < 3) {
+      cb = opts;
+      opts = {};
+    }
+
+    var share = this.generate(opts, opts.context);
     delete opts.context;
     request
       .post('/share')

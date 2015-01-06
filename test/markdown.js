@@ -1,5 +1,4 @@
 var markdown = require('lib/markdown');
-var FormHelper = require('./helpers/form');
 var UserHelper = require('./helpers/user');
 var ShareHelper = require('./helpers/share');
 var GroupHelper = require('./helpers/group');

@@ -30,4 +30,3 @@ global.socketConnect = function(token) {
   var s = socket.connect(url, {forceNew: true});
   return routerIO(s);
 };
-

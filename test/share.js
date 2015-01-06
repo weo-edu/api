@@ -1,17 +1,17 @@
 require('./helpers/boot');
 
-var Seq = require('seq')
-  , User = require('./helpers/user')
-  , Share = require('./helpers/share')
-  , GroupHelper = require('./helpers/group')
-  , Group = require('lib/Group/model')
-  , Cookie = require('cookie')
-  , access = require('lib/access');
-
+var Seq = require('seq');
+var User = require('./helpers/user');
+var Share = require('./helpers/share');
+var GroupHelper = require('./helpers/group');
+var Group = require('lib/Group/model');
+var Cookie = require('cookie');
+var access = require('lib/access');
+var awaitHooks = require('./helpers/awaitHooks');
 
 describe('Share controller', function() {
-  var user = null
-    , group = null;
+  var user = null;
+  var group = null;
 
   before(function(done) {
     Seq()
@@ -211,16 +211,13 @@ describe('Share controller', function() {
     });
 
     it('should create instances for students on share publish', function(done) {
-      var share;
       Seq()
         .seq(function() {
           Share.post({status: 'active', object: {objectType: 'section', attachments: [{objectType: 'text'}]}}, group, user.token, this);
         })
+        .seq(awaitHooks)
         .seq(function(res) {
-          share = res.body;
-          setTimeout(this, 100);
-        })
-        .seq(function() {
+          var share = res.body;
           request
             .get('/share/' + share._id)
             .set('Authorization', user.token)
@@ -388,18 +385,16 @@ describe('Share controller', function() {
             objectType: 'post',
             originalContent: 'test'
           });
-          Share.patchShare(tmp, user.token, this);
+          Share.updateShare(tmp, user.token, this);
         })
+        .seq(awaitHooks)
         .seq(function(res) {
           expect(res.status).to.equal(200);
-          var self = this;
-          setTimeout(function() {
-            share2 = res.body;
-            request
-              .get('/share/' + share._id + '/instance/' + student._id)
-              .set('Authorization', student.token)
-              .end(self);
-          }, 50);
+          share2 = res.body;
+          request
+            .get('/share/' + share._id + '/instance/' + student._id)
+            .set('Authorization', student.token)
+            .end(this);
         })
         .seq(function(res) {
           inst2 = res.body;
