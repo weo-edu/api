@@ -4,6 +4,7 @@ var qs = require('querystring');
 var async = require('async');
 
 exports.up = function(next){
+  var n = 0;
   chug.src('Share')
     .pipe(es.through(function(doc) {
       var attachments = doc._object[0].attachments;
@@ -12,8 +13,13 @@ exports.up = function(next){
           object.objectType = 'question';
       });
 
+      n++;
+      console.log('items', n);
       this.emit('data', doc);
     }))
+    .on('error', function(err) {
+      console.log('error', err);
+    })
     .pipe(chug.dest('Share'))
     .on('end', next);
 };
