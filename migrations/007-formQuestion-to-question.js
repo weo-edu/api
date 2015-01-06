@@ -5,7 +5,7 @@ var async = require('async');
 
 exports.up = function(next){
   var n = 0;
-  chug.src('Share')
+  chug.src('shares')
     .pipe(es.through(function(doc) {
       var attachments = doc._object[0].attachments;
       attachments && attachments.forEach(function(object) {
@@ -20,7 +20,7 @@ exports.up = function(next){
     .on('error', function(err) {
       console.log('error', err);
     })
-    .pipe(chug.dest('Share'))
+    .pipe(chug.dest('shares'))
     .on('end', next);
 };
 
