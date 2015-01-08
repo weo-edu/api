@@ -15,7 +15,6 @@ describe('reputation hooks', function() {
   before(function(done) {
     // enable charging
     require('lib/Reputation/hooks').noCharge = false;
-
     Seq()
       .seq(function() {
         User.createAndLogin(this);
@@ -40,7 +39,6 @@ describe('reputation hooks', function() {
       .seq(function() {
         done();
       });
-
   });
 
   after(function() {
@@ -48,7 +46,7 @@ describe('reputation hooks', function() {
   });
 
   describe('should get user reputation', function() {
-    it('when requrested', function(done) {
+    it('when requested', function(done) {
       Seq()
         .seq(function() {
           User.reputation(teacher, this);
@@ -70,6 +68,7 @@ describe('reputation hooks', function() {
         .seq(function() {
           Share.post({}, group, teacher.token, this);
         })
+        .seq(awaitHooks)
         .seq(function(res) {
           var share = post = res.body;
           comment = Share.child(share, 'comment', function(parent) {
