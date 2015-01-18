@@ -14,7 +14,6 @@ exports.up = function(next){
       });
 
       n++;
-      console.log('items', n);
       this.emit('data', doc);
     }))
     .on('error', function(err) {
