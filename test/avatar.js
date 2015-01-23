@@ -55,7 +55,7 @@ describe('Avatar controller', function() {
         .seq(done);
     });
 
-    it('should error if an invalid avatar is specified', function(done) {
+    it.only('should error if an invalid avatar is specified', function(done) {
       Seq()
         .seq(function() {
           request
