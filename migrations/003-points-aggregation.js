@@ -2,7 +2,7 @@ require('lib/db');
 require('lib/schema-plugin-extend');
 require('lib/schema-plugin-discriminator');
 var Share = require('lib/Share/model');
-var Section = require('lib/Object-Posts/Section/model');
+var Section = require('lib/Object/types/Section/model');
 var Question = require('lib/Question/model');
 var aggreateChannel = require('lib/Share/hooks').aggregateChannel();
 
