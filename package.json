@@ -19,6 +19,7 @@
     "body-parser": "~1.0.2",
     "browserify": "^7.0.1",
     "bytes": "~0.3.0",
+    "chai": "^1.9.2",
     "chug": "git://github.com/weo-edu/chug",
     "clone": "^0.1.15",
     "compression": "~1.0.1",
@@ -80,15 +81,17 @@
     "chai-http": "~0.4.0",
     "chai-properties": "~1.1.0",
     "chai-things": "~0.2.0",
+    "cheerio": "~0.17.0",
+    "cookie": "~0.1.2",
+    "cookie-parser": "~1.0.1",
     "debug-trace": "~0.2.3",
     "express-inject-latency": "0.0.3",
     "jshint": "^2.5.1",
     "lodash": "~2.4.1",
     "mocha": "^1.18.2",
-    "supertest": "~0.11.0",
+    "sinon": "^1.12.2",
+    "sinon-chai": "^2.6.0",
     "superagent": "~0.18.2",
-    "cookie-parser": "~1.0.1",
-    "cookie": "~0.1.2",
-    "cheerio": "~0.17.0"
+    "supertest": "~0.11.0"
   }
 }

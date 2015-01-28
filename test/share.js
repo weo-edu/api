@@ -219,12 +219,12 @@ describe('Share controller', function() {
         .seq(function(res) {
           var share = res.body;
           var self = this;
-          // setTimeout(function() {
+          setTimeout(function() {
             request
               .get('/share/' + share._id)
               .set('Authorization', user.token)
               .end(self);
-          // }, 500);
+          }, 750);
         })
         .seq(function(res) {
           var share = res.body;
