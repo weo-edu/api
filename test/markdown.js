@@ -29,35 +29,11 @@ describe('Markdown tests', function() {
       .seq(function() {
         var share = ShareHelper.generate({}, group);
         share.object = {
-          objectType: 'post',
-          originalContent: '## Title'
-        };
-
-        request.post('/share')
-          .set('Authorization', token)
-          .send(share)
-          .end(this);
-      })
-      .seq(function(res) {
-        var share = res.body;
-        console.log('res', res.body);
-        expect(share._object[0].content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
-        expect(share._object[0].displayName).to.equal('Title');
-        this();
-      })
-      .seq(done);
-  });
-
-  it('should work for question content', function(done) {
-    Seq()
-      .seq(function() {
-        var share = ShareHelper.generate({}, group);
-        share.object = {
-          objectType: 'question',
-          originalContent: '## Title',
+          objectType: 'section',
           attachments: [
             {
-              objectType: 'text'
+              objectType: 'post',
+              originalContent: '## Title'
             }
           ]
         };
@@ -69,8 +45,43 @@ describe('Markdown tests', function() {
       })
       .seq(function(res) {
         var share = res.body;
-        expect(share._object[0].content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
-        expect(share._object[0].displayName).to.equal('Title');
+        var obj = share._object[0].attachments[0];
+        expect(obj.content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
+        expect(obj.displayName).to.equal('Title');
+        this();
+      })
+      .seq(done);
+  });
+
+  it('should work for question content', function(done) {
+    Seq()
+      .seq(function() {
+        var share = ShareHelper.generate({}, group);
+        share.object = {
+          objectType: 'section',
+          attachments: [
+            {
+              objectType: 'question',
+              originalContent: '## Title',
+              attachments: [
+                {
+                  objectType: 'text'
+                }
+              ]
+            }
+          ]
+        };
+
+        request.post('/share')
+          .set('Authorization', token)
+          .send(share)
+          .end(this);
+      })
+      .seq(function(res) {
+        var share = res.body;
+        var obj = share._object[0].attachments[0];
+        expect(obj.content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
+        expect(obj.displayName).to.equal('Title');
         this();
       })
       .seq(done);

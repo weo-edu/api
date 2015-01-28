@@ -77,6 +77,7 @@ var Share = module.exports = {
   generate: function(opts, groups) {
     opts = opts || {};
     var share = _.defaults(opts, {
+      shareType: 'share',
       verb: _.sample(verbs),
       object: Share.generateObject(opts.object)
     });
