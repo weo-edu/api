@@ -124,12 +124,14 @@ describe('Questions', function() {
             pointsScaled: 1,
             status: 'active'
           };
+          var time = updated.instances.total[0].publishedAt;
           expect(updated.instances.total[0]).to.be.like({
             context: group.id,
             items: 1,
             status: 'active',
             pointsScaled: 1,
-            actors: actorsTotal
+            actors: actorsTotal,
+            publishedAt: time
           });
           this();
         })

@@ -416,52 +416,6 @@ describe('Share controller', function() {
     });
   });
 
-  describe('queueing a share', function() {
-    it('should show up in feed', function(done) {
-      Seq()
-        .seq(function() {
-          Share.queue({}, group, user.token, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          this.vars.share = res.body;
-          Share.feed(['group!' + group._id + '.board'], user.token, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200);
-          expect(res.body.items).to.be.an.array;
-          expect(res.body.items).to.include.an.item.with.properties({_id: this.vars.share._id});
-          this();
-        })
-        .seq(done);
-    });
-
-    it('should show queued shares before published shares', function(done) {
-      Seq()
-        .seq(function() {
-          Share.queue({}, group, user.token, this);
-        })
-        .seq(function(res) {
-          this.vars.queued = res.body;
-          expect(res).to.have.status(201);
-          Share.post({}, group, user.token, this);
-        })
-        .seq(function(res) {
-          this.vars.share = res.body;
-          expect(res).to.have.status(201);
-          Share.feed(['group!' + group._id + '.board'], user.token, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200);
-          var shares = res.body.items;
-          expect(shares).to.be.an.array;
-          expect(shares[0]._id).to.equal(this.vars.queued._id);
-          this();
-        })
-        .seq(done);
-    });
-  });
-
   describe('deleting a share', function() {
     it('should succeed for queued shares', function(done) {
       Seq()
