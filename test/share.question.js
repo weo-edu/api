@@ -111,6 +111,7 @@ describe('Questions', function() {
           var updated = res.body;
           expect(updated.instances.total.length).to.equal(1);
           var actorsTotal = {};
+          var time = updated.instances.total[0].publishedAt;
           actorsTotal[student.id] = {
             actor: {
               displayName: student.displayName,
@@ -122,14 +123,16 @@ describe('Questions', function() {
             },
             items: 1,
             pointsScaled: 1,
-            status: 'active'
+            status: 'active',
+            publishedAt: time
           };
           expect(updated.instances.total[0]).to.be.like({
             context: group.id,
             items: 1,
             status: 'active',
             pointsScaled: 1,
-            actors: actorsTotal
+            actors: actorsTotal,
+            publishedAt: time
           });
           this();
         })

@@ -11,7 +11,7 @@ exports.up = function(next){
       if (doc.shareType === 'shareInstance' || 
         (doc._object[0].objectType === 'section' && doc.shareType === 'share')) {
         doc.channels = doc.channels.filter(function(channel) {
-          return channel.indexOf('activities') === -1;
+          return channel.indexOf('activities') === -1 && channel.indexOf('public') === -1;
         });
       }
       this.emit('data', doc);
