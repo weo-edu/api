@@ -40,7 +40,6 @@ describe('Markdown tests', function() {
       })
       .seq(function(res) {
         var share = res.body;
-        console.log('res', res.body);
         expect(share._object[0].content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
         expect(share._object[0].displayName).to.equal('Title');
         this();
