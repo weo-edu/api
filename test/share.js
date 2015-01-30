@@ -218,13 +218,10 @@ describe('Share controller', function() {
         .seq(awaitHooks)
         .seq(function(res) {
           var share = res.body;
-          var self = this;
-          setTimeout(function() {
-            request
-              .get('/share/' + share._id)
-              .set('Authorization', user.token)
-              .end(self);
-          }, 750);
+          request
+            .get('/share/' + share._id)
+            .set('Authorization', user.token)
+            .end(this);
         })
         .seq(function(res) {
           var share = res.body;

@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "validate": "noiit && jshint lib/**",
-    "test": "noiit && jshint lib/** && mocha",
+    "test": "noiit && jshint lib/** && mocha && mocha lib/*/test",
     "start": "node app",
     "docs": "apidoc -i lib -o doc && apidoc-markdown -p doc -o api.md",
     "migrate": "node bin/migrate.js"
@@ -59,7 +59,7 @@
     "property-path": "0.0.5",
     "qs": "~2.2.3",
     "redis": "~0.10.1",
-    "redis-lock": "0.0.8",
+    "redis-lock": "0.0.9",
     "redis-url": "~0.2.0",
     "request": "~2.42.0",
     "routification": "0.0.1",
