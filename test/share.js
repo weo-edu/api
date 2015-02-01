@@ -218,13 +218,10 @@ describe('Share controller', function() {
         .seq(awaitHooks)
         .seq(function(res) {
           var share = res.body;
-          var self = this;
-          // setTimeout(function() {
-            request
-              .get('/share/' + share._id)
-              .set('Authorization', user.token)
-              .end(self);
-          // }, 500);
+          request
+            .get('/share/' + share._id)
+            .set('Authorization', user.token)
+            .end(this);
         })
         .seq(function(res) {
           var share = res.body;
@@ -384,6 +381,7 @@ describe('Share controller', function() {
           inst = res.body;
           var tmp = _.clone(share, true);
           tmp.displayName = 'aaaaaaaa';
+          tmp._object[0].objectType = 'section';
           tmp._object[0].attachments.push({
             objectType: 'post',
             originalContent: 'test'
