@@ -201,7 +201,6 @@ describe('User controller', function() {
           UserHelper.create({username: this.vars.user1.username}, this);
         })
         .seq(function(res) {
-          console.log('res', res.body);
           expect(res).to.have.status(400);
           expect(res).to.have
             .ValidationError('username', 'unique', 'Username already exists');

@@ -48,6 +48,36 @@ describe('Share controller', function() {
         })
         .seq(done);
     });
+    
+    it('should not allow the user to set the content field directly', function(done) {
+      var prevContent;
+      Seq()
+        .seq(function() {
+          Share.post({
+            _object: [{
+              objectType: 'section', 
+              attachments: [{
+                objectType: 'post',
+                originalContent: 'test',
+              }]
+            }]
+          }, group, user.token, this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(res).to.have.status(201);
+          var post = share._object[0].attachments[0];
+          prevContent = post.content;
+          post.content = 'asdf';
+          Share.updateShare(share, user.token, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          var share = res.body;
+          expect(share._object[0].attachments[0].content).to.equal(prevContent);
+          done();
+        });
+    });
   });
 
   describe('posting a share', function() {
