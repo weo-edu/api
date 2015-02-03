@@ -1,8 +1,9 @@
-var Faker = require('Faker')
-  , chai = require('chai')
-  , access = require('lib/access/helpers')
-  , Group = require('lib/Group/model')
-  , ShareModel = require('lib/Share/model');
+var Faker = require('Faker');
+var chai = require('chai');
+var access = require('lib/access/helpers');
+var Group = require('lib/Group/model');
+var ShareModel = require('lib/Share/model');
+var asArray = require('lib/as-array');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
@@ -82,7 +83,7 @@ var Share = module.exports = {
       object: Share.generateObject(opts.object)
     });
 
-    share.contexts = opts.contexts || [].concat(opts.contexts || groups).map(function(group) {
+    share.contexts = opts.contexts || asArray(opts.contexts || groups).map(function(group) {
       return {
         descriptor: Group.toAbstractKey(group),
         allow: [
