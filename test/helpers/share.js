@@ -19,7 +19,7 @@ var Share = module.exports = {
   },
   queue: function(opts, groups, authToken, cb) {
     var share = Share.generate(opts, groups);
-    share.status = 'pending';
+    share.channels = ['share!' + share.id + '.drafts'];
     request
       .post('/share')
       .set('Authorization', authToken)
