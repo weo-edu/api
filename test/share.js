@@ -373,9 +373,9 @@ describe('Share controller', function() {
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
           expect(inst.verb).to.equal('started');
-
+          inst.status = status.turnedIn;
           request
-            .put('/share/' + inst._id + '/turnin')
+            .put('/share/' + inst._id + '/instance')
             .set('Authorization', student.token)
             .end(this);
         })
