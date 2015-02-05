@@ -355,7 +355,7 @@ describe('Share controller', function() {
         .seq(done);
     });
 
-    it('should set the verb to "completed" on publish', function(done) {
+    it('should set the verb to "completed" on turn in', function(done) {
       var share;
       Seq()
         .seq(function() {
@@ -377,6 +377,7 @@ describe('Share controller', function() {
           request
             .put('/share/' + inst._id + '/instance')
             .set('Authorization', student.token)
+            .send(inst)
             .end(this);
         })
         .seq(function(res) {
