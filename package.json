@@ -89,6 +89,7 @@
     "jshint": "^2.5.1",
     "lodash": "~2.4.1",
     "mocha": "^1.18.2",
+    "mock-require": "^1.0.5",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.6.0",
     "superagent": "~0.18.2",
