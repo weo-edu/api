@@ -390,7 +390,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          expect(share.instances.total[0].actors[student._id].status).to.equal(status.turnedIn);
+          expect(share.instances.total[0].actors[student._id].status).to.equal(status.graded);
           this();
         })
         .seq(done);
