@@ -8,6 +8,7 @@ var Group = require('lib/Group/model');
 var Cookie = require('cookie');
 var access = require('lib/access');
 var awaitHooks = require('./helpers/awaitHooks');
+var status = require('lib/Share/status');
 
 describe('Share controller', function() {
   var user = null;
@@ -48,14 +49,14 @@ describe('Share controller', function() {
         })
         .seq(done);
     });
-    
+
     it('should not allow the user to set the content field directly', function(done) {
       var prevContent;
       Seq()
         .seq(function() {
           Share.post({
             _object: [{
-              objectType: 'section', 
+              objectType: 'section',
               attachments: [{
                 objectType: 'post',
                 originalContent: 'test',
@@ -243,7 +244,7 @@ describe('Share controller', function() {
     it('should create instances for students on share publish', function(done) {
       Seq()
         .seq(function() {
-          Share.post({status: 'active', object: {objectType: 'section', attachments: [{objectType: 'text'}]}}, group, user.token, this);
+          Share.post({object: {objectType: 'section', attachments: [{objectType: 'text'}]}}, group, user.token, this);
         })
         .seq(awaitHooks)
         .seq(function(res) {
@@ -255,14 +256,14 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          expect(share.instances.total[0].actors[student._id].status).to.equal('unstarted');
-          expect(share.instances.total[0].actors[student2._id].status).to.equal('unstarted');
+          expect(share.instances.total[0].actors[student._id].status).to.equal(status.unopened);
+          expect(share.instances.total[0].actors[student2._id].status).to.equal(status.unopened);
           this();
         })
         .seq(done);
     });
 
-    it('should create a pending instance when a student requests it', function(done) {
+    it('should create an opened instance when a student requests it', function(done) {
       var share;
       Seq()
         .seq(function() {
@@ -279,7 +280,7 @@ describe('Share controller', function() {
           var inst = res.body;
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
-          expect(inst.status).to.equal('pending');
+          expect(inst.status).to.equal(status.opened);
           request
             .get('/share/' + share._id)
             .set('Authorization', user.token)
@@ -288,13 +289,13 @@ describe('Share controller', function() {
         .seq(function(res) {
           var share = res.body;
           // check status aggregation
-          expect(share.instances.total[0].actors[student._id].status).to.equal('pending');
+          expect(share.instances.total[0].actors[student._id].status).to.equal(status.opened);
           this();
         })
         .seq(done);
     });
 
-    it('should create a draft instance when a teacher requests it', function(done) {
+    it('should create an unopened instance when a teacher requests it', function(done) {
       var share;
       Seq()
         .seq(function() {
@@ -311,7 +312,7 @@ describe('Share controller', function() {
           var inst = res.body;
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
-          expect(inst.status).to.equal('unstarted');
+          expect(inst.status).to.equal(status.unopened);
           this();
         })
         .seq(done);
@@ -334,7 +335,7 @@ describe('Share controller', function() {
           var inst = res.body;
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
-          expect(inst.status).to.equal('unstarted');
+          expect(inst.status).to.equal(status.unopened);
           this();
         })
         .seq(function() {
@@ -347,14 +348,14 @@ describe('Share controller', function() {
           var inst = res.body;
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
-          expect(inst.status).to.equal('pending');
+          expect(inst.status).to.equal(status.opened);
           expect(inst.verb).to.equal('started');
           this();
         })
         .seq(done);
     });
 
-    it('should set the verb to "completed" on publish', function(done) {
+    it('should set the verb to "completed" on turn in', function(done) {
       var share;
       Seq()
         .seq(function() {
@@ -372,10 +373,11 @@ describe('Share controller', function() {
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
           expect(inst.verb).to.equal('started');
-
+          inst.status = status.turnedIn;
           request
-            .put('/share/' + inst._id + '/published')
+            .put('/share/' + inst._id + '/instance')
             .set('Authorization', student.token)
+            .send(inst)
             .end(this);
         })
         .seq(function(res) {
@@ -388,7 +390,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var share = res.body;
-          expect(share.instances.total[0].actors[student._id].status).to.equal('active');
+          expect(share.instances.total[0].actors[student._id].status).to.equal(status.graded);
           this();
         })
         .seq(done);
@@ -624,46 +626,6 @@ describe('Share controller', function() {
 
         it('should not appear in student feed', function() {
           expect(student.messages.length).to.equal(0);
-        });
-      });
-    });
-
-    describe('queue to class', function() {
-      var post = null;
-
-      before(function() {
-        [teacher, student, teacherMember, studentMember].forEach(function(user) {
-          user.messages = [];
-        });
-      });
-
-      before(function(done) {
-        Seq()
-          .seq(function() {
-            Share.queue({}, group, teacherMember.token, this)
-          })
-          .seq(function(res) {
-            post = res.body;
-            this();
-          })
-          .seq(done);
-      });
-
-      it('should be in teacher member feed', function(done) {
-        checkinFeed(teacherMember, group, post, done);
-      });
-
-      it('should not be in student member feed', function(done) {
-        checkNotInFeed(studentMember, group, post, done);
-      });
-
-      describe('live updates', function() {
-        it('should appear in teacher member feed', function() {
-          expect(teacherMember.messages.length).to.equal(1);
-        });
-
-        it('should not appear in student feed', function() {
-          expect(studentMember.messages.length).to.equal(0);
         });
       });
     });
