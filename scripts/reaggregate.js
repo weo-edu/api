@@ -1,4 +1,6 @@
+require('lib/io/mock');
 require('lib/db');
+require('lib/main');
 
 var Share = require('lib/Share/model');
 var channel = require('lib/channel');
@@ -40,10 +42,6 @@ function reaggregate(chan) {
   channel.withModel(chan, function(err, parent) {
     if(err) throw err;
 
-    function reset(parent) {
-
-    }
-
     // Reset the selflink
     var model = parent.model;
     var prop = parent.property;
@@ -73,8 +71,10 @@ function reaggregate(chan) {
       parent.model.save(function(err) {
         if(err) console.log('err saving', parent.model.id, err);
         num--;
-        if(num === 0 && done)
+        if(num === 0 && done) {
+          console.log('reaggregation finished');
           process.exit(0);
+        }
       });
     });
   });

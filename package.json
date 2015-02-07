@@ -2,11 +2,11 @@
   "name": "api",
   "version": "0.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "validate": "noiit && jshint lib/**",
     "test": "noiit && jshint lib/** && mocha && mocha lib/*/test",
-    "start": "node app",
+    "start": "node server",
     "docs": "apidoc -i lib -o doc && apidoc-markdown -p doc -o api.md",
     "migrate": "node bin/migrate.js"
   },
@@ -72,7 +72,8 @@
     "subclass-error": "0.0.2",
     "uglifyify": "^2.5.0",
     "validator": "~3.10.0",
-    "ware": "~0.3.0"
+    "ware": "~0.3.0",
+    "weo-logger": "git://github.com/weo-edu/weo-logger"
   },
   "devDependencies": {
     "Faker": "~0.7.0",

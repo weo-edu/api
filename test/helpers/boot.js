@@ -1,5 +1,5 @@
 var path = require('path');
-var app = require(path.join(process.cwd(), 'app.js'));
+var app = require(path.join(process.cwd(), 'server.js'));
 var supertest = require('supertest')
 var chai = require('chai')
 var _ = require('lodash')
