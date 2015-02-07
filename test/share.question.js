@@ -10,6 +10,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var url = require('url');
 var awaitHooks = require('./helpers/awaitHooks');
+var status = require('lib/Share/status');
 
 describe('Questions', function() {
   var teacherToken, teacher, student;
@@ -97,7 +98,7 @@ describe('Questions', function() {
           var question = inst._object[0].attachments[0];
           expect(question.objectType).to.equal('question');
           question.response = question.attachments[0]._id;
-          inst.status = 'active';
+          inst.status = status.turnedIn;
           ShareHelper.updateInstance(inst, studentToken, this);
         })
         .seq(awaitHooks)
@@ -111,6 +112,7 @@ describe('Questions', function() {
           var updated = res.body;
           expect(updated.instances.total.length).to.equal(1);
           var actorsTotal = {};
+          var time = updated.instances.total[0].turnedInAt;
           actorsTotal[student.id] = {
             actor: {
               displayName: student.displayName,
@@ -122,14 +124,16 @@ describe('Questions', function() {
             },
             items: 1,
             pointsScaled: 1,
-            status: 'active'
+            status: status.graded,
+            turnedInAt: time
           };
           expect(updated.instances.total[0]).to.be.like({
             context: group.id,
             items: 1,
-            status: 'active',
+            status: status.graded,
             pointsScaled: 1,
-            actors: actorsTotal
+            actors: actorsTotal,
+            turnedInAt: time
           });
           this();
         })

@@ -1,8 +1,9 @@
-var Faker = require('Faker')
-  , chai = require('chai')
-  , access = require('lib/access/helpers')
-  , Group = require('lib/Group/model')
-  , ShareModel = require('lib/Share/model');
+var Faker = require('Faker');
+var chai = require('chai');
+var access = require('lib/access/helpers');
+var Group = require('lib/Group/model');
+var ShareModel = require('lib/Share/model');
+var asArray = require('lib/as-array');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
@@ -18,7 +19,7 @@ var Share = module.exports = {
   },
   queue: function(opts, groups, authToken, cb) {
     var share = Share.generate(opts, groups);
-    share.status = 'pending';
+    share.channels = ['share!' + share.id + '.drafts'];
     request
       .post('/share')
       .set('Authorization', authToken)
@@ -77,11 +78,12 @@ var Share = module.exports = {
   generate: function(opts, groups) {
     opts = opts || {};
     var share = _.defaults(opts, {
+      shareType: 'share',
       verb: _.sample(verbs),
       object: Share.generateObject(opts.object)
     });
 
-    share.contexts = opts.contexts || [].concat(opts.contexts || groups).map(function(group) {
+    share.contexts = opts.contexts || asArray(opts.contexts || groups).map(function(group) {
       return {
         descriptor: Group.toAbstractKey(group),
         allow: [
