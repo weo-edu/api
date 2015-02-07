@@ -2,7 +2,7 @@
   "name": "api",
   "version": "0.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "validate": "noiit && jshint lib/**",
     "test": "noiit && jshint lib/** && mocha && mocha lib/*/test",
