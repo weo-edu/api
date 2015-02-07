@@ -1,4 +1,4 @@
-var chug = require('chug')(require('../lib/config').mongo.url);
+var chug = require('mongo-chug')(require('../lib/config').mongo.url);
 var es = require('event-stream');
 var qs = require('querystring');
 var _ = require('lodash');
