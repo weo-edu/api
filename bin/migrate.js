@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var config = require('../lib/config');
 var migrate = require('migrate')(config.mongo.url);
 

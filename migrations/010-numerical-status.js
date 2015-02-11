@@ -15,9 +15,31 @@ exports.up = function(next){
     .pipe(es.through(function(doc) {
       if(doc.shareType === 'shareInstance' && 'string' === typeof doc.status) {
         doc.status = map[doc.status];
-      } else if (doc.shareType !== 'shareInstance') {
+      } else if (doc.shareType === 'share' && doc._object && doc._object.length && doc._object[0].objectType === 'section')  {
+        
+        if (doc.instances && doc.instances.canonicalTotal) {
+          var newVal = map[doc.instances.canonicalTotal.status];
+          if (!_.isUndefined(newVal))
+            doc.instances.canonicalTotal.status = newVal;
+          else
+            delete doc.instances.canonicalTotal.satus;
+        }
+
+        if (doc.status === 'draft') {
+          doc.publishedAt = doc.createdAt;
+          if (doc.displayName) {
+            doc.channels = ['user!' + doc.actor.id + '.drafts'];
+          } else {
+            doc.channels = [];
+          }
+          
+        }
+        delete doc.status;
+      } else {
         delete doc.status;
       }
+
+
       this.emit('data', doc);
     }))
     .pipe(chug.dest('shares'))
