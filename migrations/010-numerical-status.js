@@ -16,7 +16,7 @@ exports.up = function(next){
       if(doc.shareType === 'shareInstance' && 'string' === typeof doc.status) {
         doc.status = map[doc.status];
       } else if (doc.shareType === 'share' && doc._object && doc._object.length && doc._object[0].objectType === 'section')  {
-        
+
         if (doc.instances && doc.instances.canonicalTotal) {
           var newVal = map[doc.instances.canonicalTotal.status];
           if (!_.isUndefined(newVal))
@@ -32,7 +32,7 @@ exports.up = function(next){
           } else {
             doc.channels = [];
           }
-          
+
         }
         delete doc.status;
       } else {
