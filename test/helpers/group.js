@@ -26,7 +26,9 @@ var Group = module.exports = {
       .post('/group')
       .send(opts)
       .set('Authorization', user.token)
-      .end(cb);
-
+      .end(function(err, res) {
+        if(err) return cb(err);
+        cb(null, res.body);
+      });
   }
 };

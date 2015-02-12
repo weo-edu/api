@@ -17,8 +17,8 @@ describe('Markdown tests', function() {
         token = user.token;
         GroupHelper.create({}, user, this);
       })
-      .seq(function(res) {
-        group = res.body;
+      .seq(function(_group) {
+        group = _group;
         this();
       })
       .seq(done);
