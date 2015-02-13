@@ -158,10 +158,7 @@ describe('Share controller', function() {
     it('should show up in chronological order', function(done) {
       Seq(_.range(1, 5))
         .seqEach(function() {
-          var self = this;
-          Share.post({}, group, user.token, function(err, res) {
-            self(err, res);
-          });
+          Share.post({published: true}, group, user.token, this);
         })
         .seq(function(responses) {
           _.each(responses, function(res) {
@@ -244,7 +241,13 @@ describe('Share controller', function() {
     it('should create instances for students on share publish', function(done) {
       Seq()
         .seq(function() {
-          Share.post({object: {objectType: 'section', attachments: [{objectType: 'text'}]}}, group, user.token, this);
+          Share.post({
+            published: true,
+            object: {
+              objectType: 'section',
+              attachments: [{objectType: 'text'}]
+            }
+          }, group, user.token, this);
         })
         .seq(awaitHooks)
         .seq(function(res) {
