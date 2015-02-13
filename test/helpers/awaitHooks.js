@@ -1,8 +1,13 @@
+var ourPost = require('lib/schema-plugin-post');
+
 module.exports = function() {
   var self = this;
   var args = [].slice.call(arguments);
 
-  setTimeout(function() {
+  ourPost.onFlush(function() {
     self(null, args[0]);
-  }, 500);
+  });
+  // setTimeout(function() {
+  //   self(null, args[0]);
+  // }, 500);
 };
