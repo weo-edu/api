@@ -147,6 +147,7 @@ describe('Share controller', function() {
             .set('Authorization', user.token)
             .end(this);
         })
+        .seq(awaitHooks)
         .seq(function(res) {
           expect(res).to.have.status(201);
           group = res.body;
@@ -189,20 +190,34 @@ describe('Share controller', function() {
         .seqEach(function() {
           Share.post({}, group, user.token, this);
         })
+        .seq(awaitHooks)
         .seq(function() {
-          Share.feed({channel: channel, maxResults: 2}, user.token, this);
+          Share.feed({
+            channel: channel,
+            maxResults: 2
+          }, user.token, this);
         })
         .seq(function(res) {
           var shares = res.body.items;
           expect(shares).to.have.length(2);
           last = shares[1];
-          Share.feed({channel: channel, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+
+          Share.feed({
+            channel: channel,
+            maxResults: 2,
+            pageToken: res.body.nextPageToken
+          }, user.token, this);
         })
         .seq(function(res) {
           var shares = res.body.items;
           expect(shares).to.have.length(2);
           expect(shares[1]._id).not.to.equal(last._id)
-          Share.feed({channel: channel, maxResults: 2, pageToken: res.body.nextPageToken}, user.token, this);
+
+          Share.feed({
+            channel: channel,
+            maxResults: 2,
+            pageToken: res.body.nextPageToken
+          }, user.token, this);
         })
         .seq(function(res) {
           var shares = res.body.items;

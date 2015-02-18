@@ -22,8 +22,8 @@ describe('Post controller', function() {
       .seq(function() {
       	GroupHelper.create({}, {token: token}, this);
       })
-      .seq(function(res) {
-      	group = res.body;
+      .seq(function(_group) {
+      	group = _group;
       	this();
       })
       .seq(done);

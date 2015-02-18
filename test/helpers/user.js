@@ -1,6 +1,7 @@
 var Faker = require('Faker');
 var chai = require('chai');
 var Seq = require('seq');
+var GroupHelper = require('./group');
 
 function teacherDefaults() {
   return {
@@ -95,6 +96,37 @@ var User = module.exports = {
         user.socketToken = res.body.token;
         cb(null, user);
       });
+  },
+  createTeacherStudentAndGroupAndLogin: function(cb) {
+    var res = {};
+    User.createAndLogin(function(err, teacher) {
+      if(err) return cb(err);
+
+      res.teacher = teacher;
+      GroupHelper.create({}, teacher, function(err, group) {
+        if(err) return cb(err);
+
+        res.group = group;
+        User.createAndLogin({userType: 'student'}, function(err, user) {
+          if(err) return cb(err);
+          res.student = user;
+          GroupHelper.join(group, user, function(err, joinRes) {
+            if(err) return cb(err);
+            cb(null, res);
+          });
+        });
+      });
+    });
+  },
+  createStudentJoinGroupAndLogin: function(group, cb) {
+    User.createAndLogin({userType: 'student'}, function(err, student) {
+      if(err) return cb(err);
+
+      GroupHelper.join(group, student, function(err, joinRes) {
+        if(err) return cb(err);
+        cb(null, student);
+      });
+    });
   },
   updated: function(user, cb) {
     Seq()
