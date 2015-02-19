@@ -1,0 +1,63 @@
+Searching 208 files for ".mongo.url"
+
+/Users/andrewshaffer/weo/api/lib/db/index.js:
+   17
+   18  debug('starting mongoose...');
+   19: mongoose.connect(config.mongo.url);
+
+/Users/andrewshaffer/weo/api/migrations/001-lowercase-username.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3
+
+/Users/andrewshaffer/weo/api/migrations/002-no-channels.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3  var async = require('async');
+
+/Users/andrewshaffer/weo/api/migrations/004-fix-root-parent.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3
+
+/Users/andrewshaffer/weo/api/migrations/005-annotations-self-link.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3  var qs = require('querystring');
+
+/Users/andrewshaffer/weo/api/migrations/006-kind.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3  var qs = require('querystring');
+
+/Users/andrewshaffer/weo/api/migrations/007-formQuestion-to-question.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3  var qs = require('querystring');
+
+/Users/andrewshaffer/weo/api/migrations/008-remove-share-from-activity-channel.js:
+    1: var chug = require('mongo-chug')(require('../lib/config').mongo.url);
+    2  var es = require('event-stream');
+    3  var qs = require('querystring');
+
+/Users/andrewshaffer/weo/api/migrations/009-user-capitalize-display-name.js:
+    1: var chug = require('mongo-chug')(require('../lib/config').mongo.url);
+    2  var es = require('event-stream');
+    3  var qs = require('querystring');
+
+/Users/andrewshaffer/weo/api/migrations/010-numerical-status.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3  var status = require('lib/Share/status');
+
+/Users/andrewshaffer/weo/api/migrations/011-validate-questions.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3  var _ = require('lodash');
+
+/Users/andrewshaffer/weo/api/migrations/012-published-bool.js:
+    1: var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+    2  var es = require('event-stream');
+    3
+
+12 matches across 12 files

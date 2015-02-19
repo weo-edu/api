@@ -1,4 +1,4 @@
-var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+var chug = require('mongo-chug')(require('../lib/config/').mongo);
 var es = require('event-stream');
 
 exports.up = function(next){

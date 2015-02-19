@@ -1,4 +1,4 @@
-var chug = require('mongo-chug')(require('../lib/config/').mongo.url);
+var chug = require('mongo-chug')(require('../lib/config/').mongo);
 var es = require('event-stream');
 var async = require('async');
 var db = chug.db;
@@ -12,7 +12,7 @@ function populateSelfLink(obj, key, cb) {
     if (!channel)
       return cb(null, channel);
     var set = {};
-    
+
     set[key] = channel.object;
     _.extend(self,set);
     cb(null, channel);
