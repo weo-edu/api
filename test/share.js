@@ -418,7 +418,7 @@ describe('Share controller', function() {
       var share, share2, inst, inst2;
       Seq()
         .seq(function() {
-          Share.post({}, group, user.token, this);
+          Share.post({published: true}, group, user.token, this);
         })
         .seq(function(res) {
           share = res.body;
