@@ -6,13 +6,13 @@ var spawn = require('child_process').spawn;
 
 
 var remote = mongoURI.parse(process.env.MONGO_PRODUCTION_URL);
-var local = mongoURI.parse(process.env.MONGOHQ_URL)
+var local = mongoURI.parse(process.env.MONGO_URL)
 
 var BIN = process.env.NODE_ENV === 'production' ? './bin/' : '';
 
 var mongodump = spawn(BIN + 'mongodump', [
-  '-h', remote.hosts[0].host + ':' + remote.hosts[0].port, 
-  '-d', remote.database, 
+  '-h', remote.hosts[0].host + ':' + remote.hosts[0].port,
+  '-d', remote.database,
   '-u', remote.username,
   '-p', remote.password], {stdio: 'inherit'});
 
@@ -22,8 +22,8 @@ host = host.host;
 
 // construct args
 var args = [
-  '-h', host +  (localPort ? (':' + localPort) : ''), 
-  '-d', local.database, 
+  '-h', host +  (localPort ? (':' + localPort) : ''),
+  '-d', local.database,
 ];
 if (local.username) {
   args = args.concat([
