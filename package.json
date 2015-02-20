@@ -95,5 +95,6 @@
     "sinon-chai": "^2.6.0",
     "superagent": "~0.18.2",
     "supertest": "~0.11.0"
-  }
+  },
+  "engine": "node 0.10.33"
 }
