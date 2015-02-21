@@ -4,6 +4,8 @@ var mongo = require('mongodb');
 var mongoURI = require('mongodb-uri');
 var spawn = require('child_process').spawn;
 
+console.log('remote', process.env.MONGO_PRODUCTION_URL);
+console.log('local', process.env.MONGO_URL);
 
 var remote = mongoURI.parse(process.env.MONGO_PRODUCTION_URL);
 var local = mongoURI.parse(process.env.MONGO_URL)

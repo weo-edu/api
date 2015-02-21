@@ -8,7 +8,8 @@
     "test": "noiit && jshint lib/** && mocha && mocha lib/*/test",
     "start": "node server",
     "docs": "apidoc -i lib -o doc && apidoc-markdown -p doc -o api.md",
-    "migrate": "node bin/migrate.js"
+    "migrate": "bin/migrate.js",
+    "sync": "bin/sync.js"
   },
   "author": "",
   "license": "ISC",
