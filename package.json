@@ -9,7 +9,8 @@
     "start": "node server",
     "docs": "apidoc -i lib -o doc && apidoc-markdown -p doc -o api.md",
     "migrate": "bin/migrate.js",
-    "sync": "bin/sync.js"
+    "sync": "bin/sync.js",
+    "postinstall": "ln -s ../lib node_modules/lib; mkdir assets"
   },
   "author": "",
   "license": "ISC",
