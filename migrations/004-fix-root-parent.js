@@ -5,9 +5,9 @@ exports.up = function(next){
   chug.src('shares', {})
     .pipe(es.through(function(doc) {
       if(doc._root)
-        doc._root = [doc._root[0]];
+        doc._root = [doc._root[0]].filter(Boolean);
       if(doc._parent)
-        doc._parent = [doc._parent[0]];
+        doc._parent = [doc._parent[0]].filter(Boolean);
 
       this.emit('data', doc);
     }))
