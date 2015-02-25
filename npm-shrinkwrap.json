@@ -1534,6 +1534,23 @@
       "from": "https://registry.npmjs.org/debug/-/debug-0.8.1.tgz",
       "resolved": "https://registry.npmjs.org/debug/-/debug-0.8.1.tgz"
     },
+    "debug-trace": {
+      "version": "0.2.4",
+      "from": "debug-trace@~0.2.3",
+      "resolved": "https://registry.npmjs.org/debug-trace/-/debug-trace-0.2.4.tgz",
+      "dependencies": {
+        "callsite": {
+          "version": "1.0.0",
+          "from": "callsite@~1.0.0",
+          "resolved": "https://registry.npmjs.org/callsite/-/callsite-1.0.0.tgz"
+        },
+        "moment": {
+          "version": "2.1.0",
+          "from": "moment@~2.1.0",
+          "resolved": "https://registry.npmjs.org/moment/-/moment-2.1.0.tgz"
+        }
+      }
+    },
     "ent": {
       "version": "2.0.0",
       "from": "https://registry.npmjs.org/ent/-/ent-2.0.0.tgz",
