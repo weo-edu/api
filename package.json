@@ -10,7 +10,7 @@
     "migrate": "bin/migrate.js",
     "sync": "bin/sync.js",
     "reaggregate": "bin/reaggregate.js",
-    "postinstall": "ln -s ../lib node_modules/lib; mkdir assets"
+    "postinstall": "ln -snf ../lib node_modules/lib; mkdir -p assets"
   },
   "author": "",
   "license": "ISC",
