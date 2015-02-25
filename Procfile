@@ -1,4 +1,4 @@
-web: npm start
-migrate: npm run migrate
-sync: npm run sync
-reaggregate: npm run reaggregate
+web: node ./server.js
+migrate: node ./bin/migrate.js
+sync: node ./bin/sync.js
+reaggregate: node ./bin/reaggregate.js
