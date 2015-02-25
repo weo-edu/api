@@ -1,3 +1,3 @@
-web: node server.js
+web: npm start
 migrate: npm run migrate
-sync: node bin/sync.js
+sync: npm run sync
