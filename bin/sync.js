@@ -18,7 +18,7 @@ var mongodump = spawn(BIN + 'mongodump', [
   '-u', remote.username,
   '-p', remote.password], {stdio: 'inherit'});
 
-var host = local.hosts[1] || local.hosts[0];
+var host = local.hosts[0];
 var localPort = host.port
 host = host.host;
 
