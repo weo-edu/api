@@ -6,10 +6,10 @@
   "scripts": {
     "validate": "noiit && jshint lib/**",
     "test": "noiit && jshint lib/** && mocha && mocha lib/*/test",
-    "start": "node server.js",
-    "migrate": "bin/migrate.js",
-    "sync": "bin/sync.js",
-    "reaggregate": "bin/reaggregate.js",
+    "start": "node ./server.js",
+    "migrate": "node ./bin/migrate.js",
+    "sync": "node ./bin/sync.js",
+    "reaggregate": "node ./bin/reaggregate.js",
     "postinstall": "ln -snf ../lib node_modules/lib; mkdir -p assets"
   },
   "author": "",
