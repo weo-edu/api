@@ -42,6 +42,7 @@
     "migrate": "git://github.com/weo-edu/node-migrate",
     "moment": "~2.6.0",
     "mongo-chug": "0.0.1",
+    "mongodb": "^1.4.4",
     "mongodb-uri": "~0.9.6",
     "mongoose": "git://github.com/weo-edu/mongoose#3.8.x",
     "monk": "^0.9.1",
