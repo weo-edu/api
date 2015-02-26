@@ -20,7 +20,7 @@ exports.up = function(next){
       checkAttachments(attachment);
 
     });
-    if (parent.objectType === 'question' && !correct.length) {
+    if (parent.objectType === 'question' && parent.poll === false && !correct.length && attachments.length &&  attachments[0].objectType === 'choice' ) {
       attachments[0].correctAnswer = [attachments[0]._id];
     }
   }
