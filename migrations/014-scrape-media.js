@@ -17,12 +17,10 @@ exports.up = function(next){
 
       async.each(arr, function(att, done) {
         if(att.originalContent && types.indexOf(att.objectType) !== -1) {
-          console.log('scrape', att.originalContent);
           scrape(att.originalContent, function(err, data) {
             if (err) return done();
             data.originalContent = att.originalContent;
             _.extend(att, data);
-            console.log('update', att.originalContent, att);
             done();
           });
         } else
