@@ -19,6 +19,7 @@
     "body-parser": "~1.0.2",
     "browserify": "7.0.1",
     "bytes": "~0.3.0",
+    "capitalize": "^0.5.0",
     "clone": "0.1.15",
     "compression": "~1.0.1",
     "connect": "2.14.5",
@@ -69,6 +70,7 @@
     "subclass-error": "0.0.2",
     "superagent": "~0.18.2",
     "uglifyify": "^2.5.0",
+    "uncapitalize": "^1.0.2",
     "validator": "~3.10.0",
     "ware": "^1.2.0",
     "weo-logger": "git://github.com/weo-edu/weo-logger"
