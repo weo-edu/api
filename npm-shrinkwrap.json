@@ -1184,6 +1184,11 @@
       "from": "https://registry.npmjs.org/bytes/-/bytes-0.3.0.tgz",
       "resolved": "https://registry.npmjs.org/bytes/-/bytes-0.3.0.tgz"
     },
+    "capitalize": {
+      "version": "0.5.0",
+      "from": "capitalize@",
+      "resolved": "https://registry.npmjs.org/capitalize/-/capitalize-0.5.0.tgz"
+    },
     "clone": {
       "version": "0.1.15",
       "from": "https://registry.npmjs.org/clone/-/clone-0.1.15.tgz",
@@ -3510,6 +3515,11 @@
           }
         }
       }
+    },
+    "uncapitalize": {
+      "version": "1.0.2",
+      "from": "uncapitalize@1.0.2",
+      "resolved": "https://registry.npmjs.org/uncapitalize/-/uncapitalize-1.0.2.tgz"
     },
     "underscore": {
       "version": "1.8.2",
