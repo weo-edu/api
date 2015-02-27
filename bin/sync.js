@@ -13,18 +13,22 @@ var local = mongoURI.parse(process.env.MONGO_URL)
 var BIN = process.env.NODE_ENV === 'production' ? './bin/' : '';
 
 var mongodump = spawn(BIN + 'mongodump', [
-  '-h', remote.hosts[0].host + ':' + remote.hosts[0].port,
+  '-h', host(remote.hosts[0]),
   '-d', remote.database,
   '-u', remote.username,
   '-p', remote.password], {stdio: 'inherit'});
 
-var host = local.hosts[0];
-var localPort = host.port
-host = host.host;
+function host(opts) {
+  return opts.host + (opts.port ? (':' + opts.port) : '');
+}
+
+var hostStr = local.hosts.map(host).join(',');
+if(local.options && local.options.replicaSet)
+  hostStr = local.options.replicaSet + '/' + hostStr;
 
 // construct args
 var args = [
-  '-h', host +  (localPort ? (':' + localPort) : ''),
+  '-h', hostStr,
   '-d', local.database,
 ];
 if (local.username) {
