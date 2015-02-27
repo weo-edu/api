@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+var mock = require('mock-require');
+
+mock('../lib/Share/hooks.js', {});
 
 require('lib/io/mock');
 require('lib/db');
