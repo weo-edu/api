@@ -13,7 +13,7 @@ var local = mongoURI.parse(process.env.MONGO_URL)
 var BIN = process.env.NODE_ENV === 'production' ? './bin/' : '';
 
 var mongodump = spawn(BIN + 'mongodump', [
-  '-h', remote.hosts[0].host + ':' + remote.hosts[0].port,
+  '-h', host(remote.hosts[0]),
   '-d', remote.database,
   '-u', remote.username,
   '-p', remote.password], {stdio: 'inherit'});
