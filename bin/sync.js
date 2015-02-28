@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var mongo = require('mongodb');
 var mongoURI = require('mongodb-uri');
 var spawn = require('child_process').spawn;
 
