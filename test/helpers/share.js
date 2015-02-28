@@ -3,7 +3,7 @@ var chai = require('chai');
 var access = require('lib/access/helpers');
 var Group = require('lib/Group/model');
 var ShareModel = require('lib/Share/model');
-var asArray = require('lib/as-array');
+var asArray = require('as-array');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
