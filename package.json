@@ -33,6 +33,7 @@
     "event-stream": "^3.1.7",
     "express": "~4.0.0",
     "express-inject-latency": "0.0.4",
+    "express-robots": "^0.1.2",
     "glob": "^3.2.9",
     "handlebars": "3.0.0",
     "hashids": "^1.0.0",
