@@ -80,7 +80,7 @@ describe('share instances', function() {
         });
     });
 
-    it('should not create duplicate instances on re-assignment', function() {
+    it('should not create duplicate instances on re-assignment', function(done) {
       var contexts;
       var len;
       Seq()
@@ -114,6 +114,28 @@ describe('share instances', function() {
           expect(shares.length).to.equal(len);
           done();
         });
+    });
+
+    it('should create profile event when share instance is turned in', function(done) {
+
+      Seq()
+        .seq(function() {
+          Share.getInstance(student1.token, share.id, student1.id, this)
+        })
+        .seq(function(res) {
+          var inst = res.body;
+          inst.status = 4;
+          Share.updateInstance(inst, student1.token, this);
+        })
+        .seq(function() {
+          Share.activities(student1.token, student1.id, this);
+        })
+        .seq(function(res) {
+          var activity = res.body.items[0];
+          expect(activity.verb).to.equal('turned in');
+          done();
+        });
+
     });
   });
 });
