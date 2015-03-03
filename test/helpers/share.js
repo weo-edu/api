@@ -61,6 +61,12 @@ var Share = module.exports = {
       .set('Authorization', token)
       .end(cb);
   },
+  activities: function(token, userId, cb) {
+    request
+      .get('/share?channel=user!' + userId + '.activities')
+      .set('Authorization', token)
+      .end(cb);
+  },
   feed: function(query, authToken, cb) {
     if (!cb) {
       cb = authToken;
