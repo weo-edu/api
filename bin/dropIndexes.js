@@ -27,4 +27,3 @@ mongo.connect(url, function(err, db) {
     });
   });
 });
-

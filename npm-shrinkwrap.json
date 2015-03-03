@@ -1788,6 +1788,24 @@
         }
       }
     },
+    "express-robots": {
+      "version": "0.1.2",
+      "from": "express-robots@",
+      "dependencies": {
+        "as-array": {
+          "version": "1.0.0",
+          "from": "as-array@git://github.com/weo-edu/as-array",
+          "resolved": "git://github.com/weo-edu/as-array#17a37ea02091a778c18c0e84465ddfc5dd321df7",
+          "dependencies": {
+            "isarray": {
+              "version": "0.0.1",
+              "from": "isarray@0.0.1",
+              "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz"
+            }
+          }
+        }
+      }
+    },
     "glob": {
       "version": "3.2.11",
       "from": "https://registry.npmjs.org/glob/-/glob-3.2.11.tgz",
