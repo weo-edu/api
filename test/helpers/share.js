@@ -3,7 +3,7 @@ var chai = require('chai');
 var access = require('lib/access/helpers');
 var Group = require('lib/Group/model');
 var ShareModel = require('lib/Share/model');
-var asArray = require('lib/as-array');
+var asArray = require('as-array');
 
 var verbs = ['completed', 'liked', 'joined', 'assigned', 'created'];
 
@@ -58,6 +58,12 @@ var Share = module.exports = {
   getInstance: function(token, id, userId, cb) {
     request
       .get('/share/' + id + '/instance/' + userId)
+      .set('Authorization', token)
+      .end(cb);
+  },
+  activities: function(token, userId, cb) {
+    request
+      .get('/share?channel=user!' + userId + '.activities')
       .set('Authorization', token)
       .end(cb);
   },
