@@ -11,15 +11,15 @@ describe('User controller', function() {
     it('should validate new user data', function(done) {
       Seq()
         .seq(function() {
-          var user = UserHelper.generate({username: 'a'});
+          var user = UserHelper.generate({email: 'testasdfasdf'});
           request
-            .post('/user')
+            .post('/auth/user')
             .send(user)
             .end(this);
         })
         .seq(function(res) {
           expect(res).to.have
-            .ValidationError('username');
+            .ValidationError('email');
           this();
         })
         .seq(done);
@@ -31,14 +31,14 @@ describe('User controller', function() {
         .seq(function() {
           user = UserHelper.generate();
           request
-            .post('/user')
+            .post('/auth/user')
             .send(user)
             .end(this);
         })
         .seq(function(res) {
           user.username = user.username.toUpperCase();
           request
-            .post('/user')
+            .post('/auth/user')
             .send(user)
             .end(this);
         })
@@ -58,7 +58,7 @@ describe('User controller', function() {
         .seq(function() {
           this.vars.user = UserHelper.generate({userType: 'student'});
           request
-            .post('/student')
+            .post('/auth/user')
             .send(this.vars.user)
             .end(this);
         })
@@ -127,71 +127,7 @@ describe('User controller', function() {
         .seq(done);
     });
 
-    it('should add type field when creating a teacher', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .post('/teacher')
-            .send(_.omit(UserHelper.generate(), 'userType'))
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          expect(res.body.userType).to.equal('teacher');
-          this();
-        })
-        .seq(done);
-    });
-
-    it('should add type field when creating a student', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .post('/student')
-            .send(_.omit(UserHelper.generate({userType: 'student'}), 'userType'))
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          expect(res.body.userType).to.equal('student');
-          this();
-        })
-        .seq(done);
-    });
-
-
-
-    it('should return an error if you pass type "student" to the teacher endpoint and vice versa',
-    function(done) {
-      Seq()
-        .seq(function() {
-          var user = UserHelper.generate({userType: 'teacher'});
-          user.userType = 'student';
-          request
-            .post('/teacher')
-            .send(user)
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res.body.userType).to.equal('teacher');
-          this();
-        })
-        .seq(function() {
-          var user = UserHelper.generate({userType: 'student'});
-          user.userType = 'teacher';
-          request
-            .post('/student')
-            .send(user)
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res.body.userType).to.equal('student');
-          this();
-        })
-        .seq(done);
-    });
-
-    it('should not allow duplicate username', function(done) {
+    it('should not allow duplicate usernames', function(done) {
       Seq()
         .seq(function() {
           this.vars.user1 = UserHelper.create({}, this);

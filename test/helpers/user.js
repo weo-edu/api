@@ -57,7 +57,7 @@ var User = module.exports = {
 
     opts = User.generate(opts);
     request
-      .post('/' + opts.userType)
+      .post('/auth/user')
       .send(opts)
       .end(function(err, res) {
         // XXX Kind of hacky, but without it
