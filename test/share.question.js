@@ -17,6 +17,8 @@ describe('Questions', function() {
 
   before(function(done) {
     var teacherPassword;
+    var studentPassword;
+
     Seq()
       .seq(function() {
         teacherPassword = UserHelper.create(this).password;
@@ -29,10 +31,11 @@ describe('Questions', function() {
       .seq(function(res) {
         teacherToken = 'Bearer ' + res.body.token;
         student = UserHelper.create({userType: 'student'}, this);
+        studentPassword = student.password;
       })
       .seq(function(res) {
         student = res.body;
-      	UserHelper.login(student.username, student.password, this);
+      	UserHelper.login(student.username, studentPassword, this);
       })
       .seq(function(res) {
       	studentToken = 'Bearer ' + res.body.token;
