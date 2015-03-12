@@ -1,0 +1,18 @@
+{
+  "displayName": "Test Assignment",
+  "tags": ["test", "assignment"],
+  "object": {
+    "objectType": "section",
+    "attachments": [
+      {
+        "objectType": "question",
+        "originalContent": "What is your name?",
+        "attachements": [
+          {
+            "objectType": "text"
+          }
+        ]
+      }
+    ]
+  }
+}
