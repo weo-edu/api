@@ -1,52 +1,86 @@
 {
-  "data": [
+  "class": {
+    "displayName": "Test Class"
+  },
+  "students": [
     {
       "userType": "student",
       "name": {
         "familyName": "Turing",
         "givenName": "Alan",
-        "honorificPrefix": "None"
+        "honorificPrefix": ""
       },
       "password": "testing",
       "username": "alanturingtest",
       "aboutMe": "I am a computer scientist, mathematician, logician, cryptanalyst, philosopher, mathematician and a long distance runner. I am considered a forefather of computer science and my work decrypting engima in World War II provided one of the single largest contributions to the allied victory.",
-      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/decks/lotus.png"
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/decks/lotus.png",
+      "responses": [
+        "Alan Turing"
+      ]
     },
     {
       "userType": "student",
       "name": {
         "familyName": "Hopper",
         "givenName": "Grace",
-        "honorificPrefix": "None"
+        "honorificPrefix": ""
       },
       "password": "testing",
       "username": "gracehoppertest",
       "aboutMe": "I am a pioneer in the field of computer science. I invented one of the first high level programming languages and am credited with poularizing ther term debugging.",
-      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/narwhal.png"
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/narwhal.png",
+      "responses": [
+        "Grace Hopper"
+      ]
     },
     {
       "userType": "student",
       "name": {
         "familyName": "Austen",
         "givenName": "Jane",
-        "honorificPrefix": "None"
+        "honorificPrefix": ""
       },
       "password": "testing",
       "username": "janeaustentest",
       "aboutMe": "I am an English romantic fiction writer, known for my biting social commentary.",
-      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/octopus.png"
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/octopus.png",
+      "responses": [
+        "Jane Austen"
+      ]
     },
     {
       "userType": "student",
       "name": {
         "familyName": "Edison",
         "givenName": "Thomas",
-        "honorificPrefix": "None"
+        "honorificPrefix": ""
       },
       "password": "testing",
       "username": "thomasedisontest",
       "aboutMe": "I am an inventor and business man. I invented the phonograph, the motion picture camera, and a practical light bulb.",
-      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/penguin.png"
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/penguin.png",
+      "responses": [
+        "Thomas Edison"
+      ]
     }
-  ]
+
+  ],
+  "assignment": {
+    "displayName": "Test Assignment",
+    "tags": ["test", "assignment"],
+    "object": {
+      "objectType": "section",
+      "attachments": [
+        {
+          "objectType": "question",
+          "originalContent": "What is your name?",
+          "attachments": [
+            {
+              "objectType": "text"
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
