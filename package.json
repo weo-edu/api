@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "validate": "noiit && jshint lib/**",
-    "test": "noiit && jshint lib/** && mocha && mocha lib/*/test",
+    "validate": "make validate",
+    "test": "make test",
     "start": "node ./server.js",
     "migrate": "node ./bin/migrate.js",
     "sync": "node ./bin/sync.js",
