@@ -1,0 +1,302 @@
+{
+  "class": {
+    "displayName": "Example Class"
+  },
+  "students": [
+    {
+      "userType": "student",
+      "name": {
+        "familyName": "Turing",
+        "givenName": "Alan",
+        "honorificPrefix": ""
+      },
+      "password": "testing",
+      "username": "alanturingtest",
+      "aboutMe": "I am a computer scientist, mathematician, logician, cryptanalyst, philosopher, mathematician and a long distance runner. I am considered a forefather of computer science and my work decrypting engima in World War II provided one of the single largest contributions to the allied victory.",
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/decks/lotus.png",
+      "responses": [
+        "5511f70fb9aa6c687c000013",
+        "Collisions and the fact that we live in three dimensions",
+        "Angular momentum",
+        "55120097b9aa6c687c000026"
+      ]
+    },
+    {
+      "userType": "student",
+      "name": {
+        "familyName": "Hopper",
+        "givenName": "Grace",
+        "honorificPrefix": ""
+      },
+      "password": "testing",
+      "username": "gracehoppertest",
+      "aboutMe": "I am a pioneer in the field of computer science. I invented one of the first high level programming languages and am credited with poularizing ther term debugging.",
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/decks/redpanda.png",
+      "responses": [
+        "5511f70fb9aa6c687c000013",
+        "Our 3 dimensional universe and objects crashing and clumping",
+        "Angular Momentum",
+        "55120097b9aa6c687c000026"
+      ]
+    },
+    {
+      "userType": "student",
+      "name": {
+        "familyName": "Austen",
+        "givenName": "Jane",
+        "honorificPrefix": ""
+      },
+      "password": "testing",
+      "username": "janeaustentest",
+      "aboutMe": "I am an English romantic fiction writer, known for my biting social commentary.",
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/default/cupcake.png",
+      "responses": [
+        "5511f70fb9aa6c687c000013",
+        "Gravity and friction",
+        "energy",
+        "55120097b9aa6c687c000026"
+      ]
+    },
+    {
+      "userType": "student",
+      "name": {
+        "familyName": "Edison",
+        "givenName": "Thomas",
+        "honorificPrefix": ""
+      },
+      "password": "testing",
+      "username": "thomasedisontest",
+      "aboutMe": "I am an inventor and business man. I invented the phonograph, the motion picture camera, and a practical light bulb.",
+      "avatar": "http://cdn.eos.io.s3-website-us-west-1.amazonaws.com/originals/store/penguin.png",
+      "responses": [
+        "5511f723b9aa6c687c000014",
+        "The expanding universe and gravity",
+        "matter",
+        "551200abb9aa6c687c000027"
+      ]
+    }
+
+  ],
+  "assignment": {
+    "displayName": "Our Solar System",
+    "tags": ["solar system", "space", "science"],
+    "object": {
+      "objectType":"section",
+      "attachments":[
+        {
+          "originalContent":"http://marshall.org/wp-content/themes/marshall/img/featured-space-policy.jpg",
+          "objectType":"image",
+          "_id":"5511a6bbe0232d7566eb7e72",
+          "attachments":[
+
+          ],
+          "embed":{
+            "type":"image",
+            "url":"http://marshall.org/wp-content/themes/marshall/img/featured-space-policy.jpg"
+          },
+          "image":{
+            "height":534,
+            "width":949,
+            "url":"http://marshall.org/wp-content/themes/marshall/img/featured-space-policy.jpg"
+          }
+        },
+        {
+          "displayName":"Our solar system comprises the sun and the bodies held in its gravitational field including the planets, the dwarf planets, the asteroids, and comets.\nWatch the following video to learn more and answer the questions below:",
+          "content":"<p>Our solar system comprises the sun and the bodies held in its gravitational field including the planets, the dwarf planets, the asteroids, and comets.</p>\n<p>Watch the following video to learn more and answer the questions below:</p>\n",
+          "originalContent":"Our solar system comprises the sun and the bodies held in its gravitational field including the planets, the dwarf planets, the asteroids, and comets.\n\nWatch the following video to learn more and answer the questions below:",
+          "_id":"5511dba6b9aa6c46b6000005",
+          "objectType":"post",
+          "attachments":[
+
+          ]
+        },
+        {
+          "content":"<iframe width=\"500\" height=\"\" src=\"//www.youtube.com/embed/tmNXKqeUtJM?autoplay=1\" frameborder=\"0\" allowfullscreen></iframe>",
+          "description":"Thanks to Embry-Riddle Aeronautical University for supporting us on Subbable.com! - http://prescott.erau.edu A big thanks as well to Subbable supporters The Great Tobini (aka Tobyn Pearson) and Georgi Yanev!",
+          "displayName":"Why is the Solar System Flat?",
+          "originalContent":"https://www.youtube.com/watch?v=tmNXKqeUtJM",
+          "_id":"5511f5a1b9aa6c687c000011",
+          "objectType":"video",
+          "attachments":[
+
+          ],
+          "embed":{
+            "type":"video",
+            "url":"http://www.youtube.com/watch?v=tmNXKqeUtJM"
+          },
+          "image":{
+            "height":360,
+            "width":480,
+            "url":"https://s3-us-west-1.amazonaws.com/dev.eos.io/uploads/b7b8fcb4-e84b-4d84-9997-697a83ef5217"
+          }
+        },
+        {
+          "displayName":"When was our solar system formed?",
+          "content":"<p>When was our solar system formed?</p>\n",
+          "originalContent":"When was our solar system formed?",
+          "_id":"5511f6f9b9aa6c687c000012",
+          "objectType":"question",
+          "attachments":[
+            {
+              "displayName":"4.6 Billion Years Ago",
+              "_id":"5511f70fb9aa6c687c000013",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+                "5511f70fb9aa6c687c000013"
+              ]
+            },
+            {
+              "displayName":"52.2 Million Years Ago",
+              "_id":"5511f723b9aa6c687c000014",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            },
+            {
+              "displayName":"6.4 Thousand Years Ago",
+              "_id":"5511f736b9aa6c687c000015",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            },
+            {
+              "displayName":"7.3 Billion Years Ago",
+              "_id":"5511f77cb9aa6c687c000016",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            }
+          ],
+          "points":{
+            "max":10
+          },
+          "correctAnswer":[
+
+          ],
+          "poll":false
+        },
+        {
+          "displayName":"According to the video, what two factors contribute to making our solar system flat.",
+          "content":"<p>According to the video, what two factors contribute to making our solar system flat.</p>\n",
+          "originalContent":"According to the video, what two factors contribute to making our solar system flat.",
+          "_id":"5511f7feb9aa6c687c000017",
+          "objectType":"question",
+          "attachments":[
+            {
+              "objectType":"text",
+              "_id":"5512008fb9aa6c687c000024",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            }
+          ],
+          "points":{
+            "max":10
+          },
+          "correctAnswer":[
+
+          ],
+          "poll":false
+        },
+        {
+          "displayName":"What law is described by this statement:  The total amount of spinning in any isolated system always stays the same? \nThe conservation of:",
+          "content":"<p>What law is described by this statement:  The total amount of spinning in any isolated system always stays the same? </p>\n<p>The conservation of:</p>\n",
+          "originalContent":"What law is described by this statement:  The total amount of spinning in any isolated system always stays the same? \n\nThe conservation of:",
+          "_id":"5511fbd8b9aa6c687c00001c",
+          "objectType":"question",
+          "attachments":[
+            {
+              "objectType":"shortAnswer",
+              "_id":"5511fefeb9aa6c687c000023",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+                "angular momentum",
+                "Angular Momentum",
+                "Angular momentum"
+              ]
+            }
+          ],
+          "points":{
+            "max":10
+          },
+          "correctAnswer":[
+
+          ],
+          "poll":false
+        },
+        {
+          "displayName":"Did you like the video and did you find it informative?",
+          "content":"<p>Did you like the video and did you find it informative?</p>\n",
+          "originalContent":"Did you like the video and did you find it informative?",
+          "_id":"55120094b9aa6c687c000025",
+          "objectType":"question",
+          "attachments":[
+            {
+              "displayName":"Yes",
+              "_id":"55120097b9aa6c687c000026",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            },
+            {
+              "displayName":"No",
+              "_id":"551200abb9aa6c687c000027",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            },
+            {
+              "displayName":"No opinion",
+              "_id":"551200acb9aa6c687c000028",
+              "objectType":"choice",
+              "attachments":[
+
+              ],
+              "correctAnswer":[
+
+              ]
+            }
+          ],
+          "points":{
+            "max":10
+          },
+          "correctAnswer":[
+
+          ],
+          "poll":true
+        }
+      ],
+      "points":{
+        "max":10
+      }
+    }
+  }
+}
