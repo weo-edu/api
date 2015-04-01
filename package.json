@@ -16,9 +16,12 @@
   "license": "ISC",
   "repository": "weo-edu/api",
   "dependencies": {
+    "action": "git://github.com/mu-js/action",
+    "babel": "^4.7.16",
     "capitalize": "^0.5.0",
     "co-monk": "^1.0.0",
     "debug": "^2.1.3",
+    "io": "git://github.com/mu-js/io",
     "is-my-json-valid": "^2.10.0",
     "koa": "^0.18.1",
     "koa-mount": "^1.3.0",
@@ -30,6 +33,8 @@
     "mu-js": "git://github.com/mu-js/mu",
     "mu-route": "git://github.com/mu-js/route",
     "parse-name": "^0.2.4",
+    "prop": "git://github.com/weo-edu/prop",
+    "ramda": "^0.13.0",
     "slug": "^0.8.0",
     "validate-objectid": "^0.1.1"
   },
