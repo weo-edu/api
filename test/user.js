@@ -241,7 +241,7 @@ describe('User controller', function() {
           UserHelper.reset(token, 'newpass', this);
         })
         .seq(function(res) {
-          expect(res).to.have.status(204);
+          expect(res).to.have.status(200);
           UserHelper.login(user.username, 'newpass', this);
         })
         .seq(function(res) {
