@@ -289,13 +289,13 @@ describe('User controller', function() {
         });
     });
 
-    it('should let teachers reset students passwords', function(done) {
+    it('should let teachers reset students passwords and save the cleartext password on the student', function(done) {
       Seq()
         .seq(function() {
           // Set a new password for student, as teacher
           request
             .put('/student/' + student._id + '/password')
-            .send({newPassword: 'new password'})
+            .send({password: 'new password'})
             .set('Authorization', teacher.token)
             .end(this);
         })
@@ -311,6 +311,46 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           expect(res).to.have.status(401);
+          UserHelper.login(student.username, 'new password', this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          expect(res.body.tmpPassword).to.equal('new password');
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should not save the cleartext password when a student or teacher resets their own password', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .put('/user/' + student._id + '/password')
+            .send({password: 'newpass2'})
+            .set('Authorization', student.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res.status).to.equal(200);
+          UserHelper.me(student.token, this);
+        })
+        .seq(function(res) {
+          expect(!! res.body.tmpPassword).to.equal(false);
+          this();
+        })
+        .seq(function() {
+          request
+            .put('/user/' + teacher._id + '/password')
+            .send({password: 'newpass2'})
+            .set('Authorization', teacher.token)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res.status).to.equal(200);
+          UserHelper.me(teacher.token, this);
+        })
+        .seq(function(res) {
+          expect(!! res.body.tmpPassword).to.equal(false);
           this();
         })
         .seq(done);
@@ -326,7 +366,7 @@ describe('User controller', function() {
           // Make sure student's cannot set each others passwords
           request
             .put('/student/' + student._id + '/password')
-            .send({newPassword: 'other password'})
+            .send({password: 'other password'})
             .set('Authorization', student2.token)
             .end(this);
         })
@@ -351,7 +391,7 @@ describe('User controller', function() {
           // the student belongs to
           request
             .put('/student/' + student._id + '/password')
-            .send({newPassword: 'other password'})
+            .send({password: 'other password'})
             .set('Authorization', otherTeacher.token)
             .end(this);
         })
