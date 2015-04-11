@@ -1,13 +1,17 @@
 var ourPost = require('lib/schema-plugin-post');
+var _ = require('lodash');
 
 module.exports = function() {
-  var self = this;
-  var args = [].slice.call(arguments);
+  var args = _.toArray(arguments);
+  var fn = this;
+  if (!_.isFunction(fn)) {
+    fn = args[args.length - 1];
+    args = args.slice(0, -1);
+  }
+
 
   ourPost.onFlush(function() {
-    self(null, args[0]);
+    fn.apply(null, [null].concat(args));
   });
-  // setTimeout(function() {
-  //   self(null, args[0]);
-  // }, 500);
+
 };
