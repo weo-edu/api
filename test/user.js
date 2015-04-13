@@ -144,6 +144,31 @@ describe('User controller', function() {
         })
         .seq(done);
     });
+
+    it('should allow signup with two or one character email addresses', function(done) {
+      function random(n) {
+        return Math.floor(Math.random() * Math.pow(10, n));
+      }
+
+      function email(user) {
+        return user + '@' + random(8) + '.com';
+      }
+
+      Seq()
+        .seq(function() {
+          UserHelper.create({email: email('aa')}, this);
+        })
+        .seq(function(res) {
+          console.log('test');
+          expect(res).to.have.status(201);
+          UserHelper.create({email: email('a')}, this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(201);
+          this();
+        })
+        .seq(done);
+    });
   });
 
   describe('groups method', function() {
