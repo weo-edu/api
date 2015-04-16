@@ -9,6 +9,7 @@ var Cookie = require('cookie');
 var access = require('lib/access');
 var awaitHooks = require('./helpers/awaitHooks');
 var status = require('lib/Share/status');
+var assert = require('assert');
 
 describe('Share controller', function() {
   var user = null;
@@ -79,6 +80,68 @@ describe('Share controller', function() {
           done();
         });
     });
+
+    it('should be copyable', function(done) {
+      var share1;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share1 = res.body;
+          expect(res).to.have.status(201);
+          Share.copy(share1, user.token, this);
+        })
+        .seq(function(res) {  
+          var share = res.body;
+          assert.deepEqual(_.omit(share._object[0], 'id'), _.omit(share1._object[0], 'id'));
+          assert.notDeepEqual(share.channels, share1.channels);
+          assert.notDeepEqual(share.contexts, share1.contexts);
+          assert.notEqual(share.id, share1.id);
+          assert.deepEqual(share.actor, share1.actor);
+          this();
+        })
+        .seq(done);
+    });
+
+    describe('should be copyable', function() {
+      var user2;
+      before(function(done) {
+        Seq()
+          .seq(function() {
+            User.createAndLogin(this);
+          })
+          .seq(function(user) {
+            user2 = user;
+            done();
+          })
+        
+      })
+
+      it('by other user', function(done) {
+        var share1;
+        Seq()
+          .seq(function() {
+            Share.post({}, group, user.token, this);
+          })
+          .seq(function(res) {
+            share1 = res.body;
+            expect(res).to.have.status(201);
+            Share.copy(share1, user2.token, this);
+          })
+          .seq(function(res) {  
+            var share = res.body;
+            assert.deepEqual(_.omit(share._object[0], 'id'), _.omit(share1._object[0], 'id'));
+            assert.notDeepEqual(share.channels, share1.channels);
+            assert.notDeepEqual(share.contexts, share1.contexts);
+            assert.notEqual(share.id, share1.id);
+            assert.notDeepEqual(share.actor, share1.actor);
+            this();
+          })
+          .seq(done);
+      });
+    })
+    
   });
 
   describe('posting a share', function() {
@@ -131,6 +194,8 @@ describe('Share controller', function() {
           done();
         });
     });
+
+
   });
 
   describe('reading the feed', function() {

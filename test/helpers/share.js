@@ -41,6 +41,12 @@ var Share = module.exports = {
       .send(share)
       .end(cb);
   },
+  copy: function(share, authToken, cb) {
+    request
+      .post('/share/' + share.id + '/copy')
+      .set('Authorization', authToken)
+      .end(cb);
+  },
   updateInstance: function(inst, authToken, cb) {
     request
       .put('/share/' + inst.id + '/instance')
