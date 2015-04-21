@@ -253,7 +253,6 @@ describe('User controller', function() {
           authToken = 'Bearer ' + res.body.token;
           var group = GroupHelper.generate();
           delete group.groupType;
-          console.log('group', group);
           request
             .post('/board')
             .set('Authorization', authToken)
@@ -262,7 +261,6 @@ describe('User controller', function() {
         })
         .seq(function(res) {
           group = res.body;
-          console.log('board', group);
           done();
         });
     });

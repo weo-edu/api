@@ -47,6 +47,20 @@ var Share = module.exports = {
       .set('Authorization', authToken)
       .end(cb);
   },
+  assign: function(share, groups, authToken, cb) {
+    request
+      .put('/share/' + share.id + '/assign')
+      .set('Authorization', authToken)
+      .send({to: groups})
+      .end(cb);
+  },
+  pin: function(share, groups, authToken, cb) {
+    request
+      .put('/share/' + share.id + '/pin')
+      .set('Authorization', authToken)
+      .send({to: groups})
+      .end(cb);
+  },
   updateInstance: function(inst, authToken, cb) {
     request
       .put('/share/' + inst.id + '/instance')

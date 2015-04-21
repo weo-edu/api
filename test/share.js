@@ -14,6 +14,7 @@ var assert = require('assert');
 describe('Share controller', function() {
   var user = null;
   var group = null;
+  var board = null;
 
   before(function(done) {
     Seq()
@@ -31,6 +32,15 @@ describe('Share controller', function() {
       .seq(function(res) {
         expect(res).to.have.status(201);
         group = res.body;
+        request
+          .post('/board')
+          .send(GroupHelper.generate())
+          .set('Authorization', user.token)
+          .end(this);
+      })
+      .seq(function(res) {
+        expect(res).to.have.status(201);
+        board = res.body;
         this();
       })
       .seq(done);
@@ -140,7 +150,48 @@ describe('Share controller', function() {
           })
           .seq(done);
       });
-    })
+    });
+
+    it('should be assignable', function(done) {
+      Seq()
+        .seq(function() {
+          Share.post({}, [], user.token, this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(res).to.have.status(201);
+          expect(share.actor).to.have.property('displayName');
+          expect(share.channels.length).to.equal(0);
+          Share.assign(share, [group.id], user.token, this)
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.channels.length).to.equal(1);
+          this();
+        })  
+        .seq(done);
+    });
+
+    it('should be pinnable', function(done) {
+      Seq()
+        .seq(function() {
+          Share.post({}, [], user.token, this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(res).to.have.status(201);
+          expect(share.channels.length).to.equal(0);
+          expect(share.actor).to.have.property('displayName');
+          Share.pin(share, [board.id], user.token, this)
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.channels.length).to.equal(1);
+          this();
+        })  
+        .seq(done);
+
+    });
     
   });
 
