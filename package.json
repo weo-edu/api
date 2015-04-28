@@ -81,7 +81,8 @@
     "uncapitalize": "^1.0.2",
     "validator": "~3.10.0",
     "ware": "^1.2.0",
-    "weo-logger": "git://github.com/weo-edu/weo-logger"
+    "weo-logger": "git://github.com/weo-edu/weo-logger",
+    "summarize-markdown": "~0.3.0"
   },
   "devDependencies": {
     "Faker": "git://github.com/weo-edu/Faker.js",
