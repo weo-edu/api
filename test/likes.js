@@ -7,6 +7,7 @@ var request = supertest(app);
 
 describe('Liking', function() {
   var user = null;
+  var user2 = null;
   var share = null;
   beforeEach(function(done) {
 
@@ -16,6 +17,10 @@ describe('Liking', function() {
       },
       function(u) {
         user = u; 
+        return api.createAndLogin(createUser());
+      },
+      function(u) {
+        user2 = u;
       },
       function() {
         return api.share(createShare(), user)
@@ -50,6 +55,23 @@ describe('Liking', function() {
     )().then(done);
   });
 
+  it('should track two different likes', function(done) {
+    po(
+      function() {
+        return api.like(share, user);
+      },
+      function(res) {
+        var s = res.body;
+        assert.equal(s.likers.length, 1);
+        return api.like(share, user2);
+      },
+      function(res) {
+        var s = res.body;
+        assert.equal(s.likers.length, 2);
+      }
+    )().then(done).catch(done);
+  })
+
   it('should not be possible twice', function(done) {
     po(
       function() {
@@ -73,7 +95,6 @@ describe('Liking', function() {
   it('should be undoable', function(done) {
     po(
       function() {
-        console.log('like');
         return api.like(share, user);
       },
       function(res) {
