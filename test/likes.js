@@ -73,6 +73,7 @@ describe('Liking', function() {
   it('should be undoable', function(done) {
     po(
       function() {
+        console.log('like');
         return api.like(share, user);
       },
       function(res) {
@@ -83,15 +84,16 @@ describe('Liking', function() {
       },
       function(res) {
         var s = res.body;
-        var liker = s.likers[0];
-        assert.equal(liker.id, user.id);
+        assert.equal(s.likers.length, 0);
         return api.likes(user);
       },
       function(res) {
         var likes = res.body.items;
         assert.equal(likes.length, 0);
       }
-    )().then(done);
+    )().then(done).catch(function(err) {
+      console.error(err);
+    })
   });
 
   it('should not be unlikeable', function(done) {
