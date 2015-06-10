@@ -1,5 +1,6 @@
 {
   "strict": false,
+  "asi": true,
   "multistr": true,
   "eqeqeq": true,
   "bitwise": true,
