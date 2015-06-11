@@ -302,7 +302,7 @@ describe('Share controller', function() {
     it('should allow paging', function(done) {
       var last = null;
       var channel = 'group!' + group._id + '.board';
-      Seq(_.range(1, 5))
+      Seq(_.range(0, 5))
         .seqEach(function() {
           Share.post({}, group, user.token, this);
         })
