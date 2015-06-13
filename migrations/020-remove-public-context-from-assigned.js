@@ -28,7 +28,7 @@ function addOwnerContext(doc) {
     return;
 
   var context = {
-    allow: [_.extend(doc.actor, {id: 'user:teacher:' + doc.actor.id})],
+    allow: [_.extend({}, doc.actor, {id: 'user:teacher:' + doc.actor.id})],
     descriptor: meDescriptor
   };
 
