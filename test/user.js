@@ -159,7 +159,6 @@ describe('User controller', function() {
           UserHelper.create({email: email('aa')}, this);
         })
         .seq(function(res) {
-          console.log('test');
           expect(res).to.have.status(201);
           UserHelper.create({email: email('a')}, this);
         })
