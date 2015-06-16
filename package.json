@@ -18,6 +18,7 @@
     "@weo-edu/po": "^0.1.3",
     "as-array": "git://github.com/weo-edu/as-array",
     "async": "0.9.0",
+    "bluebird": "~2.9.25",
     "body-parser": "~1.0.2",
     "browserify": "7.0.1",
     "bytes": "~0.3.0",
@@ -55,7 +56,7 @@
     "mongoose": "git://github.com/weo-edu/mongoose#3.8.x",
     "monk": "^0.9.1",
     "morgan": "1.5.0",
-    "no-iits": "0.0.0",
+    "no-iits": "^0.2.1",
     "nodemailer": "~1.2.2",
     "overlaps": "^1.0.0",
     "parse-name": "^0.2.4",
@@ -84,8 +85,7 @@
     "uncapitalize": "^1.0.2",
     "validator": "~3.10.0",
     "ware": "^1.2.0",
-    "weo-logger": "git://github.com/weo-edu/weo-logger",
-    "bluebird": "~2.9.25"
+    "weo-logger": "git://github.com/weo-edu/weo-logger"
   },
   "devDependencies": {
     "Faker": "git://github.com/weo-edu/Faker.js",
