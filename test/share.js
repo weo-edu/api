@@ -9,10 +9,12 @@ var Cookie = require('cookie');
 var access = require('lib/access');
 var awaitHooks = require('./helpers/awaitHooks');
 var status = require('lib/Share/status');
+var assert = require('assert');
 
 describe('Share controller', function() {
   var user = null;
   var group = null;
+  var board = null;
 
   before(function(done) {
     Seq()
@@ -30,6 +32,15 @@ describe('Share controller', function() {
       .seq(function(res) {
         expect(res).to.have.status(201);
         group = res.body;
+        request
+          .post('/board')
+          .send(GroupHelper.generate())
+          .set('Authorization', user.token)
+          .end(this);
+      })
+      .seq(function(res) {
+        expect(res).to.have.status(201);
+        board = res.body;
         this();
       })
       .seq(done);
@@ -79,6 +90,109 @@ describe('Share controller', function() {
           done();
         });
     });
+
+    it('should be copyable', function(done) {
+      var share1;
+      Seq()
+        .seq(function() {
+          Share.post({}, group, user.token, this);
+        })
+        .seq(function(res) {
+          share1 = res.body;
+          expect(res).to.have.status(201);
+          Share.copy(share1, user.token, this);
+        })
+        .seq(function(res) {  
+          var share = res.body;
+          assert.deepEqual(_.omit(share._object[0], 'id'), _.omit(share1._object[0], 'id'));
+          assert.notDeepEqual(share.channels, share1.channels);
+          assert.notDeepEqual(share.contexts, share1.contexts);
+          assert.notEqual(share.id, share1.id);
+          assert.deepEqual(share.actor, share1.actor);
+          this();
+        })
+        .seq(done);
+    });
+
+    describe('should be copyable', function() {
+      var user2;
+      before(function(done) {
+        Seq()
+          .seq(function() {
+            User.createAndLogin(this);
+          })
+          .seq(function(user) {
+            user2 = user;
+            done();
+          })
+        
+      })
+
+      it('by other user', function(done) {
+        var share1;
+        Seq()
+          .seq(function() {
+            Share.post({}, group, user.token, this);
+          })
+          .seq(function(res) {
+            share1 = res.body;
+            expect(res).to.have.status(201);
+            Share.copy(share1, user2.token, this);
+          })
+          .seq(function(res) {  
+            var share = res.body;
+            assert.deepEqual(_.omit(share._object[0], 'id'), _.omit(share1._object[0], 'id'));
+            assert.notDeepEqual(share.channels, share1.channels);
+            assert.notDeepEqual(share.contexts, share1.contexts);
+            assert.notEqual(share.id, share1.id);
+            assert.notDeepEqual(share.actor, share1.actor);
+            this();
+          })
+          .seq(done);
+      });
+    });
+
+    it('should be assignable', function(done) {
+      Seq()
+        .seq(function() {
+          Share.post({}, [], user.token, this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(res).to.have.status(201);
+          expect(share.actor).to.have.property('displayName');
+          expect(share.channels.length).to.equal(0);
+          Share.assign(share, [group.id], user.token, this)
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.channels.length).to.equal(1);
+          this();
+        })  
+        .seq(done);
+    });
+
+    it('should be pinnable', function(done) {
+      Seq()
+        .seq(function() {
+          Share.post({}, [], user.token, this);
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(res).to.have.status(201);
+          expect(share.channels.length).to.equal(0);
+          expect(share.actor).to.have.property('displayName');
+          Share.pin(share, [board.id], user.token, this)
+        })
+        .seq(function(res) {
+          var share = res.body;
+          expect(share.channels.length).to.equal(1);
+          this();
+        })  
+        .seq(done);
+
+    });
+    
   });
 
   describe('posting a share', function() {
@@ -131,6 +245,8 @@ describe('Share controller', function() {
           done();
         });
     });
+
+
   });
 
   describe('reading the feed', function() {
@@ -186,7 +302,7 @@ describe('Share controller', function() {
     it('should allow paging', function(done) {
       var last = null;
       var channel = 'group!' + group._id + '.board';
-      Seq(_.range(1, 5))
+      Seq(_.range(0, 5))
         .seqEach(function() {
           Share.post({}, group, user.token, this);
         })

@@ -360,46 +360,5 @@ describe('Group controller', function() {
         })
         .seq(done);
     })
-
-    it('should archive subgroups when parent is archived', function(done) {
-      var subgroup;
-      Seq()
-        .seq(function() {
-          subgroup = GroupHelper.generate({
-            parent: Group.toKey(group),
-            groupType: 'group'
-          });
-
-          request
-            .post('/group')
-            .send(subgroup)
-            .set('Authorization', user.token)
-            .end(this);
-        })
-        .seq(function(res) {
-          subgroup = res.body;
-          expect(subgroup.status).to.equal('active');
-
-          request
-            .put('/group/' + group.id + '/archive')
-            .set('Authorization', user.token)
-            .end(this);
-        })
-        .seq(function(res) {
-          group = res.body;
-          expect(group.status).to.equal('archived');
-
-          request
-            .get('/group/' + subgroup.id)
-            .set('Authorization', user.token)
-            .end(this);
-        })
-        .seq(function(res) {
-          subgroup = res.body;
-          expect(subgroup.status).to.equal('archived');
-          this();
-        })
-        .seq(done);
-    });
   });
 });

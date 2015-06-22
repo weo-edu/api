@@ -159,7 +159,6 @@ describe('User controller', function() {
           UserHelper.create({email: email('aa')}, this);
         })
         .seq(function(res) {
-          console.log('test');
           expect(res).to.have.status(201);
           UserHelper.create({email: email('a')}, this);
         })
@@ -228,7 +227,88 @@ describe('User controller', function() {
         })
         .seq(done);
     });
+
+    it('should return the list of classes', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .get('/user/classes')
+            .set('Authorization', authToken)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          expect(res.body.items).to.have.length(1);
+          var excluded = ['__v', 'board', 'updatedAt', 'id', 'ownerIds'];
+          expect(_.omit(res.body.items[0], excluded)).to.deep.equal(_.omit(group, excluded));
+          this();
+        })
+        .seq(done);
+    });
+
+    it('should return the list of boards', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .get('/user/boards')
+            .set('Authorization', authToken)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          expect(res.body.items).to.have.length(0);
+          this();
+        })
+        .seq(done);
+    });
   });
+
+
+  describe('board method', function() {
+    before(function(done) {
+      Seq()
+        .seq(function() {
+          user = UserHelper.create({}, this);
+        })
+        .seq(function(res) {
+          UserHelper.login(user.username, user.password, this);
+        })
+        .seq(function(res) {
+          authToken = 'Bearer ' + res.body.token;
+          var group = GroupHelper.generate();
+          delete group.groupType;
+          request
+            .post('/board')
+            .set('Authorization', authToken)
+            .send(group)
+            .end(this);
+        })
+        .seq(function(res) {
+          group = res.body;
+          done();
+        });
+    });
+
+    it('should return the list of boards', function(done) {
+      Seq()
+        .seq(function() {
+          request
+            .get('/user/boards')
+            .set('Authorization', authToken)
+            .end(this);
+        })
+        .seq(function(res) {
+          expect(res).to.have.status(200);
+          expect(res.body.items).to.have.length(1);
+          var excluded = ['__v', 'board', 'updatedAt', 'id', 'ownerIds'];
+          expect(_.omit(res.body.items[0], excluded)).to.deep.equal(_.omit(group, excluded));
+          this();
+        })
+        .seq(done);
+    });
+
+
+  })
 
   var cheerio = require('cheerio');
   var ent = require('ent');
