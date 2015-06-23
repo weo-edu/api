@@ -102,7 +102,7 @@ describe('Share controller', function() {
           expect(res).to.have.status(201);
           Share.copy(share1, user.token, this);
         })
-        .seq(function(res) {  
+        .seq(function(res) {
           var share = res.body;
           assert.deepEqual(_.omit(share._object[0], 'id'), _.omit(share1._object[0], 'id'));
           assert.notDeepEqual(share.channels, share1.channels);
@@ -125,7 +125,7 @@ describe('Share controller', function() {
             user2 = user;
             done();
           })
-        
+
       })
 
       it('by other user', function(done) {
@@ -139,7 +139,7 @@ describe('Share controller', function() {
             expect(res).to.have.status(201);
             Share.copy(share1, user2.token, this);
           })
-          .seq(function(res) {  
+          .seq(function(res) {
             var share = res.body;
             assert.deepEqual(_.omit(share._object[0], 'id'), _.omit(share1._object[0], 'id'));
             assert.notDeepEqual(share.channels, share1.channels);
@@ -168,7 +168,7 @@ describe('Share controller', function() {
           var share = res.body;
           expect(share.channels.length).to.equal(1);
           this();
-        })  
+        })
         .seq(done);
     });
 
@@ -188,11 +188,11 @@ describe('Share controller', function() {
           var share = res.body;
           expect(share.channels.length).to.equal(1);
           this();
-        })  
+        })
         .seq(done);
 
     });
-    
+
   });
 
   describe('posting a share', function() {
@@ -401,7 +401,7 @@ describe('Share controller', function() {
       var share;
       Seq()
         .seq(function() {
-          Share.post({}, group, user.token, this);
+          Share.post({description: 'this is a description'}, group, user.token, this);
         })
         .seq(function(res) {
           share = res.body;
@@ -412,6 +412,7 @@ describe('Share controller', function() {
         })
         .seq(function(res) {
           var inst = res.body;
+          expect(inst.description).to.equal('this is a description')
           expect(inst.actor.id).to.equal(student._id);
           expect(inst.root.id).to.equal(share._id);
           expect(inst.status).to.equal(status.opened);
