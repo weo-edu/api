@@ -93,7 +93,7 @@ api:
     S3_AVATAR_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
     S3_UPLOAD_BUCKET: dev.eos.io
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
-    SCRAPER_URL: http://scraper/1/oembed/
+    SCRAPER_URL: http://scraper:5000/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
 
 #
@@ -112,7 +112,10 @@ redis:
 scraper:
   image: 'tutum.co/ashaffer/scraper-proxy:staging'
   autoredeploy: true
+  expose:
+    - '5000'
   environment:
+    PORT: 5000
     DEBUG: scraper:*
     DOCTHUMB_URL: http://docthumb_lb/
     EMBEDLY_API_KEY: 578f2e0b9cb04763888f0a6c9b907b55
