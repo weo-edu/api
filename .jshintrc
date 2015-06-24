@@ -1,0 +1,21 @@
+{
+  "strict": false,
+  "asi": true,
+  "multistr": true,
+  "eqeqeq": true,
+  "bitwise": true,
+// Removing this for now, may want to add it
+// back though "maxlen": 90,
+  "trailing": true,
+  "immed": true,
+  "unused": true,
+  "indent": 2,
+  "-W030": false,
+  "-W058": false,
+  "-W103": false,
+  "-W014": false,
+  "-W054": false,
+  "-W086": false,
+  "-W018": false, // "confusing" use of !, e.g. !! to coerce to bool
+  "laxcomma": true
+}

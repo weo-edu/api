@@ -1,34 +1,29 @@
 var Faker = require('Faker')
   , chai = require('chai')
+  , mongoose = require('mongoose')
   , moment = require('moment')
-  , Seq = require('seq');
+  , Seq = require('seq')
+  , Share = require('./share');
 
 
 var Post = module.exports = {
-  generate: function(opts) {
-    opts = opts || {};
-    _.defaults(opts, {
-      user: '' + Math.random(),
-      title: Faker.Lorem.words(),
-      body: Faker.Lorem.paragraph(),
-      user_name: Faker.Name.findName()
+  generate: function(opts, groups) {
+    var share = Share.generate(opts, groups);
+    delete share.verb;
+    _.defaults(share.object, {
+      originalContent: Faker.Lorem.paragraph(),
+      objectType: 'post'
     });
-
-    return opts;
+    return share;
   },
 
-  discussionId: function() {
-    return '' + Math.random();
-  },
-
-  create: function(type, opts, cb) {
-    var post = this.generate(opts);
-    var discussionId = opts.discussion_id || this.discussionId();
-    delete opts.discussion_id;
+  create: function(token, type, opts, groups, cb) {
+    var share = this.generate(opts, groups);
+    share.object.objectType = type;
     request
-      .post('/' + type + '/' + discussionId)
-      .send(post)
+      .post('/share')
+      .send(share)
+      .set('Authorization', token)
       .end(cb);
   }
 };
-
