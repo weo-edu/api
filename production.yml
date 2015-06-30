@@ -7,6 +7,8 @@
 #
 weo_lb:
   image: 'tutum/haproxy:latest'
+  tags:
+    - production
   links:
     - weo
   ports:
@@ -29,6 +31,8 @@ weo_lb:
 #
 weo:
   image: 'tutum.co/ashaffer/eos-core:production'
+  tags:
+    - production
   expose:
     - '3000'
   environment:
@@ -42,12 +46,15 @@ weo:
     NODE_ENV: production
     SEGMENT_IO_KEY: 0mhgcgv6ao
     UPLOAD_SERVER: //eos.io.s3.amazonaws.com
+    IMAGE_SERVER: http://images.weo.io
 
 #
 # API Backend Load Balancer
 #
 api_lb:
   image: 'tutum/haproxy:latest'
+  tags:
+    - production
   links:
     - api
   ports:
@@ -73,6 +80,8 @@ api_lb:
 #
 api:
   image: 'tutum.co/ashaffer/api:production'
+  tags:
+    - production
   autoredeploy: true
   target_num_containers: 3
   links:
@@ -104,59 +113,17 @@ api:
     S3_UPLOAD_BUCKET: dev.eos.io
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
     REDIS_URL: redis://user:password@redis:6379
-    SCRAPER_URL: http://scraper/1/oembed/
+    SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
 
 #
 # Redis
 #
 redis:
+  tags:
+    - production
   image: 'tutum/redis:latest'
   expose:
     - '6379'
   environment:
     REDIS_PASS: password
-
-#
-# Link Scraper
-#
-scraper:
-  image: 'tutum.co/ashaffer/scraper-proxy:production'
-  autoredeploy: true
-  environment:
-    DEBUG: scraper:*
-    DOCTHUMB_URL: http://docthumb_lb/
-    EMBEDLY_API_KEY: 578f2e0b9cb04763888f0a6c9b907b55
-    GOOGLE_DRIVE_API_KEY: AIzaSyDCntpE09OxvK4vTsCTMlUKI-wlMi3H3SI
-    PAPERTRAIL_HOST: logs2.papertrailapp.com
-    PAPERTRAIL_PORT: 15920
-    S3_API_KEY: AKIAJGRZMUAG422PORVQ
-    S3_BUCKET: dev.eos.io
-    S3_REGION: us-west-1
-    S3_SECRET: VmldgplYd6qfga0HpE1KqsMiGBJDiA88OtyYTfbc
-
-#
-# Document Thumbnailer Load Balancer
-#
-docthumb_lb:
-  image: 'tutum/haproxy:latest'
-  environment:
-    BACKEND_PORT: 3000
-  links:
-    - docthumb
-  expose:
-    - '80'
-  roles:
-    - global
-
-#
-# Document Thumbnailer
-#
-docthumb:
-  image: 'tutum.co/ashaffer/docthumb:production'
-  autoredeploy: true
-  environment:
-    PORT: 3000
-  expose:
-    - '3000'
-  target_num_containers: 3
