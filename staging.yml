@@ -45,7 +45,8 @@ weo:
     STATIC_FILES: //staging.weo.io
     UPLOAD_SERVER: //dev.eos.io.s3.amazonaws.com
     IMAGE_SERVER: http://images.weo.io
-
+    WEO_SOURCEMAPS: true
+    
 #
 # API Backend Load Balancer
 #
