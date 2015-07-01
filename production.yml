@@ -41,13 +41,14 @@ weo:
     API_SERVER: //api.weo.io
     API_STATIC: //weo-api.global.ssl.fastly.net
     STATIC_FILES: //weo.global.ssl.fastly.net
-    AVATAR_SERVER: //cdn-eos-io.global.ssl.fastly.net
+    AVATAR_SERVER: //avatars.global.ssl.fastly.net
     CLEVER_CLIENT_ID: 504ffa19024513570be4
     CRAWLABLE: true
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     NODE_ENV: production
     SEGMENT_IO_KEY: 0mhgcgv6ao
     IMAGE_SERVER: //images.global.ssl.fastly.net
+
 
 #
 # API Backend Load Balancer
@@ -112,6 +113,8 @@ api:
     REDIS_URL: redis://user:password@redis:6379
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
+    AVATAR_SERVER: //avatars.global.ssl.fastly.net
+    FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
 
 #
 # Redis
