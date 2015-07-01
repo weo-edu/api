@@ -1,7 +1,7 @@
 var Seq = require('seq')
-  , UserHelper = require('./helpers/user');
+  , UserHelper = require('./helpers/user')
 
-require('./helpers/boot');
+require('./helpers/boot')
 
 //XXX test avatar created when user is created
 
@@ -11,80 +11,63 @@ describe('Avatar controller', function() {
       Seq()
         .seq(function() {
           request
-            .put('/user/avatar')
-            .send({image: 'test.jpg'})
-            .end(this);
+            .put('/avatar')
+            .send({url: 'test.jpg'})
+            .end(this)
         })
         .seq(function(res) {
-          expect(res).to.have.status(401);
-          this();
+          expect(res).to.have.status(401)
+          this()
         })
-        .seq(done);
-    });
-  });
+        .seq(done)
+    })
+  })
 
   describe('authenticated requests', function() {
-    var authToken, teacher, student;
+    var authToken, teacher, student
     before(function(done) {
       Seq()
         .seq(function() {
-          teacher = UserHelper.create(this);
+          teacher = UserHelper.create(this)
         })
         .seq(function(res) {
-          UserHelper.login(teacher.username, teacher.password, this);
+          UserHelper.login(teacher.username, teacher.password, this)
         })
         .seq(function(res) {
-          authToken = 'Bearer ' + res.body.token;
-          this();
+          authToken = 'Bearer ' + res.body.token
+          this()
         })
-        .seq(done);
-    });
+        .seq(done)
+    })
 
     it('should error if there is no image', function(done) {
       Seq()
         .seq(function() {
           request
-            .put('/user/avatar')
+            .put('/avatar')
             .set('Authorization', authToken)
-            .end(this);
+            .end(this)
         })
         .seq(function(res) {
-          expect(res).to.have.status(400);
-          this();
+          expect(res).to.have.status(400)
+          this()
         })
-        .seq(done);
-    });
-
-    it('should error if an invalid avatar is specified', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .put('/user/avatar')
-            .set('Authorization', authToken)
-            .send({image: 'notAValidAvatar'})
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(404);
-          this();
-        })
-        .seq(done);
-    });
+        .seq(done)
+    })
 
     it('should accept a valid avatar path', function(done) {
       Seq()
         .seq(function() {
           request
-            .put('/user/avatar')
+            .put('/avatar')
             .set('Authorization', authToken)
-            .send({image: '/originals/decks/lotus.png'})
-            .end(this);
+            .send({url: 'https://www.weo.io/originals/decks/lotus.png'})
+            .end(this)
         })
         .seq(function(res) {
-          expect(res).to.have.status(204);
-          this();
+          expect(res).to.have.status(200)
+          done()
         })
-        .seq(done);
-    });
-  });
-});
+    })
+  })
+})
