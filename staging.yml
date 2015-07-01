@@ -32,7 +32,7 @@ weo:
     PORT: 3000
     API_SERVER: //staging-api.weo.io
     API_STATIC: //staging-api-cdn.weo.io
-    AVATAR_SERVER: //cdn-eos-io.global.ssl.fastly.net
+    AVATAR_SERVER: //avatars.global.ssl.fastly.net
     CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
     CRAWLABLE: false
     DEBUG: weo:*
@@ -101,7 +101,7 @@ api:
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
-    AVATAR_SERVER: //cdn-eos-io.global.ssl.fastly.net
+    AVATAR_SERVER: //avatars.global.ssl.fastly.net
 
 #
 # Redis
