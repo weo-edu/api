@@ -7,7 +7,7 @@ var _ = require('lodash');
 
 require('./helpers/boot');
 
-var excluded = ['__v', 'board', 'updatedAt', 'id', 'ownerIds', 'createdAt'];
+var excluded = ['__v', 'board', 'updatedAt', 'id', 'ownerIds', 'createdAt', 'owners'];
 
 describe('Group controller', function() {
   var user;
