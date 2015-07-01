@@ -31,22 +31,23 @@ weo_lb:
 #
 weo:
   image: 'tutum.co/ashaffer/eos-core:production'
+  target_num_containers: 2
   tags:
     - production
   expose:
     - '3000'
   environment:
     PORT: 3000
-    API_SERVER: //api-lb.production.ashaffer.svc.tutum.io
-    API_STATIC: //api-lb.production.ashaffer.svc.tutum.io
-    AVATAR_SERVER: https://cdn-eos-io.global.ssl.fastly.net
+    API_SERVER: //api.weo.io
+    API_STATIC: //weo-api.global.ssl.fastly.net
+    STATIC_FILES: //weo.global.ssl.fastly.net
+    AVATAR_SERVER: //cdn-eos-io.global.ssl.fastly.net
     CLEVER_CLIENT_ID: 504ffa19024513570be4
     CRAWLABLE: true
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     NODE_ENV: production
     SEGMENT_IO_KEY: 0mhgcgv6ao
-    UPLOAD_SERVER: //eos.io.s3.amazonaws.com
-    IMAGE_SERVER: http://images.weo.io
+    IMAGE_SERVER: //images.global.ssl.fastly.net
 
 #
 # API Backend Load Balancer
@@ -92,7 +93,6 @@ api:
     - '3000'
   environment:
     PORT: 3000
-    AVATAR_SERVER: //cdn.eos.io.s3-website-us-west-1.amazonaws.com
     CLEVER_CLIENT_ID: 504ffa19024513570be4
     CLEVER_CLIENT_SECRET: 87b3e092190e5787a10c9e0e18886221b483a553
     DEBUG: weo:*
@@ -101,16 +101,13 @@ api:
     EMAIL_USER: info@weo.io
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     GOOGLE_SECRET: POE6EaRNeXWLP8DPafQOBR-Y
-    HASH_ID_KEY: themang
     MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef
     NODE_ENV: production
     PAPERTRAIL_HOST: logs2.papertrailapp.com
     PAPERTRAIL_PORT: 15920
     S3_API_KEY: AKIAIIA5OZD3IKVSUXDA
-    S3_AVATAR_BUCKET: cdn.eos.io
-    S3_AVATAR_REGION: us-west-1
-    S3_AVATAR_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
-    S3_UPLOAD_BUCKET: dev.eos.io
+    S3_UPLOAD_BUCKET: weo-uploads
+    S3_UPLOAD_REGION: us-west-2
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
     REDIS_URL: redis://user:password@redis:6379
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
