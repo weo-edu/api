@@ -32,7 +32,7 @@ weo:
     PORT: 3000
     API_SERVER: //staging-api.weo.io
     API_STATIC: //staging-api-cdn.weo.io
-    AVATAR_SERVER: //cdn.eos.io.s3-website-us-west-1.amazonaws.com
+    AVATAR_SERVER: //avatars.weo.io
     CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
     CRAWLABLE: false
     DEBUG: weo:*
@@ -100,6 +100,8 @@ api:
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
+    FASTLY_AVATAR_SERVICE_ID: 66wIYwgwWKRCkZVOIXILTd
+    FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
 
 #
 # Redis

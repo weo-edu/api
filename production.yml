@@ -112,6 +112,8 @@ api:
     REDIS_URL: redis://user:password@redis:6379
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
+    FASTLY_AVATAR_SERVICE_ID: 66wIYwgwWKRCkZVOIXILTd
+    FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
 
 #
 # Redis
