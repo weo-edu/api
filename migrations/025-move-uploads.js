@@ -7,14 +7,21 @@ var s3client = require('knox').createClient(s3config)
 var bucketUrl = 'http://' + s3config.bucket + '.s3-' + s3config.region + '.amazonaws.com'
 
 exports.up = function(next){
+  var ps = es.pause()
   chug.src('shares', {})
+    .pipe(ps)
     .pipe(es.map(function(doc, cb) {
+      ps.pause()
+      console.log('processing share', doc._id)
       process(doc).then(function() {
         cb(null, doc)
+        ps.resume()
       }, cb)
     }))
     .pipe(chug.dest('shares'))
-    .on('end', next);
+    .on('end', next)
+
+  ps.resume()
 };
 
 exports.down = function(next){
@@ -73,8 +80,10 @@ function copy(url) {
           .resume()
           .on('error', reject)
           .on('end', function() {
-            console.log('complete', bucketUrl + path)
-            resolve(bucketUrl + path)
+            var url = (bucketUrl + path).replace('http://', '//').replace('https://', '//')
+
+            console.log('complete', url)
+            resolve(url)
           })
       })
     })
