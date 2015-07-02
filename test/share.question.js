@@ -120,10 +120,8 @@ describe('Questions', function() {
             actor: {
               displayName: student.displayName,
               id: student.id,
-              url: '/' + student.id + '/',
-              image: {
-                url: student.image.url
-              }
+              image: {url: student.image.url},
+              url: '/' + student.id + '/'
             },
             items: 1,
             pointsScaled: 1,

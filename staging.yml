@@ -32,7 +32,7 @@ weo:
     PORT: 3000
     API_SERVER: //staging-api.weo.io
     API_STATIC: //staging-api-cdn.weo.io
-    AVATAR_SERVER: //cdn.eos.io.s3-website-us-west-1.amazonaws.com
+    AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
     CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
     CRAWLABLE: false
     DEBUG: weo:*
@@ -43,10 +43,9 @@ weo:
     PAPERTRAIL_PORT: 15920
     SEGMENT_IO_KEY: e6e7s7djli
     STATIC_FILES: //staging.weo.io
-    UPLOAD_SERVER: //dev.eos.io.s3.amazonaws.com
-    IMAGE_SERVER: http://images.weo.io
+    IMAGE_SERVER: //images.weo.io
     WEO_SOURCEMAPS: true
-    
+
 #
 # API Backend Load Balancer
 #
@@ -82,7 +81,6 @@ api:
     - '3000'
   environment:
     PORT: 3000
-    AVATAR_SERVER: //cdn.eos.io.s3-website-us-west-1.amazonaws.com
     CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
     CLEVER_CLIENT_SECRET: de3a5c71719741581ec2b77a05e07c643369560f
     DEBUG: weo:*
@@ -91,20 +89,19 @@ api:
     EMAIL_USER: testmail@weo.io
     GOOGLE_CLIENT_ID: 696300823052-39m3901cceuiehfiac4s9l9su5tlps2r.apps.googleusercontent.com
     GOOGLE_SECRET: Ou2xuWLoVp_JP23p0rNMnaC9
-    HASH_ID_KEY: themang
     MONGO_URL: mongodb://eos:UGjJdj4fHjX5Qkq@c253.lighthouse.0.mongolayer.com:10253,c253.lighthouse.1.mongolayer.com:10253/default?replicaSet=set-54daa4019bb891b661000eea
     NODE_ENV: staging
     PAPERTRAIL_HOST: logs2.papertrailapp.com
     PAPERTRAIL_PORT: 15920
     REDIS_URL: redis://user:password@redis:6379/
     S3_API_KEY: AKIAIIA5OZD3IKVSUXDA
-    S3_AVATAR_BUCKET: cdn.eos.io
-    S3_AVATAR_REGION: us-west-1
-    S3_AVATAR_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
-    S3_UPLOAD_BUCKET: dev.eos.io
+    S3_UPLOAD_REGION: us-west-2
+    S3_UPLOAD_BUCKET: weo-uploads-dev
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
+    FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
+    AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
 
 #
 # Redis

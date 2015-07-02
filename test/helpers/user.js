@@ -140,13 +140,6 @@ var User = module.exports = {
         cb(null, updated);
       })
   },
-  changeAvatar: function(user, image, cb) {
-    request
-      .put('/user/avatar')
-      .set('Authorization', user.token)
-      .send({image: image})
-      .end(cb);
-  },
   reset: function(token, password, cb) {
     request
       .put('/user/reset')
