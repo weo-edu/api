@@ -1,5 +1,4 @@
 var chug = require('mongo-chug')(require('../lib/config/').mongo)
-var Promise = require('es6-promise').Promise
 var es = require('event-stream')
 var http = require('http')
 var uuid = require('uuid')
