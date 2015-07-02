@@ -80,8 +80,10 @@ function copy(url) {
           .resume()
           .on('error', reject)
           .on('end', function() {
-            console.log('complete', bucketUrl + path)
-            resolve(bucketUrl + path)
+            var url = (bucketUrl + path).replace('http://', '//').replace('https://', '//')
+
+            console.log('complete', url)
+            resolve(url)
           })
       })
     })
