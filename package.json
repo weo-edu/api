@@ -35,7 +35,6 @@
     "debug": "~0.8.0",
     "debug-trace": "~0.2.3",
     "ent": "~2.0.0",
-    "es6-promise": "^2.3.0",
     "event-stream": "^3.1.7",
     "express": "~4.0.0",
     "express-inject-latency": "0.0.4",
@@ -48,7 +47,7 @@
     "is-url": "^1.2.1",
     "knox": "~0.8.10",
     "lodash": "~2.4.1",
-    "marked": "git://github.com/weo-edu/marked.git",
+    "marked": "weo-edu/marked",
     "migrate": "git://github.com/weo-edu/node-migrate",
     "mock-require": "1.0.5",
     "moment": "~2.6.0",
@@ -110,6 +109,6 @@
   },
   "engines": {
     "npm": "2.0.2",
-    "node": "0.10.33"
+    "iojs": "1.8.2"
   }
 }
