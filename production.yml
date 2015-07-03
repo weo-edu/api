@@ -32,6 +32,7 @@ weo_lb:
 weo:
   image: 'tutum.co/ashaffer/eos-core:production'
   target_num_containers: 2
+  autoredeploy: true
   tags:
     - production
   expose:
