@@ -196,20 +196,6 @@ describe('User controller', function() {
         })
     })
 
-    it('should not allow unauthenticated requests', function(done) {
-      Seq()
-        .seq(function() {
-          request
-            .get('/user/groups')
-            .end(this)
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(401)
-          this()
-        })
-        .seq(done)
-    })
-
     it('should return the list of groups', function(done) {
       Seq()
         .seq(function() {
