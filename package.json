@@ -47,6 +47,7 @@
     "is-url": "^1.2.1",
     "knox": "~0.8.10",
     "lodash": "~2.4.1",
+    "mandrill-api": "^1.0.45",
     "marked": "weo-edu/marked",
     "migrate": "git://github.com/weo-edu/node-migrate",
     "mock-require": "1.0.5",
