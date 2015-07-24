@@ -49,6 +49,7 @@ weo:
     NODE_ENV: production
     SEGMENT_IO_KEY: 0mhgcgv6ao
     IMAGE_SERVER: //images.global.ssl.fastly.net
+    WEO_TITLE: "Weo | Teach better, together"
     WEO_TAGLINE: "Teach better, together."
     WEO_DESCRIPTION: "Weo is a place to create and discover activities for your classroom that can be assigned to your students with a simple click."
 

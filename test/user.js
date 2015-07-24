@@ -297,49 +297,6 @@ describe('User controller', function() {
   var cheerio = require('cheerio')
   var ent = require('ent')
   var url = require('url')
-  describe('forgot password', function() {
-    var user
-    it('should send password reset email and reset with token', function(done) {
-      this.timeout(60000)
-      Seq()
-        .seq(function() {
-          email.get('email', this)
-        })
-        .seq(function(e) {
-          UserHelper.create({email: e}, this)
-        })
-        .seq(function(res) {
-          user = res.body
-          request
-            .post('/user/forgot')
-            .send({username: user.username})
-            .end(this)
-        })
-        .seq(function() {
-          email.pollInbox(this)
-        })
-        .seq(function(emails) {
-          var email = emails[0]
-          expect(email.Subject).to.equal('Password Reset')
-          expect(email.From).to.equal('testmail@weo.io')
-
-
-          var $ = cheerio.load(ent.decode(email.HtmlBody))
-          var token = url.parse($('a').attr('href'), true).query.token
-
-          UserHelper.reset(token, 'newpass', this)
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200)
-          UserHelper.login(user.username, 'newpass', this)
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200)
-          this()
-        })
-        .seq(done)
-    })
-  })
 
   describe('password reset', function() {
     var student, teacher
