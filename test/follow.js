@@ -85,4 +85,12 @@ describe('following', function() {
     var followers = yield getBoardFollowers(board2.id)
     assert.equal(followers[0].id, user2.id)
   })
+
+  it('should not unfollow a user when you stop following their boards', function *() {
+    yield followUser(user1.id, user2)
+    yield unfollowBoard(board.id, user2)
+
+    var followers = yield getUserFollowers(user1.id)
+    assert.equal(followers[0].id, user2.id)
+  })
 })
