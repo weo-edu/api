@@ -1,96 +1,50 @@
-var Seq = require('seq');
-var User = require('./helpers/user');
-var Share = require('./helpers/share');
-var Group = require('./helpers/group');
-var access = require('lib/access');
-var awaitHooks = require('./helpers/awaitHooks');
+/**
+ * Imports
+ */
+var User = require('./helpers/user')
+var Share = require('./helpers/share')
+var Group = require('./helpers/group')
+var awaitHooks = require('./helpers/awaitHooks')
+var Live = require('./helpers/live')
+var assert = require('assert')
+var matches = require('lodash.matches')
 
-require('./helpers/boot');
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('nested share', function() {
-  var user = null
-    , group = null
-    , post = null;
+  var user, group, post
 
-  before(function(done) {
-    Seq()
-      .seq(function() {
-        User.createAndLogin(this);
-      })
-      .seq(function(u) {
-        user = u;
-        request
-          .post('/group')
-          .send(Group.generate())
-          .set('Authorization', user.token)
-          .end(this);
-      })
-      .seq(function(res) {
-        expect(res).to.have.status(201);
-        group = res.body;
-        Share.post({}, group, user.token, this);
-      })
-      .seq(function(res) {
-        expect(res).to.have.status(201);
-        post = res.body;
-        this();
-      })
-      .seq(done);
-  });
+  before(function *() {
+    user = yield User.createAndLogin()
+    group = yield Group.create({}, user)
 
-  it('should validate', function(done) {
-    Seq()
-      .seq(function() {
-        Share.post({channels: ['share!' + post.id + '.replies']}, group, user.token, this);
-      })
-      .seq(function(res) {
-        expect(res).to.have.status(201);
-        this();
-      })
-      .seq(done);
-  });
+    var res = yield Share.post({}, group, user.token)
+    assert.equal(res.status, 201)
+    post = res.body
+  })
 
-  it('nested feed should only contain nested shares', function(done) {
-    var nested = null;
-    var channel = 'share!' + post.id + '.replies';
+  it('should validate', function *() {
+    var res = yield Share.post({channels: ['share!' + post.id + '.replies']}, group, user.token)
+    assert.equal(res.status, 201)
+  })
 
-    Seq()
-      .seq(function() {
-        connectUser(user, this);
-      })
-      .seq(function() {
-        var self = this;
-        user.con.post('/share/subscription', {channel: channel}, function() {
-          self();
-        })
-      })
-      .seq(function() {
-        Share.post({channels: [channel]}, group, user.token, this);
-      })
-      .seq(awaitHooks)
-      .seq(function(res) {
-        nested = res.body;
+  it('nested feed should only contain nested shares', function *() {
+    var nested = null
+    var channel = 'share!' + post.id + '.replies'
 
-        Share.feed({context: group.id, channel: channel}, user.token, this);
-      })
-      .seq(function(res) {
-        var shares = res.body;
-        expect(shares).not.to.containOneLike({id: post.id});
-        expect(user.messages.length).to.equal(1);
-        this();
-      })
-      .seq(done);
-  });
-});
+    yield Live.connectUser(user)
+    yield Live.subscribe(user, channel)
 
-function connectUser(user, cb) {
-  var con = socketConnect(user.socketToken);
-  con.on('message', function(msg) {
-    user.messages.push(msg);
-  });
-  con.on('connect', function() {
-    cb(null, con);
-  });
-  user.con = con;
-  user.messages = [];
-}
+    var res = yield Share.post({channels: [channel]}, group, user.token)
+    yield awaitHooks()
+    nested = res.body
+
+    res = yield Share.feed({context: group.id, channel: channel}, user.token)
+    var shares = res.body.items
+    assert(! shares.some(matches({_id: post.id})))
+    assert.equal(user.messages.length, 1)
+  })
+})

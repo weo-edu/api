@@ -1,58 +1,41 @@
-var Seq = require('seq')
-  , User = require('./helpers/user');
+/**
+ * Imports
+ */
+var User = require('./helpers/user')
+var assert = require('assert')
 
-require('./helpers/boot');
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('Auth controller', function() {
-  describe('login', function() {
-    it('should handle non-existent username', function(done) {
-      Seq()
-        .seq(function() {
-          User.login('badusername', 'test', this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(404);
-          expect(res.body.message).to.equal('User not found');
-          this();
-        })
-        .seq(done);
-    });
+  it('should handle non-existent username', function *() {
+    var res = yield User.login('badusername', 'test')
+    assert.equal(res.status, 404)
+    assert.equal(res.body.message, 'User not found')
+  })
 
-    it('should handle incorrect password', function(done) {
-      Seq()
-        .seq(function() {
-          this.vars.user = User.create({}, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          User.login(this.vars.user.username, 'badpass', this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(401);
-          expect(res.body.message).to.equal('Incorrect password');
-          this();
-        })
-        .seq(done)
-        .catch(function(err) { throw err; });
-    });
+  it('should handle incorrect password', function *() {
+    var res = yield User.create()
+    var user = res.body
+    assert.equal(res.status, 201)
 
-    it('should accept valid credentials', function(done) {
-      Seq()
-        .seq(function() {
-          this.vars.user = User.create({}, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          var user = this.vars.user;
-          User.login(user.username, user.password, this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200);
-          expect(res.body).to.include.keys(['token', 'userType', 'username', 'id']);
-          this();
-        })
-        .seq(done)
-        .catch(function(err) { throw err; });
-    });
-  });
-});
+    res = yield User.login(user.username, 'badpass')
+    assert.equal(res.status, 401)
+    assert.equal(res.body.message, 'Incorrect password')
+  })
+
+  it('should accept valid credentials', function *() {
+    var user = User.generate()
+    var res = yield User.create(user)
+    assert.equal(res.status, 201)
+
+    res = yield User.login(user.username, user.password)
+    assert.equal(res.status, 200)
+
+    ;['token', 'userType', 'username', 'id'].forEach(function(key) {
+      assert.ok(res.body.hasOwnProperty(key))
+    })
+  })
+})

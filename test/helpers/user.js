@@ -1,7 +1,138 @@
+/**
+ * Imports
+ */
 var Faker = require('Faker')
 var chai = require('chai')
 var Seq = require('seq')
-var GroupHelper = require('./group')
+var Group = require('./group')
+var _ = require('lodash')
+
+/**
+ * User Helper
+ */
+var User = module.exports = {
+  me: function(authToken) {
+    return request
+      .get('/user')
+      .set('Authorization', authToken)
+      .end()
+  },
+  generate: function(opts) {
+    opts = opts || {}
+    var defaults = null
+    if (opts.userType === 'student') {
+      defaults = studentDefaults()
+    } else {
+      defaults = teacherDefaults()
+    }
+    _.defaults(opts, defaults)
+    return opts
+  },
+  create: function(opts) {
+    opts = User.generate(opts || {})
+    return request
+      .post('/auth/user')
+      .send(opts)
+      .end()
+  },
+  login: function(username, password) {
+    return request
+      .post('/auth/login')
+      .send({username: username, password: password})
+      .end()
+  },
+  get: function(id) {
+    return request
+      .get('/user/' + id)
+      .end()
+      .then(function(res) {
+        return res.body
+      })
+  },
+  follow: function(id, user) {
+    return request
+      .put('/user/' + id + '/follow')
+      .set('Authorization', user.token)
+      .end()
+  },
+  unfollow: function(id, user) {
+    return request
+      .del('/user/' + id + '/follow')
+      .set('Authorization', user.token)
+      .end()
+  },
+  followers: function(id, cb) {
+    return request
+      .get('/user/' + id + '/followers')
+      .end()
+      .then(function(res) {
+        return res.body.items
+      })
+  },
+  createAndLogin: function(opts) {
+    var user
+    opts = User.generate(opts || {})
+    return User
+      .create(opts)
+      .then(function(res) {
+        if(res.statusCode !== 201) throw new Error('User creation failed')
+        user = res.body
+        return User.login(opts.username, opts.password)
+      })
+      .then(function(res) {
+        if(res.statusCode !== 200) throw new Error('User login failed')
+        user.token = 'Bearer ' + res.body.token
+        user.socketToken = res.body.token
+        return user
+      })
+  },
+  createTeacherStudentAndGroupAndLogin: function() {
+    var res = {}
+    return User
+      .createAndLogin()
+      .then(function(teacher) {
+        res.teacher = teacher
+        return Group.create({}, teacher)
+      })
+      .then(function(group) {
+        res.group = group
+        return User.createAndLogin({userType: 'student'})
+      })
+      .then(function(student) {
+        res.student = student
+        return Group.join(res.group, res.student).then(function() {
+          return res
+        })
+      })
+  },
+  createStudentJoinGroupAndLogin: function(group) {
+    return User
+      .createAndLogin({userType: 'student'})
+      .then(function(student) {
+        return Group.join(group, student).then(function() {
+          return student
+        })
+      })
+  },
+  updated: function(user, cb) {
+    Seq()
+      .seq(function() {
+        User.me(user.token, this)
+      })
+      .seq(function(res) {
+        var updated = res.body
+        updated.token = user.token
+        updated.socketToken = user.socketToken
+        cb(null, updated)
+      })
+  },
+  reset: function(token, password, cb) {
+    request
+      .put('/user/reset')
+      .send({token: token, password: password})
+      .end(cb)
+  }
+}
 
 function teacherDefaults() {
   return {
@@ -29,149 +160,4 @@ function studentDefaults() {
 
 function sanitize(str) {
   return str.replace(/[^\s0-9a-zA-Z\@\.]/g, 'a')
-}
-
-var User = module.exports = {
-  me: function(authToken, cb) {
-    request
-      .get('/user')
-      .set('Authorization', authToken)
-      .end(cb)
-  },
-  generate: function(opts) {
-    opts = opts || {}
-    var defaults = null
-    if (opts.userType === 'student') {
-      defaults = studentDefaults()
-    } else {
-      defaults = teacherDefaults()
-    }
-    _.defaults(opts, defaults)
-    return opts
-  },
-  create: function(opts, cb) {
-    if('function' === typeof opts) {
-      cb = opts
-      opts = {}
-    }
-
-    opts = User.generate(opts)
-    request
-      .post('/auth/user')
-      .send(opts)
-      .end(function(err, res) {
-        // XXX Kind of hacky, but without it
-        // it's too easy to forget to do this
-        if(res.status === 201) {
-          opts.id = opts._id = res.body._id
-        }
-        return cb.apply(this, arguments)
-      })
-    return opts
-  },
-  login: function(username, password, cb) {
-    request
-      .post('/auth/login')
-      .send({username: username, password: password})
-      .end(cb)
-  },
-  get: function(id, cb) {
-    request
-      .get('/user/' + id)
-      .end(function(err, res) {
-        if(err) return cb(err)
-        cb(null, res.body)
-      })
-  },
-  follow: function(id, user, cb) {
-    request
-      .put('/user/' + id + '/follow')
-      .set('Authorization', user.token)
-      .end(cb)
-  },
-  unfollow: function(id, user, cb) {
-    request
-      .del('/user/' + id + '/follow')
-      .set('Authorization', user.token)
-      .end(cb)
-  },
-  followers: function(id, cb) {
-    request
-      .get('/user/' + id + '/followers')
-      .end(function(err, res) {
-        if(err) return cb(err)
-        cb(null, res.body.items)
-      })
-  },
-  createAndLogin: function(opts, cb) {
-    var user
-    if('function' === typeof opts) {
-      cb = opts
-      opts = {}
-    }
-
-    Seq()
-      .seq(function() {
-        user = User.create(opts, this)
-      })
-      .seq(function(res) {
-        if(res.statusCode !== 201) return cb('User creation failed', res)
-        User.login(user.username, user.password, this)
-      })
-      .seq(function(res) {
-        if(res.statusCode !== 200) return cb('User login failed', res)
-        user.token = 'Bearer ' + res.body.token
-        user.socketToken = res.body.token
-        cb(null, user)
-      })
-  },
-  createTeacherStudentAndGroupAndLogin: function(cb) {
-    var res = {}
-    User.createAndLogin(function(err, teacher) {
-      if(err) return cb(err)
-
-      res.teacher = teacher
-      GroupHelper.create({}, teacher, function(err, group) {
-        if(err) return cb(err)
-
-        res.group = group
-        User.createAndLogin({userType: 'student'}, function(err, user) {
-          if(err) return cb(err)
-          res.student = user
-          GroupHelper.join(group, user, function(err, joinRes) {
-            if(err) return cb(err)
-            cb(null, res)
-          })
-        })
-      })
-    })
-  },
-  createStudentJoinGroupAndLogin: function(group, cb) {
-    User.createAndLogin({userType: 'student'}, function(err, student) {
-      if(err) return cb(err)
-
-      GroupHelper.join(group, student, function(err, joinRes) {
-        if(err) return cb(err)
-        cb(null, student)
-      })
-    })
-  },
-  updated: function(user, cb) {
-    Seq()
-      .seq(function() {
-        User.me(user.token, this)
-      })
-      .seq(function(res) {
-        var updated = res.body
-        updated.token = user.token
-        updated.socketToken = user.socketToken
-        cb(null, updated)
-      })
-  },
-  reset: function(token, password, cb) {
-    request
-      .put('/user/reset')
-      .send({token: token, password: password})
-      .end(cb)
-  }
 }
