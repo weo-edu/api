@@ -120,6 +120,7 @@ describe('Questions', function() {
             actor: {
               displayName: student.displayName,
               id: student.id,
+              username: student.username,
               image: {url: student.image.url},
               url: '/' + student.id + '/'
             },

@@ -1,7 +1,7 @@
-var Faker = require('Faker');
-var chai = require('chai');
-var Seq = require('seq');
-var GroupHelper = require('./group');
+var Faker = require('Faker')
+var chai = require('chai')
+var Seq = require('seq')
+var GroupHelper = require('./group')
 
 function teacherDefaults() {
   return {
@@ -16,19 +16,19 @@ function teacherDefaults() {
     email: sanitize(Faker.Internet.email()).toLowerCase(),
     username: sanitize(Faker.Internet.userName()),
     password: 'testpassword'
-  };
+  }
 }
 
 function studentDefaults() {
-  var defaults = teacherDefaults();
-  delete defaults.name.honorificPrefix;
-  delete defaults.email;
-  defaults.userType = 'student';
-  return defaults;
+  var defaults = teacherDefaults()
+  delete defaults.name.honorificPrefix
+  delete defaults.email
+  defaults.userType = 'student'
+  return defaults
 }
 
 function sanitize(str) {
-  return str.replace(/[^\s0-9a-zA-Z\@\.]/g, 'a');
+  return str.replace(/[^\s0-9a-zA-Z\@\.]/g, 'a')
 }
 
 var User = module.exports = {
@@ -36,26 +36,26 @@ var User = module.exports = {
     request
       .get('/user')
       .set('Authorization', authToken)
-      .end(cb);
+      .end(cb)
   },
   generate: function(opts) {
-    opts = opts || {};
-    var defaults = null;
+    opts = opts || {}
+    var defaults = null
     if (opts.userType === 'student') {
-      defaults = studentDefaults();
+      defaults = studentDefaults()
     } else {
-      defaults = teacherDefaults();
+      defaults = teacherDefaults()
     }
-    _.defaults(opts, defaults);
-    return opts;
+    _.defaults(opts, defaults)
+    return opts
   },
   create: function(opts, cb) {
     if('function' === typeof opts) {
-      cb = opts;
-      opts = {};
+      cb = opts
+      opts = {}
     }
 
-    opts = User.generate(opts);
+    opts = User.generate(opts)
     request
       .post('/auth/user')
       .send(opts)
@@ -63,87 +63,115 @@ var User = module.exports = {
         // XXX Kind of hacky, but without it
         // it's too easy to forget to do this
         if(res.status === 201) {
-          opts.id = opts._id = res.body._id;
+          opts.id = opts._id = res.body._id
         }
-        return cb.apply(this, arguments);
-      });
-    return opts;
+        return cb.apply(this, arguments)
+      })
+    return opts
   },
   login: function(username, password, cb) {
     request
       .post('/auth/login')
       .send({username: username, password: password})
-      .end(cb);
+      .end(cb)
+  },
+  get: function(id, cb) {
+    request
+      .get('/user/' + id)
+      .end(function(err, res) {
+        if(err) return cb(err)
+        cb(null, res.body)
+      })
+  },
+  follow: function(id, user, cb) {
+    request
+      .put('/user/' + id + '/follow')
+      .set('Authorization', user.token)
+      .end(cb)
+  },
+  unfollow: function(id, user, cb) {
+    request
+      .del('/user/' + id + '/follow')
+      .set('Authorization', user.token)
+      .end(cb)
+  },
+  followers: function(id, cb) {
+    request
+      .get('/user/' + id + '/followers')
+      .end(function(err, res) {
+        if(err) return cb(err)
+        cb(null, res.body.items)
+      })
   },
   createAndLogin: function(opts, cb) {
-    var user;
+    var user
     if('function' === typeof opts) {
-      cb = opts;
-      opts = {};
+      cb = opts
+      opts = {}
     }
 
     Seq()
       .seq(function() {
-        user = User.create(opts, this);
+        user = User.create(opts, this)
       })
       .seq(function(res) {
-        if(res.statusCode !== 201) return cb('User creation failed', res);
-        User.login(user.username, user.password, this);
+        if(res.statusCode !== 201) return cb('User creation failed', res)
+        User.login(user.username, user.password, this)
       })
       .seq(function(res) {
-        if(res.statusCode !== 200) return cb('User login failed', res);
-        user.token = 'Bearer ' + res.body.token;
-        user.socketToken = res.body.token;
-        cb(null, user);
-      });
+        if(res.statusCode !== 200) return cb('User login failed', res)
+        user.token = 'Bearer ' + res.body.token
+        user.socketToken = res.body.token
+        cb(null, user)
+      })
   },
   createTeacherStudentAndGroupAndLogin: function(cb) {
-    var res = {};
+    var res = {}
     User.createAndLogin(function(err, teacher) {
-      if(err) return cb(err);
+      if(err) return cb(err)
 
-      res.teacher = teacher;
+      res.teacher = teacher
       GroupHelper.create({}, teacher, function(err, group) {
-        if(err) return cb(err);
+        if(err) return cb(err)
 
-        res.group = group;
+        res.group = group
         User.createAndLogin({userType: 'student'}, function(err, user) {
-          if(err) return cb(err);
-          res.student = user;
+          if(err) return cb(err)
+          res.student = user
           GroupHelper.join(group, user, function(err, joinRes) {
-            if(err) return cb(err);
-            cb(null, res);
-          });
-        });
-      });
-    });
+            if(err) return cb(err)
+            cb(null, res)
+          })
+        })
+      })
+    })
   },
   createStudentJoinGroupAndLogin: function(group, cb) {
     User.createAndLogin({userType: 'student'}, function(err, student) {
-      if(err) return cb(err);
+      if(err) return cb(err)
 
       GroupHelper.join(group, student, function(err, joinRes) {
-        if(err) return cb(err);
-        cb(null, student);
-      });
-    });
+        if(err) return cb(err)
+        cb(null, student)
+      })
+    })
   },
   updated: function(user, cb) {
     Seq()
       .seq(function() {
-        User.me(user.token, this);
+        User.me(user.token, this)
       })
       .seq(function(res) {
-        var updated = res.body;
-        updated.token = user.token;
-        updated.socketToken = user.socketToken;
-        cb(null, updated);
+        var updated = res.body
+        updated.token = user.token
+        updated.socketToken = user.socketToken
+        cb(null, updated)
       })
   },
   reset: function(token, password, cb) {
     request
       .put('/user/reset')
       .send({token: token, password: password})
-      .end(cb);
+      .end(cb)
   }
-};
+}

@@ -61,6 +61,7 @@
     "morgan": "1.5.0",
     "no-iits": "^0.2.1",
     "nodemailer": "~1.2.2",
+    "object-assign": "^3.0.0",
     "overlaps": "^1.0.0",
     "parse-name": "^0.2.4",
     "passport": "~0.2.0",
@@ -106,7 +107,9 @@
     "sinon": "1.12.2",
     "sinon-chai": "2.6.0",
     "supertest": "^0.9.0",
-    "supertest-as-promised": "~2.0.0"
+    "supertest-as-promised": "~2.0.0",
+    "supertest-promised": "^0.1.0",
+    "thunkify": "^2.1.2"
   },
   "engines": {
     "npm": "2.0.2",

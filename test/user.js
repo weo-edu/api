@@ -1,7 +1,7 @@
 var Seq = require('seq')
-  , UserHelper = require('./helpers/user')
-  , GroupHelper = require('./helpers/group')
-  , email = require('./helpers/email')
+var UserHelper = require('./helpers/user')
+var GroupHelper = require('./helpers/group')
+var email = require('./helpers/email')
 
 
 require('./helpers/boot')
