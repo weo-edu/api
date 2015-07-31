@@ -4,16 +4,17 @@ var mongo = require('../lib/mongo')
 
 exports.up = function(next){
   mongo.connect.then(function() {
-    var groups = mongo.collection('group')
+    var groups = mongo.collection('groups')
+    var ObjectId = mongo.raw.bsonLib.ObjectID
 
     chug.src('users', {})
       .pipe(es.map(function(doc, cb) {
-        var qs = (doc.groups || []).map(function(groupKey) {
+        var qs = (doc.groups || []).map(function(groupKey, idx) {
           return groups
-            .findOne({_id: groupKey.id})
+            .findOne({_id: ObjectId(groupKey.id)})
             .then(function(group) {
               if(group)
-                groupKey.groupType = group.groupType
+                doc.groups[idx].groupType = group.groupType
             })
         })
 
