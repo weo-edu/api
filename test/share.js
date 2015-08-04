@@ -420,20 +420,14 @@ describe('Share controller', function() {
       yield [teacher, student, teacherMember, studentMember].map(function(user) {
         return subscribe(user, 'group!' + group._id + '.board')
       })
+
+      [teacher, student, teacherMember, studentMember].map(function(user) {
+        user.messages = []
+      })
     })
 
     describe('post to class', function() {
       var post
-
-      before(function() {
-        console.log('teacher', teacher)
-        console.log('student', student)
-        console.log('teacherMember', teacherMember)
-        console.log('studentMember', studentMember)
-        ;[teacher, student, teacherMember, studentMember].forEach(function(user) {
-          user.messages = []
-        })
-      })
 
       before(function *() {
         var res = yield Share.post({}, group, teacherMember.token)
@@ -477,12 +471,6 @@ describe('Share controller', function() {
 
     describe('post to individual', function() {
       var post = null
-
-      before(function() {
-        [teacher, student, teacherMember, studentMember].forEach(function(user) {
-          user.messages = []
-        })
-      })
 
       before(function *() {
         var res = yield Share.post({
