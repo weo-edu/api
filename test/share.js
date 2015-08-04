@@ -451,19 +451,19 @@ describe('Share controller', function() {
       })
 
       describe('live updates', function() {
-        it('should not appear in teacher feed', function() {
+        it('should not appear in teacher feed', function *() {
           assert.equal(teacher.messages.length, 0)
         })
 
-        it('should appear in teacher member feed', function() {
+        it('should appear in teacher member feed', function *() {
           assert.equal(teacherMember.messages.length, 1)
         })
 
-        it('shold appear in student member feed', function() {
+        it('shold appear in student member feed', function *() {
           assert.equal(studentMember.messages.length, 1)
         })
 
-        it('should not appear in student feed', function() {
+        it('should not appear in student feed', function *() {
           assert.equal(student.messages.length, 0)
         })
       })
@@ -504,19 +504,19 @@ describe('Share controller', function() {
       })
 
       describe('live updates', function() {
-        it('should not appear in teacher feed', function() {
+        it('should not appear in teacher feed', function *() {
           assert.equal(teacher.messages.length, 0)
         })
 
-        it('should appear in teacher member feed', function() {
+        it('should appear in teacher member feed', function *() {
           assert.equal(teacherMember.messages.length, 1)
         })
 
-        it('shold appear in student member feed', function() {
+        it('shold appear in student member feed', function *() {
           assert.equal(studentMember.messages.length, 1)
         })
 
-        it('should not appear in student feed', function() {
+        it('should not appear in student feed', function *() {
           assert.equal(student.messages.length, 0)
         })
       })
