@@ -421,7 +421,7 @@ describe('Share controller', function() {
         return subscribe(user, 'group!' + group._id + '.board')
       })
 
-      [teacher, student, teacherMember, studentMember].map(function(user) {
+      ;[teacher, student, teacherMember, studentMember].forEach(function(user) {
         user.messages = []
       })
     })
