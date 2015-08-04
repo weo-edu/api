@@ -426,6 +426,10 @@ describe('Share controller', function() {
       var post
 
       before(function() {
+        console.log('teacher', teacher)
+        console.log('student', student)
+        console.log('teacherMember', teacherMember)
+        console.log('studentMember', studentMember)
         ;[teacher, student, teacherMember, studentMember].forEach(function(user) {
           user.messages = []
         })

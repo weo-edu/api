@@ -210,6 +210,7 @@ describe('Group controller', function () {
         .end()
 
       yield awaitHooks()
+      yield awaitHooks()
       assert.equal(res.status, 200)
 
       res = yield request
