@@ -1,98 +1,58 @@
-var Seq = require('seq');
-var Post = require('./helpers/post');
-var UserHelper = require('./helpers/user');
-var GroupHelper = require('./helpers/group');
+/**
+ * Imports
+ */
+var Post = require('./helpers/post')
+var User = require('./helpers/user')
+var Group = require('./helpers/group')
+var hasValidationError = require('./helpers/hasValidationError')
+var assert = require('assert')
 
-require('./helpers/boot');
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('Post controller', function() {
-	var teacher, token, group;
-	before(function(done) {
-    Seq()
-      .seq(function() {
-        teacher = UserHelper.create(this);
-      })
-      .seq(function() {
-        UserHelper.login(teacher.username, teacher.password, this);
-      })
-      .seq(function(res) {
-        token = 'Bearer ' + res.body.token;
-        this();
-      })
-      .seq(function() {
-      	GroupHelper.create({}, {token: token}, this);
-      })
-      .seq(function(_group) {
-      	group = _group;
-      	this();
-      })
-      .seq(done);
-    });
+	var teacher, group
 
+	before(function *() {
+    teacher = yield User.createAndLogin()
+    group = yield Group.create({}, teacher)
+  })
 
-	it('should create post', function(done) {
-		Seq()
-			.seq(function() {
-				Post.create(token, 'post', {}, [group], this);
-			})
-			.seq(function(res) {
-				var share = res.body;
-				expect(share._object[0].objectType).to.equal('post');
-				expect(share.verb).to.equal('shared');
-				this();
-			})
-			.seq(done);
-	});
+	it('should create post', function *() {
+  	var res = yield Post.create(teacher.token, 'post', {}, [group])
+		var share = res.body
+    assert.equal(share._object[0].objectType, 'post')
+    assert.equal(share.verb, 'shared')
+	})
 
-	it('should create comment', function(done) {
-		Seq()
-			.seq(function() {
-				Post.create(token, 'comment', {}, [group], this);
-			})
-			.seq(function(res) {
-				var share = res.body;
-				expect(share._object[0].objectType).to.equal('comment');
-				expect(share.verb).to.equal('commented');
-				this();
-			})
-			.seq(done);
-	});
+	it('should create comment', function *() {
+		var res = yield Post.create(teacher.token, 'comment', {}, [group])
+		var share = res.body
+    assert.equal(share._object[0].objectType, 'comment')
+    assert.equal(share.verb, 'commented')
+	})
 
-	describe('should throw error', function() {
-		it('when user not authenticated', function(done) {
-			var share = Post.generate({}, [group]);
-			Seq()
-				.seq(function() {
-					request
-			      .post('/share')
-			      .send(share)
-			      .end(this);
-				})
-				.seq(function(res) {
-					expect(res).to.have.status(401);
-					this();
-				})
-				.seq(done);
-		});
+	it('when user not authenticated', function *() {
+		var share = Post.generate({}, [group])
+		var res = yield request
+      .post('/share')
+      .send(share)
+      .end()
 
-		it('when body is not given', function(done) {
-			var share = Post.generate({}, [group]);
-			share.object.originalContent = '';
-			Seq()
-				.seq(function() {
-					request
-			      .post('/share')
-			      .send(share)
-			      .set('Authorization', token)
-			      .end(this);
-				})
-				.seq(function(res) {
-					expect(res).to.have.ValidationError('_object.0.originalContent', 'required', 'Path `originalContent` is required.', '', 'originalContent');
-					this();
-				})
-				.seq(done);
-		});
+		assert.equal(res.status, 401)
+	})
 
-	});
+	it('when body is not given', function *() {
+		var share = Post.generate({}, [group])
+		share.object.originalContent = ''
+		var res = yield request
+      .post('/share')
+      .send(share)
+      .set('Authorization', teacher.token)
+      .end()
 
-});
+		assert(hasValidationError(res, '_object.0.originalContent', 'required', 'Path `originalContent` is required.', '', 'originalContent'))
+	})
+})

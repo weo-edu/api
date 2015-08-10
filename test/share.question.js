@@ -1,146 +1,93 @@
-require('./helpers/boot');
+/**
+ * Imports
+ */
+var User = require('./helpers/user')
+var Group = require('./helpers/group')
+var Question = require('./helpers/question')
+var Share = require('./helpers/share')
+var awaitHooks = require('./helpers/awaitHooks')
+var status = require('lib/Share/status')
+var matches = require('lodash.matches')
+var assert = require('assert')
 
-var Seq = require('seq')
-var UserHelper = require('./helpers/user')
-var GroupHelper = require('./helpers/group');
-var QuestionHelper = require('./helpers/question');
-var ShareHelper = require('./helpers/share');
-var Faker = require('Faker');
-var _ = require('lodash');
-var moment = require('moment');
-var url = require('url');
-var awaitHooks = require('./helpers/awaitHooks');
-var status = require('lib/Share/status');
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('Questions', function() {
-  var teacherToken, teacher, student;
+  var teacher, student, group
 
-  before(function(done) {
-    var teacherPassword;
-    var studentPassword;
+  before(function *() {
+    teacher = yield User.createAndLogin()
 
-    Seq()
-      .seq(function() {
-        teacherPassword = UserHelper.create(this).password;
-      })
-      .seq(function(res) {
-        teacher = res.body
-        teacher.password = teacherPassword
-        UserHelper.login(teacher.username, teacher.password, this);
-      })
-      .seq(function(res) {
-        teacherToken = 'Bearer ' + res.body.token;
-        student = UserHelper.create({userType: 'student'}, this);
-        studentPassword = student.password;
-      })
-      .seq(function(res) {
-        student = res.body;
-      	UserHelper.login(student.username, studentPassword, this);
-      })
-      .seq(function(res) {
-      	studentToken = 'Bearer ' + res.body.token;
-      	this();
-      })
-      .seq(done);
-  });
+    student = User.generate({userType: 'student'})
+    var password = student.password
+    var res = yield User.create({userType: 'student'})
+    student = res.body
+    res = yield User.login(student.username, password)
+    student.token = 'Bearer ' + res.body.token
+  })
 
-  var group;
-  beforeEach(function(done) {
-    Seq()
-      .seq(function() {
-        request
-          .post('/group')
-          .set('Authorization', teacherToken)
-          .send(GroupHelper.generate())
-          .end(this);
-      })
-      .seq(function(res) {
-        group = res.body;
-        GroupHelper.join(group, {token: studentToken}, this);
-      })
-      .seq(function(res) {
-        this();
-      })
-      .seq(done);
-  });
+  beforeEach(function *() {
+    group = yield Group.create({}, teacher)
+    yield Group.join(group, student)
+  })
 
-  describe('should create a new share with a question', function() {
-  	it('when information is entered properly', function(done) {
-  		Seq()
-  			.seq(function() {
-          QuestionHelper.create(teacherToken, {
-            context: group
-          }, this);
-  			})
-  			.seq(function(res) {
-          var assignment = res.body;
-          expect(assignment.actor.id).to.equal(teacher.id);
-          expect(assignment.verb).to.equal('shared');
-          expect(assignment.instances.selfLink.indexOf(assignment._id)).to.be.greaterThan(0);
-  				this();
-  			})
-  			.seq(done);
-  	});
-  });
+	it('should create a new share with a question when information is entered properly', function *() {
+    var res = yield Question.create(teacher.token, {context: group})
+    var assignment = res.body
 
-  describe('should answer question', function() {
-    var assignment;
+    assert.equal(assignment.actor.id, teacher.id)
+    assert.equal(assignment.verb, 'shared')
+    assert(assignment.instances.selfLink.indexOf(assignment._id) > 0)
+	})
 
-    it('when question is formed properly', function(done) {
-      Seq()
-        .seq(function() {
-          QuestionHelper.create(teacherToken, {contexts: group.id, channels: ['group!' + group.id + '.board']}, this);
-        })
-        .seq(awaitHooks)
-        .seq(function(res) {
-          assignment = res.body;
-          ShareHelper.getInstance(studentToken, assignment._id, student._id, this);
-        })
-        .seq(function(res) {
-          var inst = res.body;
-          var question = inst._object[0].attachments[0];
-          expect(question.objectType).to.equal('question');
-          question.response = question.attachments[0]._id;
-          inst.status = status.turnedIn;
-          ShareHelper.updateInstance(inst, studentToken, this);
-        })
-        .seq(awaitHooks)
-        .seq(function(res) {
-          response = res.body;
-          request.get('/share/' + assignment._id)
-            .set('Authorization', teacherToken)
-            .end(this);
-        })
-        .seq(function(res) {
-          var updated = res.body;
-          expect(updated.instances.total.length).to.equal(1);
-          var actorsTotal = {};
-          var time = updated.instances.total[0].turnedInAt;
-          actorsTotal[student.id] = {
-            actor: {
-              displayName: student.displayName,
-              id: student.id,
-              image: {url: student.image.url},
-              url: '/' + student.id + '/'
-            },
-            items: 1,
-            pointsScaled: 1,
-            status: status.graded,
-            turnedInAt: time
-          };
-          expect(updated.instances.total[0]).to.be.like({
-            context: group.id,
-            items: 1,
-            status: status.graded,
-            pointsScaled: 1,
-            actors: actorsTotal,
-            turnedInAt: time
-          });
-          this();
-        })
-        .seq(function() {
-          done();
-        })
-    });
-  });
-});
+  it('should answer question when question is formed properly', function *() {
+    var res = yield Question.create(teacher.token, {contexts: group.id, channels: ['group!' + group.id + '.board']})
+    yield awaitHooks()
+
+    var assignment = res.body
+    res = yield Share.getInstance(student.token, assignment._id, student._id)
+
+    var inst = res.body
+    var question = inst._object[0].attachments[0]
+    assert.equal(question.objectType, 'question')
+    question.response = question.attachments[0]._id
+    inst.status = status.turnedIn
+
+    yield Share.updateInstance(inst, student.token)
+    yield awaitHooks()
+
+    res = yield request.get('/share/' + assignment._id)
+      .set('Authorization', teacher.token)
+      .end()
+
+    var updated = res.body
+    assert.equal(updated.instances.total.length, 1)
+    var actorsTotal = {}
+    var time = updated.instances.total[0].turnedInAt
+    actorsTotal[student.id] = {
+      actor: {
+        displayName: student.displayName,
+        id: student.id,
+        username: student.username,
+        image: {url: student.image.url},
+        url: '/' + student.id + '/'
+      },
+      items: 1,
+      pointsScaled: 1,
+      status: status.graded,
+      turnedInAt: time
+    }
+
+    assert(matches({
+      context: group.id,
+      items: 1,
+      status: status.graded,
+      pointsScaled: 1,
+      actors: actorsTotal,
+      turnedInAt: time
+    })(updated.instances.total[0]))
+  })
+})

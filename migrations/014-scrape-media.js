@@ -9,6 +9,9 @@ var types = ['link', 'video', 'image', 'document'];
 exports.up = function(next){
   chug.src('shares', {})
     .pipe(es.map(function(doc, cb) {
+      if(! (doc._object && doc._object[0]))
+        return cb(null, doc)
+
       var arr = doc._object[0].attachments || [];
       var self = this;
 
