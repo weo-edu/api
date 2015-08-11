@@ -2,6 +2,8 @@ var chug = require('mongo-chug')(require('../lib/config/').mongo)
 var es = require('event-stream')
 var mongo = require('../lib/mongo')
 
+require('es6-promise').polyfill()
+
 exports.up = function(next){
   mongo.connect.then(function() {
     var groups = mongo.collection('groups')
