@@ -4,9 +4,9 @@ var qs = require('querystring');
 
 
 exports.up = function(next){
-  chug.src('shares', {shareType: 'shareInstance'})
+  chug.src('shares')
     .pipe(es.through(function(doc) {
-      if (!doc.annotations) {
+      if (doc.shareType === 'shareInstance' && !doc.annotations) {
         doc.annotations = {
           total: [],
           canonicalTotal: {
@@ -19,7 +19,10 @@ exports.up = function(next){
       this.emit('data', doc);
     }))
     .pipe(chug.dest('shares'))
-    .on('end', next);
+    .on('end', next)
+    .on('error', function(err) {
+      console.log('err');
+    })
 };
 
 exports.down = function(next){
