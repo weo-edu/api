@@ -1,2 +1,2 @@
-FROM iojs:1.8
+FROM iojs:onbuild
 EXPOSE 3000
