@@ -44,7 +44,7 @@
     "glob": "^3.2.9",
     "googleapis": "^2.0.1",
     "handlebars": "3.0.0",
-    "hiredis": "0.1.17",
+    "hiredis": "^0.4.0",
     "is-url": "^1.2.1",
     "knox": "~0.8.10",
     "lodash": "^2.4.2",
