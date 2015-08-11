@@ -1,2 +1,2 @@
-FROM iojs:onbuild
-EXPOSE 3000
+FROM tutum/buildstep
+CMD ["node", "server.js"]
