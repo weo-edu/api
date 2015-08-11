@@ -1,161 +1,91 @@
-var supertest = require('supertest-as-promised');
-var po = require('@weo-edu/po');
-var assert = require('assert');
+/**
+ * Imports
+ */
+var assert = require('assert')
+var User = require('./helpers/user')
+var Share = require('./helpers/share')
 
-var app = require('../server');
-var request = supertest(app);
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('Liking', function() {
-  var user = null;
-  var user2 = null;
-  var share = null;
-  beforeEach(function(done) {
+  var user, user2, share
 
-    po(
-      function() {
-        return api.createAndLogin(createUser());
-      },
-      function(u) {
-        user = u; 
-        return api.createAndLogin(createUser());
-      },
-      function(u) {
-        user2 = u;
-      },
-      function() {
-        return api.share(createShare(), user)
-      },
-      function(res) {
-        share = res.body;
-      }
-    )().then(done).catch(done);
+  beforeEach(function *() {
+    user = yield User.createAndLogin()
+    user2 = yield User.createAndLogin()
 
-  });
+    var res = yield request
+      .post('/share')
+      .set('Authorization', user.token)
+      .send(createShare())
+      .end()
 
-
-  it('should add self to likers and be listed in likes', function(done) {
-    po(
-      function() {
-        return api.like(share, user);
-      },
-      function(res) {
-        var s = res.body;
-        var liker = s.likers[0];
-        assert.equal(liker.id, user.id);
-      },
-      function() {
-
-        return api.likes(user);
-      },
-      function(res) {
-        var likes = res.body.items;
-        assert.equal(likes.length, 1);
-        assert.equal(likes[0]._id, share.id);
-      }
-    )().then(done);
-  });
-
-  it('should track two different likes', function(done) {
-    po(
-      function() {
-        return api.like(share, user);
-      },
-      function(res) {
-        var s = res.body;
-        assert.equal(s.likers.length, 1);
-        return api.like(share, user2);
-      },
-      function(res) {
-        var s = res.body;
-        assert.equal(s.likers.length, 2);
-      }
-    )().then(done).catch(done);
+    share = res.body
   })
 
-  it('should not be possible twice', function(done) {
-    po(
-      function() {
-        return api.like(share, user);
-      },
-      function(res) {
-        var s = res.body;
-        var liker = s.likers[0];
-        assert.equal(liker.id, user.id);
-      },
-      function() {
-        return api.like(share, user);
-      },
-      function(res) {
-        assert.equal(res.status, 400);
-      }
-    )().then(done);
+  it('should add self to likers and be listed in likes', function *() {
+    var res = yield Share.like(share, user)
+    var s = res.body
+    var liker = s.likers[0]
+    assert.equal(liker.id, user.id)
+
+    res = yield Share.likes(user)
+    var likes = res.body.items
+    assert.equal(likes.length, 1)
+    assert.equal(likes[0]._id, share.id)
+  })
+
+  it('should track two different likes', function *() {
+    var res = yield Share.like(share, user)
+    var s = res.body
+    assert.equal(s.likers.length, 1)
+
+    res = yield Share.like(share, user2)
+    var s = res.body
+    assert.equal(s.likers.length, 2)
+  })
+
+  it('should not be possible twice', function *() {
+    var res = yield Share.like(share, user)
+    var s = res.body
+    var liker = s.likers[0]
+    assert.equal(liker.id, user.id)
+
+    res = yield Share.like(share, user)
+    assert.equal(res.status, 400)
   })
 
 
-  it('should be undoable', function(done) {
-    po(
-      function() {
-        return api.like(share, user);
-      },
-      function(res) {
-        var s = res.body;
-        var liker = s.likers[0];
-        assert.equal(liker.id, user.id);
-        return api.unlike(share, user);
-      },
-      function(res) {
-        var s = res.body;
-        assert.equal(s.likers.length, 0);
-        return api.likes(user);
-      },
-      function(res) {
-        var likes = res.body.items;
-        assert.equal(likes.length, 0);
-      }
-    )().then(done).catch(function(err) {
-      console.error(err);
-    })
-  });
+  it('should be undoable', function *() {
+    var res = yield Share.like(share, user)
+    var s = res.body
+    var liker = s.likers[0]
+    assert.equal(liker.id, user.id)
 
-  it('should not be unlikeable', function(done) {
-    po(
-      function() {
-        return api.unlike(share, user);
-      },
-      function(res) {
-        assert.equal(res.status, 400);
-      }
-    )().then(done);
+    res = yield Share.unlike(share, user)
+
+    var s = res.body
+    assert.equal(s.likers.length, 0)
+
+    res = yield Share.likes(user)
+    var likes = res.body.items
+    assert.equal(likes.length, 0)
   })
 
-
-});
-
-
-var Faker = require('Faker');
-
-function createUser() {
-  return {
-    userType: 'teacher',
-    name: {
-      givenName: sanitize(Faker.Name.firstName()),
-      familyName: sanitize(Faker.Name.lastName()),
-      honorificPrefix: 'Mr.'
-    },
-    email: sanitize(Faker.Internet.email()).toLowerCase(),
-    username: sanitize(Faker.Internet.userName()),
-    password: 'testpassword'
-  };
-}
-
-function sanitize(str) {
-  return str.replace(/[^\s0-9a-zA-Z\@\.]/g, 'a');
-}
+  it('should not be unlikeable', function *() {
+    var res = yield Share.unlike(share, user)
+    assert.equal(res.status, 400)
+  })
+})
 
 function createShare() {
   return {
     shareType: 'share',
     verb: 'assigned',
+    displayName: 'asdlkfjas',
     object: {
       objectType: 'section',
       originalContent: 'Test'
@@ -165,55 +95,5 @@ function createShare() {
       allow: [{id: 'public:teacher'}]
     }],
     channels: []
-  };
+  }
 }
-
-
-var api = {};
-
-api.create = function(user) {
-  return request
-    .post('/auth/user')
-    .send(user);
-}
-
-
-api.createAndLogin = po(api.create, function(res) {
-  var user = res.body;
-  user.token = 'Bearer ' + user.token;
-  return user;
-});
-
-api.share = function(share, user) {
-  return request
-    .post('/share')
-    .set('Authorization', user.token)
-    .send(share)
-}
-
-api.getShare = function(shareId, user) {
-  return request
-    .get('/share/' + shareId);
-}
-
-api.like = function(share, user) {
-  return request
-    .put('/share/' + share.id + '/like')
-    .set('Authorization', user.token);
-}
-
-api.unlike = function(share, user) {
-  return request
-    .put('/share/' + share.id + '/unlike')
-    .set('Authorization', user.token);
-}
-
-api.likes = function(user) {
-  return request
-    .get('/user/' + user.id + '/likes');
-}
-
-
-
-
-
