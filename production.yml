@@ -102,6 +102,9 @@ api:
     EMAIL_PASS: elliotrileytio
     EMAIL_USER: info@weo.io
     MANDRILL_API_KEY: GAs1A7BXpHBZM5Rl2FLcig
+    MAILCHIMP_API_KEY: 8a86dfde003377d5b2e32668c99369ce
+    MAILCHIMP_DATACENTER: us11
+    MAILCHIMP_INVITE_LIST_ID: 4c10c5f1a7
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     GOOGLE_SECRET: POE6EaRNeXWLP8DPafQOBR-Y
     MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef
