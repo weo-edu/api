@@ -35,7 +35,7 @@ push:
 
 test:
 	@mocha
-	@for dir in lib/*/test; do mocha "$$dir"; done
+#	@for dir in lib/*/test; do mocha "$$dir"; done
 
 
 .PHONY: test validate

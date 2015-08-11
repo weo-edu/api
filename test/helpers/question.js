@@ -1,18 +1,18 @@
-var Faker = require('Faker');
-var Seq = require('seq');
-var UserHelper = require('./user');
-var Share = require('./share');
-var ObjectId = require('mongoose').Types.ObjectId;
+var Faker = require('Faker')
+var Seq = require('seq')
+var User = require('./user')
+var Share = require('./share')
+var ObjectId = require('mongoose').Types.ObjectId
 
 var Question = module.exports = {
   generate: function(opts, groups) {
-    opts = opts || {};
-    opts.object = {objectType : 'section'};
-    var share = Share.generate(opts, groups);
+    opts = opts || {}
+    opts.object = {objectType : 'section'}
+    var share = Share.generate(opts, groups)
 
-    var correctId = new ObjectId();
+    var correctId = new ObjectId()
 
-    delete share.verb;
+    delete share.verb
     share.object.attachments = [{
       objectType: 'question',
       originalContent: 'How old are you?',
@@ -24,21 +24,17 @@ var Question = module.exports = {
           displayName: '18'
         }
       ]
-    }];
-    return share;
+    }]
+    return share
   },
-  create: function(token, opts, cb) {
-    if(arguments.length < 3) {
-      cb = opts;
-      opts = {};
-    }
-
-    var share = this.generate(opts, opts.context);
-    delete opts.context;
-    request
+  create: function(token, opts) {
+    opts = opts || {}
+    var share = Question.generate(opts, opts.context)
+    delete opts.context
+    return request
       .post('/share')
       .send(share)
       .set('Authorization', token)
-      .end(cb);
+      .end()
   }
-};
+}

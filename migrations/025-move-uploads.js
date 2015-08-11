@@ -4,7 +4,9 @@ var http = require('http')
 var uuid = require('uuid')
 var s3config = require('../lib/config').s3.uploads
 var s3client = require('knox').createClient(s3config)
+require('es6-promise').polyfill()
 var bucketUrl = 'http://' + s3config.bucket + '.s3-' + s3config.region + '.amazonaws.com'
+
 
 exports.up = function(next){
   var ps = es.pause()
