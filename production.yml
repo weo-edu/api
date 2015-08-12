@@ -49,6 +49,7 @@ weo:
     NODE_ENV: production
     SEGMENT_IO_KEY: 0mhgcgv6ao
     IMAGE_SERVER: //images.global.ssl.fastly.net
+    WEO_TITLE: "Weo | Teach better, together"
     WEO_TAGLINE: "Teach better, together."
     WEO_DESCRIPTION: "Weo is a place to create and discover activities for your classroom that can be assigned to your students with a simple click."
 
@@ -101,6 +102,9 @@ api:
     EMAIL_PASS: elliotrileytio
     EMAIL_USER: info@weo.io
     MANDRILL_API_KEY: GAs1A7BXpHBZM5Rl2FLcig
+    MAILCHIMP_API_KEY: 8a86dfde003377d5b2e32668c99369ce
+    MAILCHIMP_DATACENTER: us11
+    MAILCHIMP_INVITE_LIST_ID: 4c10c5f1a7
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     GOOGLE_SECRET: POE6EaRNeXWLP8DPafQOBR-Y
     MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef

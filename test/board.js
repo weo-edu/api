@@ -1,53 +1,41 @@
-var Seq = require('seq');
-var UserHelper = require('./helpers/user');
-var GroupHelper = require('./helpers/group');
-var Group = require('lib/Group/model');
-var awaitHooks = require('./helpers/awaitHooks');
-var _ = require('lodash');
+/**
+ * Imports
+ */
+var User = require('./helpers/user')
+var Group = require('./helpers/group')
+var awaitHooks = require('./helpers/awaitHooks')
+var assert = require('assert')
+var matches = require('lodash.matches')
 
-require('./helpers/boot');
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('Board', function() {
-  var user;
-  before(function(done) {
-    Seq()
-      .seq(function() {
-        UserHelper.createAndLogin(this);
-      })
-      .seq(function(teacher) {
-        user = teacher;
-        this();
-      })
-      .seq(done);
-  });
+  var user
+  before(function *() {
+    user = yield User.createAndLogin()
+  })
 
   describe('create', function(){
-    it('should create new group and add user to group', function(done) {
-      var group;
-      Seq()
-        .seq(function() {
-          request
-            .post('/board')
-            .send(GroupHelper.generate())
-            .set('Authorization', user.token)
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(201);
-          group = res.body;
-          request
-            .get('/' + [user.userType, user.id].join('/'))
-            .set('Authorization', user.token)
-            .end(this);
-        })
-        .seq(function(res) {
-          expect(res).to.have.status(200);
-          expect(res.body.groups).to.contain.an.item.with.properties({id: group.id});
-          this();
-        })
-        .seq(done);
+    it('should create new group and add user to group', function *() {
+      var res = yield request
+        .post('/board')
+        .send(Group.generate())
+        .set('Authorization', user.token)
+        .end()
+
+      assert.equal(res.status, 201)
+
+      var group = res.body
+      res = yield request
+        .get('/' + [user.userType, user.id].join('/'))
+        .set('Authorization', user.token)
+        .end()
+
+      assert.equal(res.status, 200)
+      assert(res.body.groups.some(matches({id: group.id})))
     })
-
-  });
-
-});
+  })
+})

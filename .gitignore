@@ -31,3 +31,4 @@ node_modules
 assets
 
 dump
+migrations/.migrate

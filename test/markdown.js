@@ -1,103 +1,88 @@
-var markdown = require('lib/markdown');
-var UserHelper = require('./helpers/user');
-var ShareHelper = require('./helpers/share');
-var GroupHelper = require('./helpers/group');
-var Seq = require('seq');
+/**
+ * Imports
+ */
+var markdown = require('lib/markdown')
+var User = require('./helpers/user')
+var Share = require('./helpers/share')
+var Group = require('./helpers/group')
+var assert = require('assert')
 
-require('./helpers/boot');
+require('./helpers/boot')
 
+/**
+ * Tests
+ */
 describe('Markdown tests', function() {
-  var token, group;
-  before(function(done) {
-    Seq()
-      .seq(function() {
-        UserHelper.createAndLogin(this);
-      })
-      .seq(function(user) {
-        token = user.token;
-        GroupHelper.create({}, user, this);
-      })
-      .seq(function(_group) {
-        group = _group;
-        this();
-      })
-      .seq(done);
-  });
+  var token, group
 
-  it('should work in post content', function(done) {
-    Seq()
-      .seq(function() {
-        var share = ShareHelper.generate({}, group);
-        share.object = {
-          objectType: 'section',
+  before(function *() {
+    var user = yield User.createAndLogin()
+    token = user.token
+    group = yield Group.create({}, user)
+  })
+
+  it('should work in post content', function *() {
+    var share = Share.generate({}, group)
+    share.object = {
+      objectType: 'section',
+      attachments: [
+        {
+          objectType: 'post',
+          originalContent: '## Title'
+        }
+      ]
+    }
+
+    var res = yield request.post('/share')
+      .set('Authorization', token)
+      .send(share)
+      .end()
+
+    var share = res.body
+    var obj = share._object[0].attachments[0]
+    assert.equal(obj.content, '<h2 id=\"md-header-title\">Title</h2>\n')
+    assert.equal(obj.displayName, 'Title')
+  })
+
+  it('should work for question content', function *() {
+    var share = Share.generate({}, group)
+    share.object = {
+      objectType: 'section',
+      attachments: [
+        {
+          objectType: 'question',
+          originalContent: '## Title',
           attachments: [
             {
-              objectType: 'post',
-              originalContent: '## Title'
+              objectType: 'text'
             }
           ]
-        };
+        }
+      ]
+    }
 
-        request.post('/share')
-          .set('Authorization', token)
-          .send(share)
-          .end(this);
-      })
-      .seq(function(res) {
-        var share = res.body;
-        var obj = share._object[0].attachments[0];
-        expect(obj.content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
-        expect(obj.displayName).to.equal('Title');
-        this();
-      })
-      .seq(done);
-  });
+    var res = yield request.post('/share')
+      .set('Authorization', token)
+      .send(share)
+      .end()
 
-  it('should work for question content', function(done) {
-    Seq()
-      .seq(function() {
-        var share = ShareHelper.generate({}, group);
-        share.object = {
-          objectType: 'section',
-          attachments: [
-            {
-              objectType: 'question',
-              originalContent: '## Title',
-              attachments: [
-                {
-                  objectType: 'text'
-                }
-              ]
-            }
-          ]
-        };
-
-        request.post('/share')
-          .set('Authorization', token)
-          .send(share)
-          .end(this);
-      })
-      .seq(function(res) {
-        var share = res.body;
-        var obj = share._object[0].attachments[0];
-        expect(obj.content).to.equal('<h2 id=\"md-header-title\">Title</h2>\n');
-        expect(obj.displayName).to.equal('Title');
-        this();
-      })
-      .seq(done);
-  });
+    var share = res.body
+    var obj = share._object[0].attachments[0]
+    assert.equal(obj.content, '<h2 id=\"md-header-title\">Title</h2>\n')
+    assert.equal(obj.displayName, 'Title')
+  })
 
   it('should render math content', function() {
-    expect(markdown('test $2^2$ test')).not.to.contain('katex');
-    expect(markdown('test $$2^2$$ test')).to.contain('katex');
-    expect(markdown('test\n$$\n2^2\n$$\ntest')).to.contain('katex');
-  });
+    assert(markdown('test $2^2$ test').indexOf('katex') === -1)
+    assert(markdown('test $$2^2$$ test').indexOf('katex') !== -1)
+    assert(markdown('test\n$$\n2^2\n$$\ntest').indexOf('katex') !== -1)
+  })
 
   it('should fail silently on invalid latex', function() {
-    expect(markdown('$$ 2 \\plust 2 $$')).to.equal('<p>2 \\plust 2</p>\n');
-  });
+    assert.equal(markdown('$$ 2 \\plust 2 $$'), '<p>2 \\plust 2</p>\n')
+  })
 
   it('should support lists that start in the middle', function() {
-    expect(markdown('2. test')).to.equal('<ol start="2">\n<li>test</li>\n</ol>\n');
-  });
-});
+    assert.equal(markdown('2. test'), '<ol start="2">\n<li>test</li>\n</ol>\n')
+  })
+})

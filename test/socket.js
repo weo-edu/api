@@ -1,34 +1,18 @@
-var Seq = require('seq')
+/**
+ * Importss
+ */
 var User = require('./helpers/user')
-var Cookie = require('cookie')
+var Live = require('./helpers/live')
 
 require('./helpers/boot')
 
-
-function connectNewUser(opts, cb) {
-  opts = opts || {}
-  var user, token, cookie
-  Seq()
-    .seq(function() {
-      user = User.create(opts, this)
-    })
-    .seq(function() {
-      User.login(user.username, user.password, this)
-    })
-    .seq(function(res) {
-      token = res.body.token
-      var con = socketConnect(token)
-      con.on('connect', function() {
-        cb(null, con)
-      })
-    })
-}
+/**
+ * Tests
+ */
 
 describe('socket', function() {
-  it('should connect with valid token', function(done) {
-    connectNewUser({}, function(con) {
-      done()
-    })
+  it('should connect with valid token', function *() {
+    var user = yield User.createAndLogin()
+    yield Live.connectUser(user)
   })
 })
-
