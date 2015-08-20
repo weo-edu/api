@@ -65,6 +65,7 @@
     "no-iits": "^0.2.1",
     "nodemailer": "~1.2.2",
     "object-assign": "^3.0.0",
+    "object.map": "^0.2.0",
     "overlaps": "^1.0.0",
     "parse-name": "^0.2.4",
     "passport": "~0.2.0",

@@ -1,6 +1,7 @@
 /**
  * Imports
  */
+
 var User = require('./helpers/user')
 var Group = require('./helpers/group')
 var Question = require('./helpers/question')
@@ -15,6 +16,7 @@ require('./helpers/boot')
 /**
  * Tests
  */
+
 describe('Questions', function() {
   var teacher, student, group
 
