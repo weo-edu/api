@@ -12,6 +12,7 @@ require('./helpers/boot')
 /**
  * Tests
  */
+
 describe('share instances', function() {
   var teacher, student1, student2, group, channel
 
