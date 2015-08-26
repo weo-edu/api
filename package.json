@@ -64,6 +64,7 @@
     "morgan": "1.5.0",
     "no-iits": "^0.2.1",
     "nodemailer": "~1.2.2",
+    "oauth-sign": "git://github.com/weo-edu/oauth-sign.git",
     "object-assign": "^3.0.0",
     "object.map": "^0.2.0",
     "overlaps": "^1.0.0",
