@@ -34,7 +34,7 @@ push:
 #
 
 test:
-	@mocha
+	@${NODE_BIN}/mocha
 #	@for dir in lib/*/test; do mocha "$$dir"; done
 
 
