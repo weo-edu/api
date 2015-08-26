@@ -45,6 +45,7 @@ weo:
     STATIC_FILES: //staging.weo.io
     IMAGE_SERVER: //images.weo.io
     WEO_SOURCEMAPS: true
+    WEO_ENGAGE: "Get early access"
 
 #
 # API Backend Load Balancer

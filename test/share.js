@@ -1,6 +1,7 @@
 /**
  * Imports
  */
+
 var User = require('./helpers/user')
 var Share = require('./helpers/share')
 var Group = require('./helpers/group')
@@ -17,6 +18,7 @@ require('./helpers/boot')
 /**
  * Tests
  */
+
 describe('Share controller', function() {
   var user, group, board
 
@@ -140,7 +142,7 @@ describe('Share controller', function() {
 
       res = yield Share.feed(['group!' + group._id + '.board'], user.token)
       assert.equal(res.status, 200)
-      assert(_.isArray(res.body.items))
+      assert(Array.isArray(res.body.items))
       assert(res.body.items.some(matches({_id: share._id})))
     })
 
@@ -173,7 +175,7 @@ describe('Share controller', function() {
 
       var res = yield Share.feed(['group!' + group._id + '.board'], user.token)
       assert.equal(res.status, 200)
-      assert(_.isArray(res.body.items))
+      assert(Array.isArray(res.body.items))
 
       var last = Infinity
       res.body.items.forEach(function(item) {
@@ -459,7 +461,7 @@ describe('Share controller', function() {
           assert.equal(teacherMember.messages.length, 1)
         })
 
-        it('shold appear in student member feed', function *() {
+        it('should appear in student member feed', function *() {
           assert.equal(studentMember.messages.length, 1)
         })
 
@@ -503,17 +505,17 @@ describe('Share controller', function() {
         yield checkNotInFeed(student, group, post)
       })
 
-      describe('live updates', function() {
+      describe('live updates', function () {
         it('should not appear in teacher feed', function *() {
           assert.equal(teacher.messages.length, 0)
         })
 
         it('should appear in teacher member feed', function *() {
-          assert.equal(teacherMember.messages.length, 1)
+          assert.equal(teacherMember.messages.length, 2)
         })
 
         it('shold appear in student member feed', function *() {
-          assert.equal(studentMember.messages.length, 1)
+          assert.equal(studentMember.messages.length, 2)
         })
 
         it('should not appear in student feed', function *() {
