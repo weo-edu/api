@@ -8,14 +8,11 @@ exports.up = function(next){
     var ObjectId = mongo.raw.bsonLib.ObjectID
 
     chug
-      .src('shares', {})
+      .src('shares', {shareType: 'notification'})
       .pipe(es.map(function(doc, cb) {
-        // Only notifications
-        if (doc.shareType !== 'notification')
-          return cb(null, doc)
         // Only old-style notifications
-        if (! doc._object[0].hasOwnProperty('instance'))
-          return cb(null, doc)
+        if (!doc._object[0].hasOwnProperty('instance'))
+          return done()
 
         doc._object[0].actor = doc.actor
         doc._object[0].object = doc._parent[0]
@@ -26,14 +23,21 @@ exports.up = function(next){
             if (share) {
               if (doc._object[0].status === 'liked') {
                 doc._object[0].meta = share.likersCount
-              } else if (doc._object[0].status === 'pinned') {
+              } else if (doc._object[0].status === 'pinned' && share.contexts && share.contexts[1]) {
                 doc._object[0].meta = share.contexts[1] && share.contexts[1].descriptor
               }
-
-              cb(null, doc)
             }
-          }, cb)
 
+            delete doc._object[0].instance
+            done()
+          }, done)
+
+        function done (err) {
+          if (err) console.log('ERRROR', err)
+          setTimeout(function () {
+            cb(err || null, doc)
+          })
+        }
       }))
       .pipe(chug.dest('shares'))
       .on('end', next)

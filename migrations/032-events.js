@@ -16,7 +16,6 @@ exports.up = function(next){
         if (doc.shareType === 'notification')
           return cb(null, doc)
 
-        console.log('here', doc)
         doc._object[0].actor = doc.actor
         doc._object[0].object = doc._parent[0]
         doc.shareType = 'notification'
