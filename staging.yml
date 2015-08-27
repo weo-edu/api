@@ -107,6 +107,8 @@ api:
     UPLOAD_SIZE_LIMIT: 5mb
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
     AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
+    WEO_API_FEATURED: 5595a59342d1080b00920bfe,55ca9a978cb0b1100052be67,55b02d80c8a4620e00ef7fe9,54aaff61bf530f0200f351c7
+
 
 #
 # Redis
