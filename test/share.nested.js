@@ -1,6 +1,7 @@
 /**
  * Imports
  */
+
 var User = require('./helpers/user')
 var Share = require('./helpers/share')
 var Group = require('./helpers/group')
@@ -14,6 +15,7 @@ require('./helpers/boot')
 /**
  * Tests
  */
+
 describe('nested share', function() {
   var user, group, post
 
