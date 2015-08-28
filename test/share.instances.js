@@ -55,7 +55,7 @@ describe('share instances', function() {
   it('should create profile event when share instance is turned in', function *() {
     var res = yield Share.getInstance(student1.token, share.id, student1.id)
     var inst = res.body
-    inst.status = 4
+    inst.status = 3
 
     yield Share.updateInstance(inst, student1.token)
     res = yield Share.activities(student1.token, student1.id)
