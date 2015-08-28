@@ -39,13 +39,4 @@ describe('Avatar controller', function() {
     assert.equal(res.status, 400)
   })
 
-  it('should accept a valid avatar path', function *() {
-    var res = yield request
-      .put('/avatar')
-      .set('Authorization', authToken)
-      .send({url: 'https://www.weo.io/originals/decks/lotus.png'})
-      .end()
-
-    assert.equal(res.status, 200)
-  })
 })
