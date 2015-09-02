@@ -21,7 +21,7 @@ var Question = module.exports = {
           _id: correctId,
           correctAnswer: [correctId],
           objectType: 'choice',
-          displayName: '18'
+          originalContent: '18'
         }
       ]
     }]
