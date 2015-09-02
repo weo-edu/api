@@ -1,6 +1,7 @@
 var chug = require('mongo-chug')(require('../lib/config/').mongo)
 var es = require('event-stream')
 var qs = require('querystring')
+var _ = require('lodash')
 var async = require('async')
 
 exports.up = function(cb){
@@ -10,19 +11,22 @@ exports.up = function(cb){
     .src('shares')
     .pipe(es.through(function (doc) {
       if (doc._object && doc._object[0] && doc._object[0].attachments) {
-        doc._object[0].attachments.forEach(function (att) {
+        doc._object[0].attachments = doc._object[0].attachments.map(function (att) {
           if (att && att.attachments) {
-            att.attachments.forEach(function (sub) {
+            att.attachments = att.attachments.map(function (sub) {
               if (sub.objectType === 'choice') {
-                sub.content = sub.originalContent = sub.displayName
-                delete sub.displayName
+                return _.extend(sub, {originalContent: sub.displayName, content: sub.displayName})
               }
+
+              return sub
             })
           }
+
+          return att
         })
       }
 
-      this.emit('data', doc)
+      this.emit('data', _.extend(doc, {_object: doc._object.slice(0)}))
     }))
     .pipe(chug.dest('shares'))
     .on('end', cb)
