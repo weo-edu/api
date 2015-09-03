@@ -51,7 +51,7 @@
     "lodash.matches": "^3.1.0",
     "mailchimp": "git://github.com/weo-edu/mailchimp.git",
     "mandrill-send-template": "^0.1.1",
-    "marked": "weo-edu/marked",
+    "marked": "git://github.com/weo-edu/marked.git",
     "migrate": "git://github.com/weo-edu/node-migrate",
     "mock-require": "1.0.5",
     "moment": "~2.6.0",
