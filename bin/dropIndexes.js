@@ -13,7 +13,7 @@ mongo.connect(url, function(err, db) {
       if(name === 'system')
         return cb(null)
 
-      db.collection(name, function(err, col) {
+      db.collection(colInfo.name, function(err, col) {
         if(err) return cb(err)
         col.dropAllIndexes(cb)
       })
