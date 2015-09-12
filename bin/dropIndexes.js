@@ -9,11 +9,11 @@ mongo.connect(url, function(err, db) {
     if(err) throw err
     console.log('dropping indexes for', collections)
     async.each(collections, function(colInfo, cb) {
-      var name = colInfo.name.split('.')[1]
+      var name = colInfo.name.split('.')[0]
       if(name === 'system')
         return cb(null)
 
-      db.collection(name, function(err, col) {
+      db.collection(colInfo.name, function(err, col) {
         if(err) return cb(err)
         col.dropAllIndexes(cb)
       })
