@@ -53,13 +53,6 @@ var Share = module.exports = {
       .send({to: groups})
       .end()
   },
-  updateInstance: function(inst, authToken) {
-    return request
-      .put('/share/' + inst.id + '/instance')
-      .set('Authorization', authToken)
-      .send(inst)
-      .end()
-  },
   child: function(parent, objectType, channelFn) {
     var parent = new ShareModel(parent)
     var child = parent.createChild(objectType, {
@@ -88,6 +81,26 @@ var Share = module.exports = {
     return request
       .get('/share/' + id + '/instance/' + userId)
       .set('Authorization', token)
+      .end()
+  },
+  score: function (token, id, questionId, scaled) {
+    return request
+      .put('/instance/' + id + '/score/' + questionId)
+      .set('Authorization', token)
+      .send({scaled: scaled})
+      .end()
+  },
+  turnIn: function (id, token) {
+    return request
+      .put('/instance/' + id + '/turned_in')
+      .set('Authorization', token)
+      .end()
+  },
+  answer: function (token, id, questionId, answer) {
+    return request
+      .put('/instance/' + id + '/question/' + questionId + '/response')
+      .set('Authorization', token)
+      .send({answer: answer})
       .end()
   },
   activities: function(token, userId) {

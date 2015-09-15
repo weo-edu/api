@@ -58,7 +58,8 @@ describe('Questions', function() {
     question.response = question.attachments[0]._id
     inst.status = status.turnedIn
 
-    yield Share.updateInstance(inst, student.token)
+    yield Share.answer(student.token, inst._id, question._id, question.attachments[0]._id)
+    yield Share.turnIn(inst._id, student.token)
     yield awaitHooks()
 
     res = yield request.get('/share/' + assignment._id)

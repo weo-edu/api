@@ -336,12 +336,9 @@ describe('Share controller', function() {
       assert.equal(inst.root.id, share._id)
       assert.equal(inst.verb, 'started')
 
-      inst.status = status.turnedIn
-      res = yield request
-        .put('/share/' + inst._id + '/instance')
-        .set('Authorization', student.token)
-        .send(inst)
-        .end()
+      yield Share.turnIn(inst._id, student.token)
+      yield awaitHooks()
+      res = yield Share.getInstance(student.token, share._id, student._id)
 
       var inst = res.body
       assert.equal(inst.verb, 'completed')
