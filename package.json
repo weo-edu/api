@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@weo-edu/avatars": "^0.1.2",
+    "@weo-edu/is": "^0.2.0",
     "@weo-edu/po": "^0.1.3",
     "as-array": "git://github.com/weo-edu/as-array",
     "async": "0.9.0",
