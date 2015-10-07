@@ -6,7 +6,7 @@
 # WEO Frontend Load Balancer
 #
 weo_lb:
-  image: 'tutum/haproxy:latest'
+  image: 'tutum/haproxy:0.1'
   tags:
     - production
   links:
@@ -58,7 +58,7 @@ weo:
 # API Backend Load Balancer
 #
 api_lb:
-  image: 'tutum/haproxy:latest'
+  image: 'tutum/haproxy:0.1'
   tags:
     - production
   links:
