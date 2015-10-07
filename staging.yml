@@ -34,6 +34,7 @@ weo:
     API_STATIC: //staging-api-cdn.weo.io
     AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
     CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
+    FACEBOOK_APP_ID: 1696938930540934
     CRAWLABLE: false
     DEBUG: weo:*
     GOOGLE_CLIENT_ID: 696300823052-39m3901cceuiehfiac4s9l9su5tlps2r.apps.googleusercontent.com
@@ -108,6 +109,9 @@ api:
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
     AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
     WEO_API_FEATURED: 5595a59342d1080b00920bfe,55ca9a978cb0b1100052be67,55b02d80c8a4620e00ef7fe9,54aaff61bf530f0200f351c7
+    FACEBOOK_APP_ID: 1696938930540934
+    FACEBOOK_SECRET: 35bb8416b0448f1df66c2e1e6a430350
+    TEMPLATE_BOARD_ID: 560c603510322a8faf06f82d
 
 
 #
