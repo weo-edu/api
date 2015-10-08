@@ -6,7 +6,7 @@
 # WEO Frontend Load Balancer
 #
 weo_lb:
-  image: 'tutum/haproxy:latest'
+  image: 'tutum/haproxy:0.1'
   tags:
     - production
   links:
@@ -58,7 +58,7 @@ weo:
 # API Backend Load Balancer
 #
 api_lb:
-  image: 'tutum/haproxy:latest'
+  image: 'tutum/haproxy:0.1'
   tags:
     - production
   links:
@@ -97,7 +97,6 @@ api:
     PORT: 3000
     CLEVER_CLIENT_ID: 504ffa19024513570be4
     CLEVER_CLIENT_SECRET: 87b3e092190e5787a10c9e0e18886221b483a553
-    WEO_AUTOFOLLOW: 542af2209c22b81200d87884
     DEBUG: weo:*
     EMAIL_FRONTEND: http://weo.io
     EMAIL_PASS: elliotrileytio
