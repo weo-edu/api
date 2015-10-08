@@ -220,7 +220,7 @@ describe('User controller', function() {
       assert.equal(res.status, 200)
 
       res = yield User.login(student.username, student.password)
-      assert.equal(res.status, 401)
+      assert.equal(res.status, 400)
 
       res = yield User.login(student.username, 'new password')
       assert.equal(res.status, 200)
