@@ -22,7 +22,7 @@ describe('Auth controller', function() {
     assert.equal(res.status, 201)
 
     res = yield User.login(user.username, 'badpass')
-    assert.equal(res.status, 401)
+    assert.equal(res.status, 400)
     assert.equal(res.body.message, 'Incorrect password')
   })
 

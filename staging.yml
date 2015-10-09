@@ -6,7 +6,7 @@
 # WEO Frontend Load Balancer
 #
 weo_lb:
-  image: 'tutum/haproxy:latest'
+  image: 'tutum/haproxy:0.1'
   tags:
     - staging
   links:
@@ -52,7 +52,7 @@ weo:
 # API Backend Load Balancer
 #
 api_lb:
-  image: 'tutum/haproxy:latest'
+  image: 'tutum/haproxy:0.1'
   tags:
     - staging
   links:
@@ -111,7 +111,7 @@ api:
     WEO_API_FEATURED: 5595a59342d1080b00920bfe,55ca9a978cb0b1100052be67,55b02d80c8a4620e00ef7fe9,54aaff61bf530f0200f351c7
     FACEBOOK_APP_ID: 1696938930540934
     FACEBOOK_SECRET: 35bb8416b0448f1df66c2e1e6a430350
-    TEMPLATE_BOARD_ID: 560c603510322a8faf06f82d
+    TEMPLATE_BOARD_ID: 56148baeeacd410a00d38d39
 
 
 #
