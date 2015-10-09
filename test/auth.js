@@ -1,6 +1,7 @@
 /**
  * Imports
  */
+
 var User = require('./helpers/user')
 var assert = require('assert')
 
@@ -9,6 +10,7 @@ require('./helpers/boot')
 /**
  * Tests
  */
+
 describe('Auth controller', function() {
   it('should handle non-existent username', function *() {
     var res = yield User.login('badusername', 'test')
@@ -34,7 +36,7 @@ describe('Auth controller', function() {
     res = yield User.login(user.username, user.password)
     assert.equal(res.status, 200)
 
-    ;['token', 'userType', 'username', 'id'].forEach(function(key) {
+    ;['token', 'userType', 'username', 'id'].forEach(function (key) {
       assert.ok(res.body.hasOwnProperty(key))
     })
   })
