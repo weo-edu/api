@@ -25,6 +25,7 @@
     "body-parser": "~1.0.2",
     "browserify": "7.0.1",
     "bytes": "~0.3.0",
+    "camelcase": "^1.2.1",
     "capitalize": "^0.5.0",
     "cheerio": "^0.19.0",
     "clever-oauth-token": "git://github.com/weo-edu/clever-oauth-token",
