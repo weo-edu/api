@@ -7,6 +7,7 @@
 #
 weo_lb:
   image: 'tutum/haproxy:0.1'
+  autorestart: 'always'
   tags:
     - production
   links:
@@ -33,6 +34,7 @@ weo:
   image: 'tutum.co/ashaffer/eos-core:production'
   target_num_containers: 2
   autoredeploy: true
+  autorestart: 'always'
   tags:
     - production
   expose:
@@ -60,6 +62,7 @@ weo:
 #
 api_lb:
   image: 'tutum/haproxy:0.1'
+  autorestart: 'always'
   tags:
     - production
   links:
@@ -87,6 +90,7 @@ api:
   tags:
     - production
   autoredeploy: true
+  autorestart: 'always'
   target_num_containers: 3
   links:
     - redis # We don't actually use the link or the env vars to connnect to
@@ -130,6 +134,7 @@ api:
 # Redis
 #
 redis:
+  autorestart: 'always'
   tags:
     - production
   image: 'tutum/redis:latest'
