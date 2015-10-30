@@ -61,7 +61,7 @@
     "mock-require": "1.0.5",
     "moment": "~2.6.0",
     "mongo-chug": "0.0.1",
-    "mongodb": "~1.4.4",
+    "mongodb": "^1.4.39",
     "mongodb-next": "^0.7.0",
     "mongodb-uri": "~0.9.6",
     "mongoose": "git://github.com/weo-edu/mongoose.git#3.8.x",
