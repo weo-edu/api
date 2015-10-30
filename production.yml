@@ -7,6 +7,7 @@
 #
 weo_lb:
   image: 'tutum/haproxy:0.1'
+  autorestart: 'always'
   tags:
     - production
   links:
@@ -33,6 +34,7 @@ weo:
   image: 'tutum.co/ashaffer/eos-core:production'
   target_num_containers: 2
   autoredeploy: true
+  autorestart: 'always'
   tags:
     - production
   expose:
@@ -60,6 +62,7 @@ weo:
 #
 api_lb:
   image: 'tutum/haproxy:0.1'
+  autorestart: 'always'
   tags:
     - production
   links:
@@ -87,6 +90,7 @@ api:
   tags:
     - production
   autoredeploy: true
+  autorestart: 'always'
   target_num_containers: 3
   links:
     - redis # We don't actually use the link or the env vars to connnect to
@@ -97,7 +101,7 @@ api:
   environment:
     PORT: 3000
     CLEVER_CLIENT_ID: 504ffa19024513570be4
-    CLEVER_CLIENT_SECRET: 87b3e092190e5787a10c9e0e18886221b483a553
+    CLEVER_SECRET: 87b3e092190e5787a10c9e0e18886221b483a553
     DEBUG: weo:*
     EMAIL_FRONTEND: http://weo.io
     EMAIL_PASS: elliotrileytio
@@ -125,11 +129,13 @@ api:
     FACEBOOK_APP_ID: 1662916197276541
     FACEBOOK_SECRET: 3d3d29e3ad0ce59945447b71b804e0f0
     TEMPLATE_BOARD_ID: 56149fd19c9d5d0c0024ad3c
+    JWT_KEY: 2nkSzCwMboGIOI1Q
 
 #
 # Redis
 #
 redis:
+  autorestart: 'always'
   tags:
     - production
   image: 'tutum/redis:latest'
