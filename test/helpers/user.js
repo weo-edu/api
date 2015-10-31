@@ -1,6 +1,7 @@
 /**
  * Imports
  */
+
 var Faker = require('Faker')
 var chai = require('chai')
 var Seq = require('seq')
@@ -10,6 +11,7 @@ var _ = require('lodash')
 /**
  * User Helper
  */
+
 var User = module.exports = {
   me: function(authToken) {
     return request
