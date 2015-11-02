@@ -91,6 +91,7 @@
     "striptags": "^2.0.2",
     "summarize-markdown": "~0.3.0",
     "superagent": "^1.4.0",
+    "supertest-promised": "^0.1.0",
     "uglifyify": "^2.5.0",
     "uncapitalize": "^1.0.2",
     "uuid": "^2.0.1",
