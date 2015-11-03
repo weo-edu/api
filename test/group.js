@@ -30,7 +30,6 @@ describe('Group controller', function () {
         .post('/group')
         .send(Group.generate())
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 201)
 
@@ -38,7 +37,6 @@ describe('Group controller', function () {
       res = yield request
       	.get('/' + [user.userType, user.id].join('/'))
         .set('Authorization', user.token)
-      	.end()
 
       assert.equal(res.status, 200)
     	assert(res.body.groups.some(matches({id: group.id})))
@@ -50,7 +48,6 @@ describe('Group controller', function () {
         .post('/group')
         .send(Group.generate())
         .set('Authorization', student.token)
-        .end()
 
       assert.equal(res.status, 403)
     })
@@ -61,7 +58,6 @@ describe('Group controller', function () {
         .post('/group')
         .send(group)
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 201)
 
@@ -69,7 +65,6 @@ describe('Group controller', function () {
         .post('/group')
         .send(Group.generate({displayName: group.displayName}))
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 400)
     })
@@ -81,13 +76,11 @@ describe('Group controller', function () {
         .post('/group')
         .send(Group.generate())
         .set('Authorization', user.token)
-        .end()
 
 			var group = res.body
 			res = yield request
 				.get('/group/' + group.id)
         .set('Authorization', user.token)
-				.end()
 
 			assert(_.isEqual(_.omit(res.body, excluded), _.omit(group, excluded)))
   	})
@@ -97,13 +90,11 @@ describe('Group controller', function () {
         .post('/group')
         .send(Group.generate())
         .set('Authorization', user.token)
-        .end()
 
       var group = res.body
 			res = yield request
 				.get('/group/' + group.id)
         .set('Authorization', user.token)
-				.end()
 
 			assert(_.isEqual(_.omit(res.body, excluded), _.omit(group, excluded)))
   	})
@@ -125,7 +116,6 @@ describe('Group controller', function () {
       res = yield request
         .get('/teacher/' + user.id)
         .set('Authorization', user.token)
-        .end()
 
       assert(res.body.groups.some(matches({id: group.id})))
   	})
@@ -150,7 +140,6 @@ describe('Group controller', function () {
       res = yield request
         .get('/student/' + student.id)
         .set('Authorization', student.token)
-        .end()
 
         assert(res.body.groups.some(matches({id: group.id})))
     })
@@ -168,7 +157,6 @@ describe('Group controller', function () {
       var res = yield request
         .put('/group/join/535abfe3dac02cfe4a7a4f1b')
         .set('Authorization', student.token)
-        .end()
 
       assert.equal(res.status, 404)
     })
@@ -185,7 +173,6 @@ describe('Group controller', function () {
       var res = yield request
         .put('/group/' + group.id + '/archive')
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.body.status, 'archived')
     })
@@ -194,7 +181,6 @@ describe('Group controller', function () {
       var res = yield request
         .get('/' + user.userType + '/' + user.id)
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 200)
 
@@ -207,7 +193,6 @@ describe('Group controller', function () {
       res = yield request
         .put('/group/' + group.id + '/archive')
         .set('Authorization', user.token)
-        .end()
 
       yield awaitHooks()
       yield awaitHooks()
@@ -216,7 +201,6 @@ describe('Group controller', function () {
       res = yield request
         .get('/' + user.userType + '/' + user.id)
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 200)
 

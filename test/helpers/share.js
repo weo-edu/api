@@ -15,7 +15,6 @@ var Share = module.exports = {
       .post('/share')
       .set('Authorization', authToken)
       .send(share)
-      .end()
   },
   queue: function(opts, groups, authToken) {
     var share = Share.generate(opts, groups)
@@ -24,34 +23,29 @@ var Share = module.exports = {
       .post('/share')
       .set('Authorization', authToken)
       .send(share)
-      .end()
   },
   update: function(share, authToken) {
     return request
       .put('/share/' + share.id)
       .set('Authorization', authToken)
       .send(share)
-      .end()
   },
   copy: function(share, authToken) {
     return request
       .post('/share/' + share.id + '/copy')
       .set('Authorization', authToken)
-      .end()
   },
   assign: function(share, groups, authToken) {
     return request
       .put('/share/' + share.id + '/assign')
       .set('Authorization', authToken)
       .send({to: groups})
-      .end()
   },
   pin: function(share, groups, authToken) {
     return request
       .put('/share/' + share.id + '/pin')
       .set('Authorization', authToken)
       .send({to: groups})
-      .end()
   },
   child: function(parent, objectType, channelFn) {
     var parent = new ShareModel(parent)
@@ -64,50 +58,42 @@ var Share = module.exports = {
     return request
       .put('/share/' + share.id + '/like')
       .set('Authorization', user.token)
-      .end()
   },
   unlike: function(share, user) {
     return request
       .put('/share/' + share.id + '/unlike')
       .set('Authorization', user.token)
-      .end()
   },
   likes: function(user) {
     return request
       .get('/user/' + user.id + '/likes')
-      .end()
   },
   getInstance: function(token, id, userId) {
     return request
       .get('/share/' + id + '/instance/' + userId)
       .set('Authorization', token)
-      .end()
   },
   score: function (token, id, questionId, scaled) {
     return request
       .put('/instance/' + id + '/score/' + questionId)
       .set('Authorization', token)
       .send({scaled: scaled})
-      .end()
   },
   turnIn: function (id, token) {
     return request
       .put('/instance/' + id + '/turned_in')
       .set('Authorization', token)
-      .end()
   },
   answer: function (token, id, questionId, answer) {
     return request
       .put('/instance/' + id + '/question/' + questionId + '/response')
       .set('Authorization', token)
       .send({answer: answer})
-      .end()
   },
   activities: function(token, userId) {
     return request
       .get('/share?channel=user!' + userId + '.activities')
       .set('Authorization', token)
-      .end()
   },
   feed: function(query, authToken) {
     if (!_.isObject(query) || _.isArray(query))
@@ -117,7 +103,6 @@ var Share = module.exports = {
       .get('/share')
       .set('Authorization', authToken)
       .query(query)
-      .end()
   },
   generate: function(opts, groups) {
     opts = opts || {}
@@ -158,12 +143,10 @@ var Share = module.exports = {
     return request
       .del('/share/' + shareId)
       .set('Authorization', authToken)
-      .end()
   },
   members: function(shareId, context, authToken) {
     return request
       .get('/share/' + shareId + '/members?context=' + context)
       .set('Authorization', authToken)
-      .end()
   }
 }

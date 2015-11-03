@@ -39,7 +39,6 @@ describe('Post controller', function() {
 		var res = yield request
       .post('/share')
       .send(share)
-      .end()
 
 		assert.equal(res.status, 401)
 	})
@@ -51,7 +50,6 @@ describe('Post controller', function() {
       .post('/share')
       .send(share)
       .set('Authorization', teacher.token)
-      .end()
 
 		assert(hasValidationError(res, '_object.0.originalContent', 'required', 'Path `originalContent` is required.', '', 'originalContent'))
 	})

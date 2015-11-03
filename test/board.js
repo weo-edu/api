@@ -24,7 +24,6 @@ describe('Board', function() {
         .post('/board')
         .send(Group.generate())
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 201)
 
@@ -32,7 +31,6 @@ describe('Board', function() {
       res = yield request
         .get('/' + [user.userType, user.id].join('/'))
         .set('Authorization', user.token)
-        .end()
 
       assert.equal(res.status, 200)
       assert(res.body.groups.some(matches({id: group.id})))

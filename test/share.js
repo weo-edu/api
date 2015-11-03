@@ -249,7 +249,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id)
         .set('Authorization', user.token)
-        .end()
 
       share = res.body
       assert.equal(share.instances.total[0].actors[student._id].status, status.unopened)
@@ -263,7 +262,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', student.token)
-        .end()
 
       var inst = res.body
       assert.equal(inst.description, 'this is a description')
@@ -274,7 +272,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id)
         .set('Authorization', user.token)
-        .end()
 
       share = res.body
       // check status aggregation
@@ -288,7 +285,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', user.token)
-        .end()
 
       var inst = res.body
       assert.equal(inst.actor.id, student._id)
@@ -303,7 +299,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', user.token)
-        .end()
 
       var inst = res.body
       assert.equal(inst.actor.id, student._id)
@@ -313,7 +308,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', student.token)
-        .end()
 
       var inst = res.body
       assert.equal(inst.actor.id, student._id)
@@ -329,7 +323,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', student.token)
-        .end()
 
       var inst = res.body
       assert.equal(inst.actor.id, student._id)
@@ -346,7 +339,7 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id)
         .set('Authorization', user.token)
-        .end()
+
       share = res.body
       assert.equal(share.instances.total[0].actors[student._id].status, status.graded)
     })
@@ -358,7 +351,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', student.token)
-        .end()
 
       var inst = res.body
       var tmp = _.clone(share, true)
@@ -377,7 +369,6 @@ describe('Share controller', function() {
       res = yield request
         .get('/share/' + share._id + '/instance/' + student._id)
         .set('Authorization', student.token)
-        .end()
 
       var inst2 = res.body
       assert(share.displayName !== share2.displayName)

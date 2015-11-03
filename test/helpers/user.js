@@ -17,7 +17,6 @@ var User = module.exports = {
     return request
       .get('/user')
       .set('Authorization', authToken)
-      .end()
   },
   generate: function(opts) {
     opts = opts || {}
@@ -35,18 +34,15 @@ var User = module.exports = {
     return request
       .post('/auth/user')
       .send(opts)
-      .end()
   },
   login: function(username, password) {
     return request
       .post('/auth/login')
       .send({username: username, password: password})
-      .end()
   },
   get: function(id) {
     return request
       .get('/user/' + id)
-      .end()
       .then(function(res) {
         return res.body
       })
@@ -55,18 +51,15 @@ var User = module.exports = {
     return request
       .put('/user/' + id + '/follow')
       .set('Authorization', user.token)
-      .end()
   },
   unfollow: function(id, user) {
     return request
       .del('/user/' + id + '/follow')
       .set('Authorization', user.token)
-      .end()
   },
   followers: function(id, cb) {
     return request
       .get('/user/' + id + '/followers')
-      .end()
       .then(function(res) {
         return res.body.items
       })

@@ -20,6 +20,5 @@ var Post = module.exports = {
       .post('/share')
       .send(share)
       .set('Authorization', token)
-      .end()
   }
 }
