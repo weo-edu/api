@@ -122,7 +122,7 @@ api:
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
     REDIS_URL: redis://user:password@redis:6379
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
-    UPLOAD_SIZE_LIMIT: 5mb
+    UPLOAD_SIZE_LIMIT: 20mb
     AVATAR_SERVER: //avatars.global.ssl.fastly.net
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
     WEO_API_FEATURED: 5595a59342d1080b00920bfe,55ca9a978cb0b1100052be67,55b02d80c8a4620e00ef7fe9,54aaff61bf530f0200f351c7
