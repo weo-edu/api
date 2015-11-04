@@ -13,13 +13,11 @@ var Group = module.exports = {
     return request
       .put('/group/' + group.id + '/members/' + user)
       .set('Authorization', token)
-      .end()
   },
   join: function(group, user) {
     return request
       .put('/group/join/' + group.code)
       .set('Authorization', user.token)
-      .end()
   },
   create: function(opts, user) {
     opts = Group.generate(opts)
@@ -27,7 +25,6 @@ var Group = module.exports = {
       .post('/group')
       .send(opts)
       .set('Authorization', user.token)
-      .end()
       .then(function(res) {
         return res.body
       })
@@ -39,7 +36,6 @@ var Group = module.exports = {
       .post('/board')
       .send(opts)
       .set('Authorization', user.token)
-      .end()
       .then(function(res) {
         return res.body
       })
@@ -48,18 +44,15 @@ var Group = module.exports = {
     return request
       .put('/board/' + id + '/follow')
       .set('Authorization', user.token)
-      .end()
   },
   unfollow: function(id, user) {
     return request
       .del('/board/' + id + '/follow')
       .set('Authorization', user.token)
-      .end()
   },
   followers: function(id) {
     return request
       .get('/board/' + id + '/followers')
-      .end()
       .then(function(res) {
         return res.body.items
       })

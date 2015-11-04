@@ -36,7 +36,6 @@ describe('Markdown tests', function() {
     var res = yield request.post('/share')
       .set('Authorization', token)
       .send(share)
-      .end()
 
     var share = res.body
     var obj = share._object[0].attachments[0]
@@ -64,7 +63,6 @@ describe('Markdown tests', function() {
     var res = yield request.post('/share')
       .set('Authorization', token)
       .send(share)
-      .end()
 
     var share = res.body
     var obj = share._object[0].attachments[0]
