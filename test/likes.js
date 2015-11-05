@@ -21,7 +21,6 @@ describe('Liking', function() {
       .post('/share')
       .set('Authorization', user.token)
       .send(createShare())
-      .end()
 
     share = res.body
   })

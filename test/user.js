@@ -122,7 +122,6 @@ describe('User controller', function() {
       var res = yield request
         .get('/user/groups')
         .set('Authorization', authToken)
-        .end()
 
       assert.equal(res.status, 200)
       assert.equal(res.body.items.length, 1)
@@ -133,7 +132,6 @@ describe('User controller', function() {
       var res = yield request
         .get('/user/classes')
         .set('Authorization', authToken)
-        .end()
 
       assert.equal(res.status, 200)
       assert.equal(res.body.items.length, 1)
@@ -144,7 +142,6 @@ describe('User controller', function() {
       var res = yield request
         .get('/user/boards')
         .set('Authorization', authToken)
-        .end()
 
       assert.equal(res.status, 200)
       assert.equal(res.body.items.length, 0)
@@ -170,7 +167,6 @@ describe('User controller', function() {
         .post('/board')
         .set('Authorization', authToken)
         .send(group)
-        .end()
 
       group = res.body
       assert.equal(res.status, 201)
@@ -180,7 +176,6 @@ describe('User controller', function() {
       var res = yield request
         .get('/user/boards')
         .set('Authorization', authToken)
-        .end()
 
       assert.equal(res.status, 200)
       assert.equal(res.body.items.length, 1)
@@ -199,7 +194,6 @@ describe('User controller', function() {
       var res = yield request
         .put('/group/join/' + group.code)
         .set('Authorization', student.token)
-        .end()
 
       assert.equal(res.status, 200)
     })
@@ -210,7 +204,6 @@ describe('User controller', function() {
         .put('/student/' + student._id + '/password')
         .send({password: 'new password'})
         .set('Authorization', teacher.token)
-        .end()
 
       // Try to login with our new password
       assert.equal(res.status, 200)
@@ -232,7 +225,6 @@ describe('User controller', function() {
         .put('/user/' + student._id + '/password')
         .send({password: 'newpass2'})
         .set('Authorization', student.token)
-        .end()
 
       assert.equal(res.status, 200)
 
@@ -243,7 +235,6 @@ describe('User controller', function() {
         .put('/user/' + teacher._id + '/password')
         .send({password: 'newpass2'})
         .set('Authorization', teacher.token)
-        .end()
 
       assert.equal(res.status, 200)
 
@@ -258,7 +249,6 @@ describe('User controller', function() {
         .put('/student/' + student._id + '/password')
         .send({password: 'other password'})
         .set('Authorization', student2.token)
-        .end()
 
       assert.equal(res.status, 403)
     })
@@ -275,7 +265,6 @@ describe('User controller', function() {
         .put('/student/' + student._id + '/password')
         .send({password: 'other password'})
         .set('Authorization', otherTeacher.token)
-        .end()
 
       // Expect failure
       assert.equal(res.status, 403)

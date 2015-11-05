@@ -1,6 +1,6 @@
 var path = require('path')
 var app = require(path.join(process.cwd(), 'server.js'))
-var supertest = require('supertest-promised')
+var supertest = require('supertest-as-promised')
 var socket = require('socket.io-client')
 var querystring = require('querystring')
 var config = require('lib/config')

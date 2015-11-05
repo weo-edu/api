@@ -48,7 +48,6 @@ describe('Questions', function() {
   it('should answer question when question is formed properly', function *() {
     var res = yield Question.create(teacher.token, {contexts: group.id, channels: ['group!' + group.id + '.board']})
     yield awaitHooks()
-
     var assignment = res.body
     res = yield Share.getInstance(student.token, assignment._id, student._id)
 
@@ -58,12 +57,12 @@ describe('Questions', function() {
     question.response = question.attachments[0]._id
     inst.status = status.turnedIn
 
-    yield Share.updateInstance(inst, student.token)
+    yield Share.answer(student.token, inst._id, question._id, question.attachments[0]._id)
+    yield Share.turnIn(inst._id, student.token)
     yield awaitHooks()
 
     res = yield request.get('/share/' + assignment._id)
       .set('Authorization', teacher.token)
-      .end()
 
     var updated = res.body
     assert.equal(updated.instances.total.length, 1)

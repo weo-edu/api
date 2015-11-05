@@ -1,6 +1,7 @@
 /**
  * Imports
  */
+
 var User = require('./helpers/user')
 var Share = require('./helpers/share')
 var Group = require('./helpers/group')
@@ -12,7 +13,8 @@ require('./helpers/boot')
 /**
  * Tests
  */
-describe('grading', function() {
+
+describe('grading', function () {
   var user, group, student, student2
 
   before(function *() {
@@ -32,9 +34,10 @@ describe('grading', function() {
 
     res = yield Share.getInstance(user.token, share._id, student._id)
     var inst = res.body
-    inst._object[0].attachments[0].points.scaled = 0.7
 
-    res = yield Share.updateInstance(inst, user.token)
+    yield Share.score(user.token, inst._id, inst._object[0].attachments[0]._id, 0.7)
+    res = yield Share.getInstance(user.token, share._id, student._id)
+
     assert.equal(res.body._object[0].attachments[0].points.scaled, 0.7)
 
     share.displayName = '111111'

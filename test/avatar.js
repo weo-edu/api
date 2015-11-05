@@ -25,7 +25,6 @@ describe('Avatar controller', function() {
     var res = yield request
       .put('/avatar')
       .send({url: 'test.jpg'})
-      .end()
 
     assert.equal(res.status, 401)
   })
@@ -34,9 +33,7 @@ describe('Avatar controller', function() {
     var res = yield request
       .put('/avatar')
       .set('Authorization', authToken)
-      .end()
 
     assert.equal(res.status, 400)
   })
-
 })
