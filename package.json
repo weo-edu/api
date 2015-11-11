@@ -41,6 +41,7 @@
     "escape-regexp": "0.0.1",
     "event-stream": "^3.1.7",
     "express": "~4.0.0",
+    "express-current-version": "^0.1.4",
     "express-inject-latency": "0.0.4",
     "express-robots": "^0.1.4",
     "fastly": "^1.2.1",
