@@ -104,7 +104,7 @@ api:
     S3_UPLOAD_REGION: us-west-2
     S3_UPLOAD_BUCKET: weo-uploads-dev
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
-    SCRAPER_URL: http://scraper.weo.io/1/oembed/
+    SCRAPER_URL: http://staging-scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
     AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
