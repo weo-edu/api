@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "0.0.0",
+  "version": "0.1.4",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "async": "0.9.0",
     "babel": "^5.6.14",
     "binary-search": "^1.2.0",
-    "body-parser": "~1.0.2",
+    "body-parser": "^1.14.1",
     "browserify": "7.0.1",
     "bytes": "~0.3.0",
     "camelcase": "^1.2.1",
@@ -41,6 +41,7 @@
     "escape-regexp": "0.0.1",
     "event-stream": "^3.1.7",
     "express": "~4.0.0",
+    "express-current-version": "^0.1.4",
     "express-inject-latency": "0.0.4",
     "express-robots": "^0.1.4",
     "fastly": "^1.2.1",
