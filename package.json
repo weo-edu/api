@@ -17,6 +17,7 @@
   "dependencies": {
     "@micro-js/assign": "^1.0.0",
     "@micro-js/curry-once": "^1.2.0",
+    "@micro-js/is-undefined": "^1.0.0",
     "@micro-js/object-to-promise": "^1.0.0",
     "@micro-js/pick": "^1.0.1",
     "@micro-js/pick-as": "^1.0.0",
