@@ -82,6 +82,15 @@ describe('Questions', function() {
       turnedInAt: time
     }
 
+    console.log('asdf', updated.instances.total, {
+      context: group.id,
+      items: 1,
+      status: status.graded,
+      pointsScaled: 1,
+      actors: actorsTotal,
+      turnedInAt: time
+    })
+
     assert(matches({
       context: group.id,
       items: 1,
