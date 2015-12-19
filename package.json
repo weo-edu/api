@@ -15,6 +15,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@micro-js/assign": "^1.0.0",
+    "@micro-js/curry-once": "^1.2.0",
+    "@micro-js/is-undefined": "^1.0.0",
+    "@micro-js/object-to-promise": "^1.0.0",
+    "@micro-js/pick": "^1.0.1",
+    "@micro-js/pick-as": "^1.0.0",
+    "@micro-js/thunk-to-promise": "^1.0.0",
     "@weo-edu/avatars": "^0.1.2",
     "@weo-edu/is": "^0.2.0",
     "@weo-edu/po": "^0.1.3",
