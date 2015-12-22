@@ -5,11 +5,11 @@ exports.up = function(next){
   chug.src('shares', {shareType: 'notification'})
     .pipe(es.through(function(doc) {
       var object = doc._object[0]
-      var objectUrl = object.object.url
+      var objectUrl = object.object.url || ''
       if (isClassLink(objectUrl)) {
         object.object.url = objectUrl.slice(objectUrl.indexOf('/class/'))
       }
-      var metaUrl = object.meta && object.meta.url
+      var metaUrl = (object.meta && object.meta.url) || ''
       if (object.meta && metaUrl&& isClassLink(metaUrl)) {
         object.meta.url = metaUrl.slice(metaUrl.indexOf('/class/'))
       }
