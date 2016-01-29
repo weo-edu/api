@@ -91,7 +91,7 @@ api:
     - production
   autoredeploy: true
   autorestart: 'always'
-  target_num_containers: 3
+  target_num_containers: 6
   links:
     - redis # We don't actually use the link or the env vars to connnect to
             # redis, but we need to put the link here to ensure redis boots up
