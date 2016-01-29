@@ -112,7 +112,7 @@ api:
     MAILCHIMP_INVITE_LIST_ID: 4c10c5f1a7
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     GOOGLE_SECRET: POE6EaRNeXWLP8DPafQOBR-Y
-    MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef
+    MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef&connectTimeoutMS=10000
     NODE_ENV: production
     PAPERTRAIL_HOST: logs2.papertrailapp.com
     PAPERTRAIL_PORT: 15920
