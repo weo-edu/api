@@ -99,7 +99,7 @@ api:
     NODE_ENV: staging
     PAPERTRAIL_HOST: logs2.papertrailapp.com
     PAPERTRAIL_PORT: 15920
-    REDIS_URL: redis://user:password@redis:6379/
+    REDIS_URL: redis://user:password@redis-1.staging.ashaffer.cont.tutum.io:6379/
     S3_API_KEY: AKIAIIA5OZD3IKVSUXDA
     S3_UPLOAD_REGION: us-west-2
     S3_UPLOAD_BUCKET: weo-uploads-dev
@@ -127,5 +127,7 @@ redis:
     - staging
   expose:
     - '6379'
+  ports:
+    - '6379:6379'
   environment:
     REDIS_PASS: password
