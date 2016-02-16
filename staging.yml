@@ -83,6 +83,7 @@ api:
     - '3000'
   environment:
     PORT: 3000
+    APP_NAME: eos-api-staging
     CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
     CLEVER_CLIENT_SECRET: de3a5c71719741581ec2b77a05e07c643369560f
     DEBUG: weo:*
