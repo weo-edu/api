@@ -112,7 +112,7 @@ api:
     MAILCHIMP_INVITE_LIST_ID: 4c10c5f1a7
     GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     GOOGLE_SECRET: POE6EaRNeXWLP8DPafQOBR-Y
-    MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef&connectTimeoutMS=10000
+    MONGO_URL: mongodb://db:X4ubrTLYLcDm8HS@c273.lighthouse.0.mongolayer.com:10273,c273.lighthouse.1.mongolayer.com:10273/eos?replicaSet=set-54e81ced9b093226ee0008ef&autoReconnect=true
     NODE_ENV: production
     PAPERTRAIL_HOST: logs2.papertrailapp.com
     PAPERTRAIL_PORT: 15920
@@ -120,7 +120,7 @@ api:
     S3_UPLOAD_BUCKET: weo-uploads
     S3_UPLOAD_REGION: us-west-2
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
-    REDIS_URL: redis://user:password@redis:6379
+    REDIS_URL: redis://user:password@redis-1.production.ashaffer.cont.tutum.io:6379
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 20mb
     AVATAR_SERVER: //avatars.global.ssl.fastly.net
@@ -144,5 +144,7 @@ redis:
   image: 'tutum/redis:latest'
   expose:
     - '6379'
+  ports:
+    - '6379:6379'
   environment:
     REDIS_PASS: password
