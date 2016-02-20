@@ -90,6 +90,7 @@ api:
   tags:
     - production
   autoredeploy: true
+  autorestart: 'always'
   target_num_containers: 6
   links:
     - redis # We don't actually use the link or the env vars to connnect to
