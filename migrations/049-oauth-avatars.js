@@ -55,9 +55,10 @@ function process (user, cb) {
       s3upload('http://graph.facebook.com/' + user.auth.facebook.id + '/picture?type=large', function (err, url) {
         if (err) return cb(err)
         console.log('uploaded', user._id, user.auth.facebook.id, url)
+        doc.url = url
         avatars
           .findOne(doc._id)
-          .update('url', url)
+          .update(doc)
           .then(function () { cb() }, cb)
       })
     }, cb)
