@@ -47,7 +47,8 @@ function process (user, cb) {
   var avatars = mongo.collection('avatars')
   console.log('process', user._id)
   try {
-    avatars.findOne({user: user._id}).then(function (doc) {
+    avatars.findOne({user: user._id.toString()}).then(function (doc) {
+      console.log('avatar', doc)
       if (!doc) return cb(null)
       if (doc.url && doc.url.indexOf('fbcdn.net/hprofile') === -1) return cb()
 
