@@ -56,7 +56,8 @@ function process (user, cb) {
         if (err) return cb(err)
         console.log('uploaded', user._id, user.auth.facebook.id, url)
         avatars
-          .updateById(user._id, {$set: {url: url}})
+          .findOne(user._id)
+          .update('url', url)
           .then(function () { cb() }, cb)
       })
     }, cb)
