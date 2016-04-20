@@ -45,6 +45,7 @@ weo:
     API_STATIC: //weo-api.global.ssl.fastly.net
     STATIC_FILES: //weo.global.ssl.fastly.net
     AVATAR_SERVER: //avatars.global.ssl.fastly.net
+    SHARE_INTRO_ID: 56d61b4b1e6fae0a00f063f9
     CLEVER_CLIENT_ID: 504ffa19024513570be4
     FACEBOOK_APP_ID: 1662916197276541
     CRAWLABLE: true
@@ -133,7 +134,6 @@ api:
     SEGMENT_IO_KEY: 0mhgcgv6ao
     KHAN_CONSUMER_KEY: RmFAeWUah2X4HdNY
     KHAN_CONSUMER_SECRET: ezcnXCHTTXp7pnja
-    SHARE_INTRO_ID: 56d61b4b1e6fae0a00f063f9
 
 #
 # Redis
