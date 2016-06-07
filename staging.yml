@@ -5,7 +5,7 @@
 #
 # WEO Frontend Load Balancer
 #
-weo_lb:
+weo-lb:
   image: 'tutum/haproxy:0.1'
   tags:
     - staging
@@ -49,11 +49,12 @@ weo:
     IMAGE_SERVER: //images.global.ssl.fastly.net
     WEO_SOURCEMAPS: true
     WEO_ENGAGE: "Get early access"
+    OFFICE365_CLIENT_ID: f2a70124-f015-4cd1-b80b-7e80cb022d16
 
 #
 # API Backend Load Balancer
 #
-api_lb:
+api-lb:
   image: 'tutum/haproxy:0.1'
   tags:
     - staging
@@ -121,6 +122,8 @@ api:
     JWT_KEY: weodevjwtkey
     KHAN_CONSUMER_KEY: RmFAeWUah2X4HdNY
     KHAN_CONSUMER_SECRET: ezcnXCHTTXp7pnja
+    OFFICE365_CLIENT_ID: f2a70124-f015-4cd1-b80b-7e80cb022d16
+    OFFICE365_SECRET: 7nMkzuAEkOrKO9h/zK/H4sjGMU+DhTgXpOFSlIkEzpA=
 
 
 #

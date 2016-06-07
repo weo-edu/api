@@ -5,7 +5,7 @@
 #
 # WEO Frontend Load Balancer
 #
-weo_lb:
+weo-lb:
   image: 'tutum/haproxy:0.1'
   autorestart: 'always'
   tags:
@@ -61,7 +61,7 @@ weo:
 #
 # API Backend Load Balancer
 #
-api_lb:
+api-lb:
   image: 'tutum/haproxy:0.1'
   autorestart: 'always'
   tags:
