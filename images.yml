@@ -1,0 +1,27 @@
+#
+# Images Load Balancer
+#
+
+images-lb:
+  image: 'tutum/haproxy:latest'
+  environment:
+    - BACKEND_PORT=3000
+  links:
+    - images
+  ports:
+    - '80:80'
+  roles:
+    - global
+
+#
+# Images service
+#
+
+images:
+  image: 'weoedu/images:master'
+  autoredeploy: true
+  environment:
+    - PORT=3000
+  expose:
+    - '3000'
+  target_num_containers: 3

@@ -1,0 +1,37 @@
+#
+# Staging Scraper Load Balancer
+#
+
+scraper-lb:
+  image: 'tutum/haproxy:latest'
+  environment:
+    - BACKEND_PORT=3000
+  links:
+    - scraper
+  ports:
+    - '80:80'
+  roles:
+    - global
+
+#
+# Staging Scraper Service
+#
+
+scraper:
+  image: 'weoedu/scraper-proxy:staging'
+  autoredeploy: true
+  environment:
+    - 'DEBUG=scraper:*'
+    - EMBEDLY_API_KEY=578f2e0b9cb04763888f0a6c9b907b55
+    - GOOGLE_DRIVE_API_KEY=AIzaSyDCntpE09OxvK4vTsCTMlUKI-wlMi3H3SI
+    - PAPERTRAIL_HOST=logs2.papertrailapp.com
+    - PAPERTRAIL_PORT=15920
+    - PINTEREST_API_KEY=ARTRJNqOwb_jMHhdwO7TiE0ZTr2CFBNeteDdZd1Cm50xFSBGQQAAAAA
+    - PORT=3000
+    - SCRAPER_S3_API_KEY=AKIAIIA5OZD3IKVSUXDA
+    - SCRAPER_S3_BUCKET=weo-uploads
+    - SCRAPER_S3_REGION=us-west-2
+    - SCRAPER_S3_SECRET=5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
+  expose:
+    - '3000'
+  target_num_containers: 2
