@@ -24,7 +24,7 @@ weo_lb:
 # WEO Frontend Server
 #
 weo:
-  image: 'tutum.co/ashaffer/eos-core:staging'
+  image: 'weoedu/eos-core:staging'
   tags:
     - staging
   autoredeploy: true
@@ -74,7 +74,7 @@ api_lb:
 # API Backend Server
 #
 api:
-  image: 'tutum.co/ashaffer/api:staging'
+  image: 'weoedu/api:staging'
   tags:
     - staging
   autoredeploy: true
@@ -104,7 +104,7 @@ api:
     NODE_ENV: staging
     PAPERTRAIL_HOST: logs2.papertrailapp.com
     PAPERTRAIL_PORT: 15920
-    REDIS_URL: redis://user:password@redis-1.staging.ashaffer.cont.tutum.io:6379/
+    REDIS_URL: tcp://user:password@redis.staging.2c4bcbe7.svc.dockerapp.io:6379
     S3_API_KEY: AKIAIIA5OZD3IKVSUXDA
     S3_UPLOAD_REGION: us-west-2
     S3_UPLOAD_BUCKET: weo-uploads-dev

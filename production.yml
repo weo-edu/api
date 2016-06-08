@@ -31,7 +31,7 @@ weo_lb:
 # WEO Frontend Server
 #
 weo:
-  image: 'tutum.co/ashaffer/eos-core:production'
+  image: 'weoedu/eos-core:production'
   target_num_containers: 2
   autoredeploy: true
   autorestart: 'always'
@@ -87,7 +87,7 @@ api_lb:
 # API Backend Server
 #
 api:
-  image: 'tutum.co/ashaffer/api:production'
+  image: 'weoedu/api:production'
   tags:
     - production
   autoredeploy: true
@@ -121,7 +121,7 @@ api:
     S3_UPLOAD_BUCKET: weo-uploads
     S3_UPLOAD_REGION: us-west-2
     S3_UPLOAD_SECRET: 5bvPGCODzU/rzfyjq6F0VQN7hkO4AWzqONRkclig
-    REDIS_URL: redis://user:password@redis-1.production.ashaffer.cont.tutum.io:6379
+    REDIS_URL: tcp://user:password@redis.production.8ef58fd1.svc.dockerapp.io:6379
     SCRAPER_URL: http://scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 20mb
     AVATAR_SERVER: //avatars.global.ssl.fastly.net
