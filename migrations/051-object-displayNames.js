@@ -13,7 +13,6 @@ exports.up = function(cb){
     shares
       .find()
       .pipe(es.through(function (doc) {
-        console.log('doc', doc._id)
         if (doc._object && doc._object[0] && doc._object[0].attachments) {
           doc._object[0].attachments.forEach(function (att) {
             if (!att.displayName && att.content) att.displayName = xf(att.content)
