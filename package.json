@@ -100,7 +100,7 @@
     "strip": "azer/strip",
     "striptags": "^2.0.2",
     "summarize-markdown": "~0.3.0",
-    "superagent": "^1.4.0",
+    "superagent": "1.7.2",
     "track-prep": "^0.1.2",
     "uglifyify": "^2.5.0",
     "uncapitalize": "^1.0.2",
