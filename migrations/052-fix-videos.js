@@ -16,7 +16,8 @@ exports.up = function (cb){
 
         if (doc._object && doc._object[0] && doc._object[0].attachments) {
           found = doc._object[0].attachments.forEach(function (att) {
-            if ((att.objectType === 'video' || att.objectType === 'document') && att.content.startsWith('<p>')) {
+            if ((att.objectType === 'video' || att.objectType === 'document') && att.content.startsWith('<p>') && att.originalContent) {
+              console.log('scraping object', doc._id, att._id, att.originalContent)
               scrape(att.originalContent, function (err, data) {
                 if (err) return cb(err)
 
