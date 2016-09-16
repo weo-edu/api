@@ -12,24 +12,22 @@ exports.up = function (cb){
     shares
       .find()
       .pipe(es.map(function (doc, cb) {
-        var found = false
-
         if (doc._object && doc._object[0] && doc._object[0].attachments) {
-          found = doc._object[0].attachments.forEach(function (att) {
+          Promise.all(doc._object[0].attachments.map(function (att) {
             if ((att.objectType === 'video' || att.objectType === 'document') && att.content.startsWith('<p>') && att.originalContent) {
-              console.log('scraping object', doc._id, att._id, att.originalContent)
-              scrape(att.originalContent, function (err, data) {
-                if (err) return cb(err)
-
-                _.extend(att, data)
-                cb(null, doc)
+              return new Promise(resolve => {
+                scrape(att.originalContent, function (err, data) {
+                  if (!err) _.extend(att, data)
+                  resolve()
+                })
               })
-              found = true
             }
-          })
-        }
 
-        if (!found) cb(null, doc)
+            return new Promise(resolve => resolve())
+          })).then(() => cb(null, doc))
+        } else {
+          cb(null, doc)
+        }
       }))
       .pipe(es.map(function (doc, cb) {
         shares.findOne(doc._id).update(doc).then(function () {
