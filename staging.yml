@@ -31,25 +31,7 @@ weo:
   expose:
     - '3000'
   environment:
-    PORT: 3000
-    API_SERVER: //staging-api.weo.io
-    API_STATIC: //staging-api.weo.io
-    AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
-    CLEVER_CLIENT_ID: 9e85d73ee95c90414fbd
-    FACEBOOK_APP_ID: 1696938930540934
-    CRAWLABLE: false
-    DEBUG: weo:*
-    GOOGLE_CLIENT_ID: 696300823052-39m3901cceuiehfiac4s9l9su5tlps2r.apps.googleusercontent.com
-    INTERCOM_APP_ID: so9uchl4
     NODE_ENV: staging
-    PAPERTRAIL_HOST: logs2.papertrailapp.com
-    PAPERTRAIL_PORT: 15920
-    SEGMENT_IO_KEY: e6e7s7djli
-    STATIC_FILES: //staging.weo.io
-    IMAGE_SERVER: //images.global.ssl.fastly.net
-    WEO_SOURCEMAPS: true
-    WEO_ENGAGE: "Get early access"
-    OFFICE365_CLIENT_ID: f2a70124-f015-4cd1-b80b-7e80cb022d16
 
 #
 # API Backend Load Balancer
@@ -113,6 +95,7 @@ api:
     SCRAPER_URL: http://staging-scraper.weo.io/1/oembed/
     UPLOAD_SIZE_LIMIT: 5mb
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
+    FASTLY_AVATAR_SERVICE_ID: 66wIYwgwWKRCkZVOIXILTd
     AVATAR_SERVER: //staging-avatars.global.ssl.fastly.net
     WEO_API_FEATURED: 5595a59342d1080b00920bfe,55ca9a978cb0b1100052be67,55b02d80c8a4620e00ef7fe9,54aaff61bf530f0200f351c7
     FACEBOOK_APP_ID: 1696938930540934
