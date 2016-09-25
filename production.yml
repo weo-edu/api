@@ -5,7 +5,7 @@
 #
 # WEO Frontend Load Balancer
 #
-weo_lb:
+weo-lb:
   image: 'tutum/haproxy:0.1'
   autorestart: 'always'
   tags:
@@ -40,28 +40,12 @@ weo:
   expose:
     - '3000'
   environment:
-    PORT: 3000
-    API_SERVER: //api.weo.io
-    API_STATIC: //weo-api.global.ssl.fastly.net
-    STATIC_FILES: //weo.global.ssl.fastly.net
-    AVATAR_SERVER: //avatars.global.ssl.fastly.net
-    SHARE_INTRO_ID: 56d61b4b1e6fae0a00f063f9
-    CLEVER_CLIENT_ID: 504ffa19024513570be4
-    FACEBOOK_APP_ID: 1662916197276541
-    CRAWLABLE: true
-    GOOGLE_CLIENT_ID: 696300823052-gluo2j11ec7jfocj7opqt8qpmosbducq.apps.googleusercontent.com
     NODE_ENV: production
-    SEGMENT_IO_KEY: 0mhgcgv6ao
-    IMAGE_SERVER: //images.global.ssl.fastly.net
-    WEO_TITLE: "Weo | Empower Your Classroom"
-    WEO_TAGLINE: "Empower Your Classroom"
-    WEO_DESCRIPTION: "Weo is a place to create and discover activities for your classroom that can be assigned to your students with a simple click."
-
 
 #
 # API Backend Load Balancer
 #
-api_lb:
+api-lb:
   image: 'tutum/haproxy:0.1'
   autorestart: 'always'
   tags:
@@ -126,6 +110,7 @@ api:
     UPLOAD_SIZE_LIMIT: 20mb
     AVATAR_SERVER: //avatars.global.ssl.fastly.net
     FASTLY_API_KEY: 5fcca7ec8ce5850f169a5589f0cf3a62
+    FASTLY_AVATAR_SERVICE_ID: 66wIYwgwWKRCkZVOIXILTd
     WEO_API_FEATURED: 5595a59342d1080b00920bfe,55ca9a978cb0b1100052be67,55b02d80c8a4620e00ef7fe9,54aaff61bf530f0200f351c7
     FACEBOOK_APP_ID: 1662916197276541
     FACEBOOK_SECRET: 3d3d29e3ad0ce59945447b71b804e0f0
@@ -134,6 +119,8 @@ api:
     SEGMENT_IO_KEY: 0mhgcgv6ao
     KHAN_CONSUMER_KEY: RmFAeWUah2X4HdNY
     KHAN_CONSUMER_SECRET: ezcnXCHTTXp7pnja
+    OFFICE365_CLIENT_ID: 570e8309-8141-4588-b74d-ca708fd29ac3
+    OFFICE365_SECRET: W4ksxmCEQby2ZPLyk6piuYp0MxNA/bAhqIJAQLJm+TE=
 
 #
 # Redis
