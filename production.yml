@@ -31,7 +31,7 @@ weo-lb:
 # WEO Frontend Server
 #
 weo:
-  image: 'weoedu/eos-core:production'
+  image: 'weoedu/weo:production'
   target_num_containers: 2
   autoredeploy: true
   autorestart: 'always'
