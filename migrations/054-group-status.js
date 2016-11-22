@@ -1,34 +1,45 @@
 var mongo = require('../lib/mongo')
 var es = require('event-stream')
+var _ = require('lodash')
 
 exports.up = function(cb){
   mongo.connect.then(function () {
     var groups = mongo.collection('groups')
     var users = mongo.collection('users')
+    var ObjectId = mongo.raw.bsonLib.ObjectID
 
-    groups
-      .find({status: 'archived'})
-      .pipe(es.map(function (group, cb) {
-        console.log('group', group._id)
-        var id = group._id.toString()
+    users
+      .find({})
+      .pipe(es.map(function (user, cb) {
+        var groupIds = user.groups.map(g => ObjectId(g.id))
 
-        users
-          .find({'groups.id': id})
-          .pipe(es.map(function (user, cb) {
-            console.log('user', user._id)
-            user.groups.forEach(function (group) {
-              if (group.id === id) {
-                console.log('setting status', group._id)
-                group.status = 'archived'
+        groups
+          .find({_id: {$in: groupIds}})
+          .then(groups => {
+            var modified = false
+
+            user.groups.forEach(g => {
+              var group = _.find(groups, function (group) {
+                return group._id.toString() === g.id
+              })
+
+              if (!group) {
+                var ug = _.find(user.groups, {id: g.id})
+                ug.status = 'archived'
+                modified = true
+              } else if (group.status !== g.status) {
+                g.status = group.status
+                modified = true
               }
             })
 
-            users
-              .findOne(user._id)
-              .update(user)
-              .then(function () { cb() }, cb)
-          }))
-          .on('end', function () { cb() })
+            if (modified) {
+              return users
+                .findOne(user._id)
+                .update(user)
+            }
+          })
+          .then(function () { cb() }, cb)
       }))
       .on('end', cb)
   })
