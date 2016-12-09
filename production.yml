@@ -41,6 +41,8 @@ weo:
     - '3000'
   environment:
     NODE_ENV: production
+    PAPERTRAIL_HOST: logs2.papertrailapp.com
+    PAPERTRAIL_PORT: 15920
 
 #
 # API Backend Load Balancer
