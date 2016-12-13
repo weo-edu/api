@@ -32,7 +32,7 @@ weo-lb:
 #
 weo:
   image: 'weoedu/weo:production'
-  target_num_containers: 2
+  target_num_containers: 5
   autoredeploy: true
   autorestart: 'always'
   tags:
