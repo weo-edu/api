@@ -266,7 +266,7 @@ arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
-as-array@^1.0.0, "as-array@git://github.com/weo-edu/as-array", "as-array@git://github.com/weo-edu/as-array.git":
+as-array@^1.0.0, "as-array@git://github.com/weo-edu/as-array":
   version "1.0.0"
   resolved "git://github.com/weo-edu/as-array#17a37ea02091a778c18c0e84465ddfc5dd321df7"
   dependencies:
@@ -4643,7 +4643,7 @@ sliced@0.0.5:
   version "0.0.5"
   resolved "http://registry.npmjs.org/sliced/-/sliced-0.0.5.tgz#5edc044ca4eb6f7816d50ba2fc63e25d8fe4707f"
 
-slug@^0.8.0:
+slug@0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/slug/-/slug-0.8.0.tgz#6ca45b836d03abdd54b7372f1f89c9bf8d902cf8"
   dependencies:
