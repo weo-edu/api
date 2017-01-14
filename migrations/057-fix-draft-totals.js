@@ -17,11 +17,13 @@ exports.up = function(cb){
           .find({channels})
           .count()
           .then(count => {
-            user.drafts.canonicalTotal.items = count
+            if (user.drafts && user.drafts.canonicalTotal && user.drafts.canonicalTotal.items !== count) {
+              user.drafts.canonicalTotal.items = count
 
-            return users
-              .findOne(user._id)
-              .update(user)
+              return users
+                .findOne(user._id)
+                .update(user)
+            }
           }, cb)
           .then(() => cb(), cb)
       }))
