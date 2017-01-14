@@ -4,7 +4,6 @@ var _ = require('lodash')
 
 exports.up = function(cb){
   mongo.connect.then(function () {
-    var groups = mongo.collection('groups')
     var shares = mongo.collection('shares')
     var users = mongo.collection('users')
     var ObjectId = mongo.raw.bsonLib.ObjectID
@@ -12,8 +11,10 @@ exports.up = function(cb){
     users
       .find({userType: 'teacher'})
       .pipe(es.map(function (user, cb) {
+        const channels = `user!${user._id}.drafts`
+
         shares
-          .find({channels: `user!${user._id}.drafts'})`})
+          .find({channels})
           .count()
           .then(count => {
             user.drafts.canonicalTotal.items = count
