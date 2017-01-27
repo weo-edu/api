@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@f/get-prop": "^1.1.1",
+    "@f/index": "^1.0.4",
     "@f/throttle": "^1.0.0",
     "@micro-js/assign": "^1.0.0",
     "@micro-js/curry-once": "^1.2.0",

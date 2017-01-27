@@ -37,6 +37,17 @@
   dependencies:
     "@f/is-string" "^1.0.1"
 
+"@f/identity@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@f/identity/-/identity-1.1.1.tgz#6fb49a3141b1684f64ecf6fb87baa744909ae4ce"
+
+"@f/index":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@f/index/-/index-1.0.4.tgz#a4586763d95d47446a4198ba891968522164af3d"
+  dependencies:
+    "@f/identity" "^1.1.1"
+    "@f/reduce-array" "^0.2.1"
+
 "@f/is-array@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@f/is-array/-/is-array-1.1.1.tgz#cb3cd2f20016fc7b6d7049013c0318d75a222590"
@@ -54,6 +65,10 @@
 "@f/is-string@^1.0.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@f/is-string/-/is-string-1.1.1.tgz#02a098ff44562e42ad795380909b46824b0f06db"
+
+"@f/reduce-array@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@f/reduce-array/-/reduce-array-0.2.1.tgz#de8e7b7f837ef1319ea8a35b4ba70169ea7e999f"
 
 "@f/slice@^1.1.2":
   version "1.1.3"
