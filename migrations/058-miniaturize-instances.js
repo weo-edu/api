@@ -20,13 +20,12 @@ exports.up = function (cb) {
             if (att.objectType === 'question') {
               const resp = share.responses[att._id] = share.responses[att._id] || {}
               resp.response = att.response
-              resp.score = att.points.scaled || 0
+              resp.score = (att.points && att.points.scaled) || 0
               max += (att.points.max || 0)
               points += max * resp.score
             }
           })
 
-          console.log('points', points)
           share.score = points / max
           delete share._object
         } else {
