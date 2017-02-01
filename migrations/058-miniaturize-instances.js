@@ -21,7 +21,7 @@ exports.up = function (cb) {
               const resp = share.responses[att._id] = share.responses[att._id] || {}
               resp.response = att.response
               resp.score = (att.points && att.points.scaled) || 0
-              max += (att.points.max || 0)
+              max += (att.points && att.points.max) || 0
               points += max * resp.score
             }
           })
