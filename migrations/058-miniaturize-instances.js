@@ -20,13 +20,13 @@ exports.up = function (cb) {
             if (att.objectType === 'question') {
               const resp = share.responses[att._id] = share.responses[att._id] || {}
               resp.response = att.response
-              resp.score = (att.points && att.points.scaled) || 0
+              resp.score = att.points && att.points.scaled
               max += (att.points && att.points.max) || 0
-              points += max * resp.score
+              points += max * (resp.score || 0)
             }
           })
 
-          share.score = points / max
+          share.score = points / (max || 1)
           delete share._object
         } else {
           shares
@@ -42,7 +42,7 @@ exports.up = function (cb) {
                 }
 
                 return score
-              }, 0) / max
+              }, 0) / (max || 1)
 
               shares
                 .findOne(share._id)
