@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@f/find-index": "^1.0.0",
     "@f/get-prop": "^1.1.1",
     "@f/index": "^1.0.4",
     "@f/throttle": "^1.0.0",
