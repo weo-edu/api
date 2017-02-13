@@ -350,7 +350,7 @@ arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
-as-array@^1.0.0, "as-array@git://github.com/weo-edu/as-array", "as-array@git://github.com/weo-edu/as-array.git":
+as-array@^1.0.0, "as-array@git://github.com/weo-edu/as-array":
   version "1.0.0"
   resolved "git://github.com/weo-edu/as-array#17a37ea02091a778c18c0e84465ddfc5dd321df7"
   dependencies:
@@ -1253,6 +1253,29 @@ csurf@~1.8.3:
     csrf "~3.0.0"
     http-errors "~1.3.1"
 
+csv:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/csv/-/csv-1.1.1.tgz#d9952d59b1f964a7afbcdd804d6818a73199a477"
+  dependencies:
+    csv-generate "^1.0.0"
+    csv-parse "^1.2.0"
+    csv-stringify "^1.0.0"
+    stream-transform "^0.1.0"
+
+csv-generate@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/csv-generate/-/csv-generate-1.0.0.tgz#bd52886859d0c925f3e51f60f3abed262fa15caf"
+
+csv-parse@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-1.2.0.tgz#047b73868ab9a85746e885f637f9ed0fb645a425"
+
+csv-stringify@^1.0.0:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-1.0.4.tgz#bc18bab9ad4cef3195fd257980b58b479c42d3e5"
+  dependencies:
+    lodash.get "^4.0.0"
+
 ctype@0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/ctype/-/ctype-0.5.3.tgz#82c18c2461f74114ef16c135224ad0b9144ca12f"
@@ -1573,6 +1596,10 @@ escape-html@1.0.1:
 escape-html@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.2.tgz#d77d32fa98e38c2f41ae85e9278e0e0e6ba1022c"
+
+escape-regexp-component@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/escape-regexp-component/-/escape-regexp-component-1.0.2.tgz#9c63b6d0b25ff2a88c3adbd18c5b61acc3b9faa2"
 
 escape-regexp@0.0.1:
   version "0.0.1"
@@ -2705,6 +2732,10 @@ lodash._basematches@^3.0.0:
 lodash._getnative@^3.0.0:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/lodash._getnative/-/lodash._getnative-3.9.1.tgz#570bc7dede46d61cdcde687d65d3eecbaa3aaff5"
+
+lodash.get@^4.0.0:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
 lodash.isarguments@^3.0.0:
   version "3.1.0"
@@ -4357,6 +4388,10 @@ stream-to@~0.2.0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/stream-to/-/stream-to-0.2.2.tgz#84306098d85fdb990b9fa300b1b3ccf55e8ef01d"
 
+stream-transform@^0.1.0:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-0.1.2.tgz#7d8e6b4e03ac4781778f8c79517501bfb0762a9f"
+
 string_decoder@~0.10.x:
   version "0.10.31"
   resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
@@ -4559,13 +4594,100 @@ tinycolor@0.x:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/tinycolor/-/tinycolor-0.0.1.tgz#320b5a52d83abb5978d81a3e887d4aefb15a6164"
 
+title-case-minors@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/title-case-minors/-/title-case-minors-1.0.0.tgz#51f17037c294747a1d1cda424b5004c86d8eb115"
+
 to-array@0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/to-array/-/to-array-0.1.3.tgz#d45dadc6363417f60f28474fea50ecddbb4f4991"
 
+to-camel-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-camel-case/-/to-camel-case-1.0.0.tgz#1a56054b2f9d696298ce66a60897322b6f423e46"
+  dependencies:
+    to-space-case "^1.0.0"
+
+to-capital-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-capital-case/-/to-capital-case-1.0.0.tgz#a57c5014fd5a37217cf05099ff8a421bbf9c9b7f"
+  dependencies:
+    to-space-case "^1.0.0"
+
+to-case:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/to-case/-/to-case-2.0.0.tgz#6901ed90cdbfadbf7a16d06897bfb412fa3c0f0a"
+  dependencies:
+    to-camel-case "^1.0.0"
+    to-capital-case "^1.0.0"
+    to-constant-case "^1.0.0"
+    to-dot-case "^1.0.0"
+    to-no-case "^1.0.0"
+    to-pascal-case "^1.0.0"
+    to-sentence-case "^1.0.0"
+    to-slug-case "^1.0.0"
+    to-snake-case "^1.0.0"
+    to-space-case "^1.0.0"
+    to-title-case "^1.0.0"
+
+to-constant-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-constant-case/-/to-constant-case-1.0.0.tgz#63f52729b00e85188be7e0e361789e5eabaa081b"
+  dependencies:
+    to-snake-case "^1.0.0"
+
+to-dot-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-dot-case/-/to-dot-case-1.0.0.tgz#e688f11a3c9ba511eac0dd0f012c95cc9316ec3b"
+  dependencies:
+    to-space-case "^1.0.0"
+
 to-fast-properties@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.2.tgz#f3f5c0c3ba7299a7ef99427e44633257ade43320"
+
+to-no-case@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/to-no-case/-/to-no-case-1.0.2.tgz#c722907164ef6b178132c8e69930212d1b4aa16a"
+
+to-pascal-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-pascal-case/-/to-pascal-case-1.0.0.tgz#0bbdc8df448886ba01535e543327048d0aa1ce78"
+  dependencies:
+    to-space-case "^1.0.0"
+
+to-sentence-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-sentence-case/-/to-sentence-case-1.0.0.tgz#c483bf3647737e5c738ef7006fe360d5f99c572e"
+  dependencies:
+    to-no-case "^1.0.0"
+
+to-slug-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-slug-case/-/to-slug-case-1.0.0.tgz#92acde53471055a33c830719e8eb78387206d813"
+  dependencies:
+    to-space-case "^1.0.0"
+
+to-snake-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-snake-case/-/to-snake-case-1.0.0.tgz#ce746913897946019a87e62edfaeaea4c608ab8c"
+  dependencies:
+    to-space-case "^1.0.0"
+
+to-space-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-space-case/-/to-space-case-1.0.0.tgz#b052daafb1b2b29dc770cea0163e5ec0ebc9fc17"
+  dependencies:
+    to-no-case "^1.0.0"
+
+to-title-case@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/to-title-case/-/to-title-case-1.0.0.tgz#aca88f89d6064de50108a97cea0db44827e80061"
+  dependencies:
+    escape-regexp-component "^1.0.2"
+    title-case-minors "^1.0.0"
+    to-capital-case "^1.0.0"
+    to-sentence-case "^1.0.0"
 
 to-utf8@0.0.1:
   version "0.0.1"
