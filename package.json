@@ -79,7 +79,7 @@
     "mongodb-next": "^0.7.0",
     "mongodb-uri": "~0.9.6",
     "mongoose": "github:weo-edu/mongoose#3.8.x",
-    "monk": "^0.9.1",
+    "monk": "^4.0.0",
     "morgan": "1.5.0",
     "no-iits": "^0.2.1",
     "node-uuid": "^1.4.7",
