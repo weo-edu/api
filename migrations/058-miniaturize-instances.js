@@ -37,8 +37,10 @@ exports.up = function (cb) {
               share.score = parent._object[0].attachments.reduce((score, att) => {
                 if (share.responses[att._id]) {
                   const r = share.responses[att._id]
-                  score += r.score * att.points.max
-                  max += att.points.max
+                  const points = att.points || {}
+
+                  score += r.score * points.max
+                  max += points.max
                 }
 
                 return score
