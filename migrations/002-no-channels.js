@@ -53,7 +53,6 @@ exports.up = function(next){
         if (err) throw err;
         cb(null, share);
       }, true);
-
     }))
     .pipe(chug.dest('shares'))
     .on('end', next);
