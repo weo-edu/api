@@ -58,6 +58,7 @@
     "express": "~4.0.0",
     "express-current-version": "^0.1.4",
     "express-inject-latency": "0.0.4",
+    "express-oauth-server": "^2.0.0-b1",
     "express-robots": "^0.1.4",
     "fastly": "^1.2.1",
     "fbgraph": "^1.1.0",
